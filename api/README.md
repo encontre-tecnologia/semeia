@@ -1,86 +1,123 @@
 # Semeia API — Workers + D1
 
-Backend da vitrine com catálogo, cadastro e moderação de lojas e produtos.
+Backend da vitrine: catálogo, cadastro e moderação de lojas, painel do lojista,
+pedidos com reserva de estoque e e-mails transacionais.
 
-> Estado atual: pagamentos estão desativados. A rota `/api/checkout` responde
-> com `410 Gone`; o comprador conversa diretamente com o vendedor pelo WhatsApp.
-> O código antigo de Mercado Pago permanece isolado apenas como referência para
-> uma possível fase futura e não é utilizado pelo site.
+> **O Semeia não processa pagamentos.** O Pix vai direto do comprador para o
+> vendedor, combinado entre os dois pelo WhatsApp. As rotas antigas de
+> pagamento respondem `410 Gone` e o código de Mercado Pago está fora do
+> caminho de build, em `legado/`, só como referência.
 
 ## Endereços publicados
 
-- Site: `https://semeia-51k.pages.dev`
+- Site: `https://semeiabr.com` (o antigo `semeia-51k.pages.dev` continua no ar)
 - API: `https://semeia-api.encontretecnologia2.workers.dev`
-- OAuth callback: `https://semeia-api.encontretecnologia2.workers.dev/api/oauth/callback`
-- Webhook: `https://semeia-api.encontretecnologia2.workers.dev/api/webhooks/mercadopago`
 
-## Como o dinheiro é dividido
+## Como um pedido acontece
 
-1. O vendedor cadastra a loja e autoriza o Semeia pelo OAuth do Mercado Pago.
-2. Os tokens são criptografados antes de serem gravados no D1.
-3. Na compra, o preço e o vendedor são buscados no banco — o navegador não envia o valor.
-4. A preferência é criada com o token do vendedor e `marketplace_fee`.
-5. O Mercado Pago direciona o líquido ao vendedor e a comissão ao Semeia.
-6. Somente o webhook assinado confirma o pedido como pago.
+1. O comprador escolhe retirada ou entrega e finaliza no site.
+2. `POST /api/impact/confirm` grava o pedido e **reserva o estoque**: a
+   quantidade sai do catálogo por um `UPDATE` condicional, que só funciona se
+   ainda houver unidades — é o que evita duas pessoas levarem a última.
+3. O vendedor recebe um e-mail com os itens, o total e o WhatsApp de quem pediu.
+4. Ele confirma ou cancela em `POST /api/store/orders/:id/status`.
+5. Se ninguém confirmar em 24 horas, o cron horário (`releaseExpiredHolds`)
+   devolve as unidades ao catálogo.
 
-## Configuração que ainda precisa ser feita no Mercado Pago
+Produto **sob encomenda** (`stock_quantity NULL`) fica fora dessa mecânica: não
+há quantidade pronta para reservar.
 
-1. Configurar a aplicação como **Checkout Pro / Marketplace**.
-2. Cadastrar o OAuth callback listado acima como **Redirect URL**.
-3. Criar um webhook de pagamentos usando a URL listada acima.
-4. Definir os dois segredos sem colocá-los em arquivo ou no frontend:
+## Autenticação
 
-   ```powershell
-   npx wrangler secret put MP_CLIENT_SECRET
-   npx wrangler secret put MP_WEBHOOK_SECRET
-   ```
+| Quem | Como |
+|---|---|
+| Lojista | token do Firebase no corpo (`idToken`), conferido em `identitytoolkit` |
+| Administração | `Authorization: Bearer <ADMIN_TOKEN>` **ou** conta Google listada em `ADMIN_EMAILS` |
 
-5. Trocar o token administrativo por um valor conhecido e forte:
+A loja precisa estar `approved` para publicar produto ou pedir destaque — a API
+recusa antes de qualquer gravação, e o site desabilita os botões para não deixar
+ninguém preencher um formulário à toa.
 
-   ```powershell
-   npx wrangler secret put ADMIN_TOKEN
-   ```
+## Rotas
 
-O `TOKEN_ENCRYPTION_KEY` já existe no Worker. Não troque essa chave depois que
-vendedores reais forem conectados, pois os tokens existentes deixariam de ser
-decifráveis.
+**Públicas**
 
-## E-mails para lojistas (boas-vindas e aprovação)
+| Método | Rota | Função |
+|---|---|---|
+| GET | `/api/health` | estado da API, do D1 e do e-mail |
+| GET | `/api/products` · `/api/products/:id` | catálogo e produto |
+| GET | `/api/stores` · `/api/stores/:id` · `/api/stores/featured` | lojas e vitrine |
+| GET | `/api/impact` | totais de impacto confirmados |
+| POST | `/api/impact/confirm` | registra o pedido e reserva o estoque |
+| POST | `/api/stores` | cadastra loja (entra como `pending`) |
+| POST | `/api/metrics` · `/api/products/:id/view` | visitas e cliques |
+| GET | `/api/promotions/prices` · `/api/store-promotions/prices` | tabela de destaques |
 
-Dois e-mails automáticos, escritos em `src/email.ts`: um no cadastro da loja e
-outro quando o admin muda o status para `approved`. O transporte é a API do
-Gmail (`src/gmail.ts`) — é o único caminho gratuito que chega na caixa de
-entrada sem domínio próprio, já que desde 2024 o `gmail.com` publica DMARC
-`p=quarantine` e mandar "de" um @gmail.com através de Brevo/Resend cai no spam.
+**Do lojista** (exigem `idToken`)
 
-Fica desligado enquanto `EMAIL_FROM` estiver vazio ou os segredos não
-existirem — o cadastro e a aprovação funcionam normalmente sem isso.
+| Método | Rota | Função |
+|---|---|---|
+| POST | `/api/store/me` | painel: loja, produtos, pedidos e métricas |
+| POST | `/api/store-products` | publica anúncio |
+| POST | `/api/store-products/:id/detail` · `/update` · `/images` · `/delete` | edita anúncio |
+| POST | `/api/store-products/:id/stock` | ajusta estoque (número, delta ou `null` = sob encomenda) |
+| POST | `/api/store/orders/:id/status` · `/delete` | confirma, cancela ou apaga pedido |
+| POST | `/api/store/profile` · `/logo` · `/cover` · `/pix` | dados da loja |
+| POST | `/api/store/upload` | envia imagem ao Cloudinary |
+| POST | `/api/store/promotions` · `/store-promotions` | pede destaque de produto ou de loja |
 
-Para ligar:
+**Administrativas**
+
+| Método | Rota | Função |
+|---|---|---|
+| GET | `/api/admin/stores` | lista lojas por status |
+| POST | `/api/admin/stores/:id/status` | aprova ou suspende (dispara e-mail nas duas viradas) |
+| POST | `/api/admin/stores/:id/email` | reenvia boas-vindas ou aprovação |
+| GET/POST | `/api/admin/promotions` · `/store-promotions` | fila e liberação de destaques |
+| GET | `/api/admin/email-failures` | e-mails que não saíram nos últimos 7 dias |
+| GET | `/api/admin/impact` | números consolidados |
+
+**Desativadas** (respondem `410`): `/api/checkout`, `/api/orders/:id`,
+`/api/oauth/*`, `/api/webhooks/mercadopago`.
+
+## E-mails
+
+Escritos em `src/email.ts`, enviados pela API do Gmail (`src/gmail.ts`) — é o
+único caminho gratuito que chega na caixa de entrada sem domínio próprio de
+e-mail, já que desde 2024 o `gmail.com` publica DMARC `p=quarantine` e mandar
+"de" um @gmail.com através de Brevo ou Resend cai no spam.
+
+| Quando | Para quem |
+|---|---|
+| Cadastro da loja | lojista (boas-vindas, com o aviso sobre spam) |
+| Loja aprovada | lojista, com o link da vitrine |
+| Loja suspensa | lojista, explicando que nada foi apagado |
+| Pedido novo | lojista, com itens, total e WhatsApp do comprador |
+| Loja pendente · destaque pedido | administração (`ADMIN_EMAILS`) |
+
+Tudo sai em `waitUntil`, depois da resposta. O que falha vira linha em
+`email_failures` e aparece no `admin.html` — um e-mail travado nunca invalida um
+cadastro nem impede uma aprovação.
+
+Fica desligado enquanto `EMAIL_FROM` estiver vazio ou os segredos `GMAIL_*` não
+existirem. Para ligar:
 
 1. No [Google Cloud Console](https://console.cloud.google.com/), no projeto do
-   Firebase (`semeia-a7cd2`) ou em um novo: habilite a **Gmail API** e crie um
-   **OAuth client ID** do tipo *Web application* com
-   `http://localhost:5580` em *Authorized redirect URIs*. Se a tela de
-   consentimento estiver em modo *Testing*, adicione a conta que vai enviar
-   como *Test user*.
-
-   Importante: clique em **Publish app** na aba *Audience*. Em status
-   *Testing*, o refresh token expira em 7 dias.
-
-2. Rode o script — ele faz o resto (autoriza, descobre o endereço, grava os
-   três segredos, preenche `EMAIL_FROM` e faz o deploy):
+   Firebase (`semeia-a7cd2`): habilite a **Gmail API** e crie um **OAuth client
+   ID** do tipo *Web application* com `http://localhost:5580` em *Authorized
+   redirect URIs*. Clique em **Publish app** na aba *Audience* — em modo
+   *Testing* o refresh token expira em 7 dias.
+2. Rode o script, que autoriza, descobre o endereço, grava os três segredos,
+   preenche `EMAIL_FROM` e publica:
 
    ```powershell
    node scripts/gmail-auth.mjs <CLIENT_ID> <CLIENT_SECRET>
    ```
 
-   O refresh token não é impresso nem gravado em arquivo: vai direto para o
-   `wrangler secret put`. Use `--no-deploy` para parar antes do deploy.
+   O refresh token não é impresso nem gravado em arquivo. Use `--no-deploy` para
+   parar antes da publicação.
 
-Limite prático da conta Google: ~500 mensagens por dia. Os envios acontecem em
-`waitUntil` e qualquer falha é apenas logada (`event: email_failed`), para que
-um problema de e-mail nunca invalide o cadastro de uma loja.
+Limite prático da conta Google: ~500 mensagens por dia.
 
 ## Desenvolvimento local
 
@@ -88,74 +125,70 @@ um problema de e-mail nunca invalide o cadastro de uma loja.
 npm install
 npm run cf-typegen
 npm run db:migrate:local
-npx wrangler d1 execute semeia-db --local --file seed.demo.sql
+npx wrangler d1 execute semeia-db --local --file seed.demo.sql   # opcional
 npm run dev
 ```
 
-Os segredos locais ficam em `.dev.vars`, que está ignorado pelo Git. Use
-`.dev.vars.example` como referência.
+Segredos locais ficam em `.dev.vars` (ignorado pelo Git); use
+`.dev.vars.example` como referência. Para apontar o site local contra esta API,
+rode no console do navegador:
+
+```js
+localStorage.setItem("semeia-api-url", "http://localhost:8787")
+```
 
 ## Banco D1
 
-```powershell
-# aplicar novas migrações localmente
-npm run db:migrate:local
+`semeia-db` — SQLite gerenciado pela Cloudflare, ligado ao Worker por *binding*.
+Todas as consultas ficam em `src/db.ts`; o esquema vive em `migrations/`, um
+arquivo numerado por mudança.
 
-# aplicar novas migrações no banco publicado
-npm run db:migrate:remote
+```powershell
+npm run db:migrate:local     # aplica no banco local
+npm run db:migrate:remote    # aplica no banco publicado
 ```
 
-`seed.demo.sql` contém apenas uma loja e um produto fictícios para demonstrar o
-bloqueio de checkout antes da conexão OAuth. Não representa um vendedor real.
+Duas armadilhas do SQLite que já custaram caro aqui:
 
-## Rotas públicas
+- **Não dá para alterar um `CHECK` com `ALTER TABLE`.** A migração `0029`
+  precisou recriar duas tabelas para aceitar `amount_cents = 0` (destaque
+  gratuito do piloto).
+- **`DROP TABLE` leva os índices junto.** Foi o que aconteceu na `0029`, e a
+  `0030` existe só para recriar os sete índices perdidos.
 
-| Método | Rota | Função |
-|---|---|---|
-| GET | `/api/health` | Estado da API, D1 e configuração de pagamento |
-| GET | `/api/products` | Lista produtos aprovados |
-| GET | `/api/products/:id` | Busca um produto |
-| GET | `/api/impact` | Totais de impacto confirmados |
-| POST | `/api/stores` | Cadastra loja e devolve link temporário de OAuth |
-| GET | `/api/oauth/connect` | Inicia autorização do vendedor |
-| GET | `/api/oauth/callback` | Salva tokens OAuth criptografados |
-| POST | `/api/checkout` | Cria pedido e preferência com `marketplace_fee` |
-| GET | `/api/orders/:id` | Consulta o status do pedido |
-| POST | `/api/webhooks/mercadopago` | Confirma pagamento após validar assinatura |
+## Configuração
 
-Rotas administrativas exigem `Authorization: Bearer ADMIN_TOKEN`:
+Variáveis em `wrangler.jsonc`:
 
-| Método | Rota | Função |
-|---|---|---|
-| GET | `/api/admin/stores?status=` | Lista lojas |
-| POST | `/api/admin/stores/:id/status` | Aprova ou suspende uma loja |
-| POST | `/api/admin/stores/:id/plan` | Define plano/comissão |
-| POST | `/api/admin/products` | Cadastra um produto com preço em centavos |
+| Nome | Para quê |
+|---|---|
+| `ALLOWED_ORIGIN` | origens liberadas no CORS, separadas por vírgula |
+| `ADMIN_EMAILS` | quem entra no painel e recebe os avisos internos |
+| `EMAIL_FROM` | conta Google que envia |
+| `FIREBASE_PROJECT_ID` · `FIREBASE_WEB_API_KEY` | login do lojista |
+| `CLOUDINARY_CLOUD_NAME` · `CLOUDINARY_UPLOAD_PRESET` | envio de imagens |
 
-## Comissão atual
+Segredos (`npx wrangler secret put <NOME>`): `ADMIN_TOKEN`, `GMAIL_CLIENT_ID`,
+`GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`.
 
-| Plano | Mensalidade | Comissão |
-|---|---:|---:|
-| `semente` | R$ 0 | 8% por venda |
-| `raiz` | ainda não implementada | 3% por venda |
+## Regras que valem a pena saber
 
-O backend transforma a porcentagem em valor monetário e envia esse valor em
-`marketplace_fee`. As tarifas próprias do Mercado Pago são separadas.
+- **Piloto só em São Carlos - SP** (`SERVED_REGIONS`, em `src/parsing.ts`). Outra
+  cidade é recusada com um convite para conversar.
+- **Destaques gratuitos** enquanto `PROMOTION_FREE_DURING_PILOT` for `true`
+  (`src/pricing.ts`).
+- **Preços sempre em centavos**, inteiros, nunca ponto flutuante.
+- **Nome de imagem decidido no servidor**: o preset do Cloudinary deriva o
+  endereço do nome do arquivo, e o site mandava sempre "produto.jpg" — todas as
+  fotos caíam no mesmo lugar e uma sobrescrevia a outra.
+- **Estimativa de CO₂** (`src/impact.ts`) é comparativa e educativa. O tipo do
+  alimento é deduzido do nome e da categoria; o peso vem do conteúdo declarado.
 
-## Segurança implementada
+## Publicar
 
-- AES-GCM para tokens OAuth em repouso.
-- `state` OAuth assinado e com expiração de 15 minutos.
-- Link inicial de conexão assinado e válido por sete dias.
-- Assinatura `x-signature` validada no webhook.
-- Comparação temporalmente segura para segredos.
-- Preços armazenados como inteiros em centavos.
-- Checkout usa produto e vendedor vindos do D1.
-- O retorno do navegador nunca marca um pedido como pago.
+```powershell
+npm run typecheck
+npx wrangler deploy
+```
 
-## Antes de aceitar dinheiro real
-
-- Concluir os dois segredos do Mercado Pago.
-- Usar contas e cartões de teste para validar OAuth, compra, rejeição e estorno.
-- Criar termos para comissão, entrega, garantia, cancelamento e reembolso.
-- Validar emissão de nota fiscal da comissão com contabilidade.
+Logs em tempo real: `npx wrangler tail`.
