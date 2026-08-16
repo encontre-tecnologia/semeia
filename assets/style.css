@@ -513,6 +513,11 @@ header.site-nav nav a:hover::after, header.site-nav nav a.active::after { right:
 /* ---------- Menu lateral ---------- */
 .menu-toggle { margin-left:0; display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--line); border-radius:10px; background:transparent; color:var(--ink); padding:.58rem .85rem; cursor:pointer; font:600 .82rem Charter,Georgia,serif; }
 .menu-toggle:hover { border-color:var(--accent); color:var(--accent); }
+/* Voltar no lugar do menu, só no celular e só fora da home. */
+.nav-back{display:none;align-items:center;justify-content:center;width:2.7rem;height:2.7rem;padding:0;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);cursor:pointer}
+.nav-back svg{width:1.35rem;height:1.35rem}
+.nav-back:hover{border-color:var(--accent);color:var(--accent)}
+@media (max-width: 640px){.nav-back{display:inline-flex}.menu-toggle.has-back{display:none}}
 @media (min-width: 641px) { .menu-toggle { display:none; } }
 .side-menu { position:fixed; inset:0; z-index:80; pointer-events:none; }
 .side-menu.open { pointer-events:auto; }

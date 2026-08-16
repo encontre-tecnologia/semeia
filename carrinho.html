@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://semeiabr.com/carrinho">
 <title>Sua sacola — Semeia</title>
 <link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<link rel="stylesheet" href="assets/style.css?v=20260816-voltar">
 <style>
   .cart-page{width:min(calc(100% - 3rem),900px);margin-inline:auto;padding:2.6rem 0 4.5rem}
   .cart-head{margin-bottom:1.5rem}
@@ -26,7 +26,7 @@
   .cart-item img{width:64px;height:64px;border-radius:14px;object-fit:cover;background:var(--paper)}
   .cart-item strong{display:block;font-size:.95rem}
   .cart-item small{display:block;margin-top:.15rem;color:var(--ink-soft);font-size:.75rem}
-  .cart-unit-price{display:flex!important;align-items:center;gap:.45rem;flex-wrap:wrap}.cart-old-price{text-decoration:line-through;opacity:.72}.cart-up{padding:.18rem .38rem;border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line));border-radius:999px;color:var(--warn);font:800 .56rem/1 "SF Mono",Consolas,monospace}.cart-off{padding:.18rem .38rem;border:1px solid color-mix(in srgb,var(--accent-bright) 50%,var(--line));border-radius:999px;color:var(--accent-bright);font:800 .56rem/1 "SF Mono",Consolas,monospace}
+  .cart-unit-price{display:flex!important;align-items:center;gap:.45rem;flex-wrap:wrap}.cart-content{padding:.16rem .45rem;border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));border-radius:999px;color:var(--accent);font:700 .68rem/1 "SF Mono",Consolas,monospace}.cart-old-price{text-decoration:line-through;opacity:.72}.cart-up{padding:.18rem .38rem;border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line));border-radius:999px;color:var(--warn);font:800 .56rem/1 "SF Mono",Consolas,monospace}.cart-off{padding:.18rem .38rem;border:1px solid color-mix(in srgb,var(--accent-bright) 50%,var(--line));border-radius:999px;color:var(--accent-bright);font:800 .56rem/1 "SF Mono",Consolas,monospace}
   .cart-item-price{font:700 .9rem "SF Mono",Consolas,monospace;color:var(--accent);white-space:nowrap;text-align:right}
   .cart-qty{display:inline-flex;align-items:center;gap:.1rem;margin-top:.5rem;border:1px solid var(--line);border-radius:999px;overflow:hidden}
   .cart-qty button{width:2rem;height:2rem;border:0;background:transparent;color:var(--ink);font-size:1rem;line-height:1;cursor:pointer}
@@ -93,7 +93,7 @@
   </div>
 </main>
 
-<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script>
+<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260816-carbono"></script>
 <script src="assets/api.js"></script>
 <script src="assets/cart.js?v=20260813-1"></script>
 <script src="assets/notice.js?v=20260813-1"></script>
@@ -188,6 +188,14 @@
       var unitCurrent = document.createElement("span");
       unitCurrent.textContent = money(entry.product.price) + (entry.product.unit || "");
       unit.appendChild(unitCurrent);
+      // Quanto vem em cada venda: sem isso o comprador fecha o pedido sem saber
+      // se está levando 300 ml ou 1 litro.
+      if (entry.product.content) {
+        var conteudo = document.createElement("span");
+        conteudo.className = "cart-content";
+        conteudo.textContent = "contém " + entry.product.content;
+        unit.appendChild(conteudo);
+      }
       var change = SemeiaFormat.priceChange(entry.product);
       if (change) {
         var oldPrice = document.createElement("span");

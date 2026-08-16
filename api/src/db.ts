@@ -29,11 +29,17 @@ export interface StoreRow {
   created_at: number;
 }
 
-/** Faixa de frete por distância. `upToKm` null é a última faixa ("acima da anterior");
- *  `feeCents` null significa "a combinar" com o vendedor. */
+/** Faixa de frete. `upToKm` null é a última faixa ("acima da anterior");
+ *  `feeCents` null significa "a combinar" com o vendedor.
+ *
+ *  `label` existe porque nem todo vendedor cobra por distância: há quem cobre
+ *  por bairro ("Centro e Vila Nery") e quem cobre por regra ("R$ 1,00 por km
+ *  rodado"). Quando vem preenchido, é ele que o comprador lê no lugar da faixa
+ *  em quilômetros — e a faixa deixa de precisar de `upToKm`. */
 export interface ShippingTier {
   upToKm: number | null;
   feeCents: number | null;
+  label?: string | null;
 }
 
 export interface ProductRow {
@@ -58,6 +64,8 @@ export interface ProductRow {
   shipping_fee_cents: number | null;
   shipping_tiers: string | null;
   pickup_address: string | null;
+  content_amount: number | null;
+  content_unit: string | null;
   image_url: string | null;
   image_urls: string | null;
   active: number;
@@ -190,6 +198,9 @@ export interface NewProduct {
   imageUrls?: string[];
   productType?: string;
   weightKg?: number | null;
+  /** Conteúdo declarado pela loja: 500 + "ml", 1.2 + "kg", 12 + "un". */
+  contentAmount?: number | null;
+  contentUnit?: string | null;
   processing?: string;
   packaging?: string;
   refrigerated?: boolean;
@@ -207,8 +218,9 @@ export async function insertProduct(database: D1Database, product: NewProduct): 
       INSERT INTO products
         (id, store_id, name, description, price_cents, unit, category, seals, co2_g, image_url, image_urls,
          product_type, weight_kg, processing, packaging, refrigerated, delivery_method,
-         pesticide_free, stock_quantity, shipping_fee_cents, shipping_tiers, pickup_address, active, created_at)
-      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, 1, ?23)
+         pesticide_free, stock_quantity, shipping_fee_cents, shipping_tiers, pickup_address,
+         content_amount, content_unit, active, created_at)
+      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, 1, ?25)
     `)
     .bind(
       product.id,
@@ -233,6 +245,8 @@ export async function insertProduct(database: D1Database, product: NewProduct): 
       product.shippingFeeCents ?? null,
       product.shippingTiers?.length ? JSON.stringify(product.shippingTiers) : null,
       product.pickupAddress ?? null,
+      product.contentAmount ?? null,
+      product.contentUnit ?? null,
       Math.floor(Date.now() / 1000),
     )
     .run();
@@ -249,7 +263,8 @@ export async function updateProduct(database: D1Database, product: NewProduct): 
              price_cents = ?3, unit = ?4, category = ?5, seals = ?6, co2_g = ?7,
              image_url = ?8, image_urls = ?9, product_type = ?10, weight_kg = ?11, processing = ?12,
              packaging = ?13, refrigerated = ?14, delivery_method = ?15, pesticide_free = ?16,
-             stock_quantity = ?17, shipping_fee_cents = ?18, shipping_tiers = ?19, pickup_address = ?20
+             stock_quantity = ?17, shipping_fee_cents = ?18, shipping_tiers = ?19, pickup_address = ?20,
+             content_amount = ?23, content_unit = ?24
        WHERE id = ?21 AND store_id = ?22 AND deleted_at IS NULL
     `)
     .bind(
@@ -275,16 +290,23 @@ export async function updateProduct(database: D1Database, product: NewProduct): 
       product.pickupAddress ?? null,
       product.id,
       product.storeId,
+      product.contentAmount ?? null,
+      product.contentUnit ?? null,
     )
     .run();
   return (result.meta.changes ?? 0) > 0;
 }
 
+/**
+ * O Instagram saiu do perfil da loja. A coluna continua no banco com o que já
+ * estava gravado — este UPDATE apenas deixou de tocá-la, para uma edição de
+ * descrição ou horário não apagar dado antigo sem ninguém pedir.
+ */
 export async function setStoreProfile(database: D1Database, id: string, profile: {
-  description: string | null; openingHours: string | null; instagram: string | null;
+  description: string | null; openingHours: string | null;
 }): Promise<void> {
-  await database.prepare("UPDATE stores SET description = ?1, opening_hours = ?2, instagram = ?3 WHERE id = ?4")
-    .bind(profile.description, profile.openingHours, profile.instagram, id).run();
+  await database.prepare("UPDATE stores SET description = ?1, opening_hours = ?2 WHERE id = ?3")
+    .bind(profile.description, profile.openingHours, id).run();
 }
 
 /** Capa da vitrine — mesma origem da logo (upload assinado do Cloudinary). */
@@ -1112,9 +1134,15 @@ export async function setOrderState(database: D1Database, params: {
  * atropela uma reserva feita entre a leitura da tela e o clique. `quantity`
  * grava um número fechado, para quando o vendedor conta o que tem na prateleira.
  */
+/**
+ * `quantity: null` é o produto sob encomenda — sem quantidade pronta e fora da
+ * reserva de estoque. Por isso o retorno separa "não encontrei o produto"
+ * (`ok: false`) de "a quantidade agora é nenhuma" (`quantity: null`): antes o
+ * null virava 0 no caminho de volta e os dois casos ficavam iguais.
+ */
 export async function adjustProductStock(database: D1Database, params: {
-  productId: string; storeId: string; delta?: number; quantity?: number;
-}): Promise<number | null> {
+  productId: string; storeId: string; delta?: number; quantity?: number | null;
+}): Promise<{ ok: false } | { ok: true; quantity: number | null }> {
   const statement = params.delta !== undefined
     ? database.prepare(`
         UPDATE products
@@ -1124,13 +1152,13 @@ export async function adjustProductStock(database: D1Database, params: {
     : database.prepare(`
         UPDATE products SET stock_quantity = ?1
          WHERE id = ?2 AND store_id = ?3 AND deleted_at IS NULL
-      `).bind(params.quantity ?? 0, params.productId, params.storeId);
+      `).bind(params.quantity ?? null, params.productId, params.storeId);
   const result = await statement.run();
-  if (!result.meta.changes) return null;
+  if (!result.meta.changes) return { ok: false };
   const row = await database
     .prepare("SELECT stock_quantity FROM products WHERE id = ?1 AND store_id = ?2")
     .bind(params.productId, params.storeId).first<{ stock_quantity: number | null }>();
-  return row?.stock_quantity ?? 0;
+  return { ok: true, quantity: row?.stock_quantity ?? null };
 }
 
 /**

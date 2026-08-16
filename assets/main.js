@@ -211,6 +211,14 @@ function setupSiteMenu() {
       register.textContent = "Cadastrar loja";
       desktopNav.appendChild(register);
     }
+    /* Nas telas que fazem parte da área do vendedor, "Minha loja" é o caminho de
+       volta — e antes ficava indistinguível dos outros cinco links. Marcá-la
+       como seção atual é o que dispensa um botão de voltar dentro da página. */
+    var naAreaDaLoja = /\/(minha-loja|cadastro-produto|editar-fotos)(\.html)?$/.test(location.pathname.replace(/\/+$/, ""));
+    if (naAreaDaLoja) {
+      var linkLoja = desktopNav.querySelector('[href="minha-loja.html"]');
+      if (linkLoja) linkLoja.classList.add("active");
+    }
   }
   var toggle = document.createElement("button");
   toggle.type = "button"; toggle.className = "menu-toggle"; toggle.setAttribute("aria-expanded", "false"); toggle.textContent = "Menu";
@@ -221,6 +229,41 @@ function setupSiteMenu() {
   toggle.addEventListener("click",function(){var open=menu.classList.toggle("open");document.body.classList.toggle("menu-open",open);toggle.setAttribute("aria-expanded",String(open));});
   menu.querySelector(".side-menu-backdrop").addEventListener("click",close);menu.querySelector(".side-menu-close").addEventListener("click",close);
   inner.insertBefore(toggle, inner.firstChild);document.body.appendChild(menu);
+
+  /* Fora da home, no celular, o lugar do menu é ocupado por um botão de voltar.
+     Em tela pequena a pessoa está sempre no meio de uma tarefa — ver um produto,
+     publicar um anúncio — e o que ela procura ali é o caminho de volta, não a
+     lista de seções. O menu continua no computador e a marca continua levando
+     para a home. */
+  var caminho = location.pathname.replace(/\/+$/, "");
+  var ehHome = caminho === "" || /\/index(\.html)?$/.test(caminho);
+  if (!ehHome) {
+    var voltar = document.createElement("button");
+    voltar.type = "button";
+    voltar.className = "nav-back";
+    voltar.setAttribute("aria-label", "Voltar");
+    voltar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>';
+    voltar.addEventListener("click", function () {
+      // Quem chegou pela busca do Google não tem para onde voltar: nesse caso o
+      // botão leva ao lugar de onde a página faz parte.
+      var veioDaqui = document.referrer.indexOf(location.origin + "/") === 0;
+      if (veioDaqui && history.length > 1) history.back();
+      else location.href = destinoDeVolta(caminho);
+    });
+    inner.insertBefore(voltar, inner.firstChild);
+    toggle.classList.add("has-back");
+  }
+}
+
+/** Para onde a seta leva quando não existe histórico do próprio site. */
+function destinoDeVolta(caminho) {
+  if (/cadastro-produto|editar-fotos/.test(caminho)) return "minha-loja.html";
+  // No checkout o lugar de onde a pessoa veio é o produto que está comprando.
+  if (/checkout/.test(caminho)) {
+    var id = new URLSearchParams(location.search).get("id");
+    return id ? "produto?id=" + encodeURIComponent(id) : "index.html";
+  }
+  return "index.html";
 }
 
 function setupLegalConsent() {
@@ -299,6 +342,31 @@ async function restoreStoreSession() {
     document.querySelector("#publish").hidden = data.store.status !== "approved";
   } catch (_) { /* a tela continua oferecendo login normal */ }
 }
+
+/*
+ * As telas do painel montam o conteúdo depois de conversar com a API: quando a
+ * página abre ela tem poucos centímetros, e cresce alguns segundos depois. O
+ * navegador guarda a posição de rolagem da visita anterior e a devolve assim que
+ * o documento fica alto o bastante — o resultado era abrir direto no rodapé.
+ * Aqui a restauração passa a ser nossa: painel sempre começa no topo.
+ */
+(function () {
+  var caminho = location.pathname.replace(/\/+$/, "");
+  if (!/\/(minha-loja|cadastro-produto|editar-fotos|admin)(\.html)?$/.test(caminho)) return;
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  if (location.hash) return;
+  var mexeu = false;
+  // Só forçamos o topo enquanto a pessoa não rolou por conta própria.
+  addEventListener("wheel", function () { mexeu = true; }, { passive: true, once: true });
+  addEventListener("touchmove", function () { mexeu = true; }, { passive: true, once: true });
+  addEventListener("keydown", function () { mexeu = true; }, { once: true });
+  function aoTopo() { if (!mexeu) scrollTo(0, 0); }
+  aoTopo();
+  addEventListener("load", aoTopo);
+  // O conteúdo do painel chega depois do carregamento; a última checagem cobre isso.
+  setTimeout(aoTopo, 400);
+  setTimeout(aoTopo, 1500);
+})();
 
 document.addEventListener("DOMContentLoaded", function () { setupSiteMenu(); setupSiteFooter(); setupLegalConsent(); void restoreStoreSession(); });
 

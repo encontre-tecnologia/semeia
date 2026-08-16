@@ -183,6 +183,7 @@ export function parseShippingTiers(raw: string | null): db.ShippingTier[] {
       .map((tier) => ({
         upToKm: typeof tier.upToKm === "number" ? tier.upToKm : null,
         feeCents: typeof tier.feeCents === "number" ? tier.feeCents : null,
+        label: typeof tier.label === "string" && tier.label.trim() ? tier.label.trim() : null,
       }));
   } catch {
     return [];
@@ -197,23 +198,84 @@ export function readShippingTiers(raw: unknown): { error: string } | { tiers: db
   const tiers: db.ShippingTier[] = [];
   let previousKm = 0;
   for (let index = 0; index < raw.length; index++) {
-    const entry = raw[index] as { upToKm?: unknown; feeCents?: unknown };
+    const entry = raw[index] as { upToKm?: unknown; feeCents?: unknown; label?: unknown };
     if (!entry || typeof entry !== "object") return { error: "Revise as faixas de frete." };
     const isLast = index === raw.length - 1;
+    // Faixa descrita em palavras ("Centro e Vila Nery", "R$ 1,00 por km rodado").
+    const label = typeof entry.label === "string" ? entry.label.trim().replace(/\s+/g, " ") : "";
+    if (label.length > 80) return { error: "A descrição de uma faixa de frete pode ter no máximo 80 caracteres." };
     const rawKm = entry.upToKm;
     const upToKm = rawKm === null || rawKm === undefined || rawKm === "" ? null : Number(rawKm);
-    if (upToKm === null && !isLast) return { error: "Só a última faixa pode ser \"acima de\"." };
-    if (upToKm !== null) {
-      // Sem teto de distância: só exigimos que cada faixa comece onde a anterior terminou.
-      if (!Number.isFinite(upToKm) || upToKm <= previousKm) return { error: `A faixa ${index + 1} precisa ter uma distância maior que a anterior (${previousKm} km).` };
-      previousKm = upToKm;
+    // A ordem por quilometragem só vale entre faixas numéricas. Uma faixa escrita
+    // em palavras não tem "até onde vai", então fica fora dessas duas regras.
+    if (!label) {
+      if (upToKm === null && !isLast) return { error: "Só a última faixa pode ser \"acima de\"." };
+      if (upToKm !== null) {
+        // Sem teto de distância: só exigimos que cada faixa comece onde a anterior terminou.
+        if (!Number.isFinite(upToKm) || upToKm <= previousKm) return { error: `A faixa ${index + 1} precisa ter uma distância maior que a anterior (${previousKm} km).` };
+        previousKm = upToKm;
+      }
+    } else if (upToKm !== null && (!Number.isFinite(upToKm) || upToKm <= 0)) {
+      return { error: `Revise a distância da faixa ${index + 1}.` };
     }
     const rawFee = entry.feeCents;
     const feeCents = rawFee === null || rawFee === undefined || rawFee === "" ? null : Math.round(Number(rawFee));
     if (feeCents !== null && (!Number.isFinite(feeCents) || feeCents < 0)) return { error: "Revise o valor de uma das faixas de frete." };
-    tiers.push({ upToKm, feeCents });
+    tiers.push({ upToKm, feeCents, label: label || null });
   }
   return { tiers };
+}
+
+/**
+ * Conteúdo da venda: quanto vem em cada unidade vendida. Fica vazio quando a
+ * loja não informa — é melhor não dizer nada do que exibir um chute.
+ */
+export const CONTENT_UNITS = new Map<string, string>([
+  ["g", "g"],
+  ["kg", "kg"],
+  ["ml", "ml"],
+  ["l", "L"],
+  ["un", "un"],
+]);
+
+export function readContent(rawAmount: unknown, rawUnit: unknown): { error: string } | { amount: number | null; unit: string | null } {
+  const unit = typeof rawUnit === "string" ? rawUnit.trim().toLowerCase() : "";
+  const vazio = rawAmount === null || rawAmount === undefined || rawAmount === "";
+  if (vazio && !unit) return { amount: null, unit: null };
+  const amount = Number(rawAmount);
+  if (vazio || !Number.isFinite(amount) || amount <= 0) return { error: "Informe quanto vem em cada venda, ou deixe o campo vazio." };
+  if (amount > 100_000) return { error: "Revise o conteúdo do produto." };
+  if (!CONTENT_UNITS.has(unit)) return { error: "Escolha uma medida válida para o conteúdo (g, kg, ml, L ou un)." };
+  // Duas casas bastam para 0,75 kg e 1,5 L; mais que isso é ruído no anúncio.
+  return { amount: Math.round(amount * 100) / 100, unit };
+}
+
+/**
+ * "500 ml", "1,5 kg", "30 unidades" — o texto que o comprador lê.
+ *
+ * Em unidades a abreviação "un" colada no preço ("R$ 20,00/bandeja · 30 un")
+ * era lida como "30 bandejas". Escrito por extenso, fica claro que o número é o
+ * conteúdo de uma venda, não a quantidade de vendas.
+ */
+export function contentLabel(amount: number | null, unit: string | null): string | null {
+  if (amount === null || !unit) return null;
+  const medida = CONTENT_UNITS.get(unit);
+  if (!medida) return null;
+  const numero = String(amount).replace(".", ",");
+  if (unit === "un") return amount === 1 ? "1 unidade" : `${numero} unidades`;
+  return `${numero} ${medida}`;
+}
+
+/** Peso equivalente em kg, quando o conteúdo já diz isso — evita perguntar duas vezes. */
+export function contentWeightKg(amount: number | null, unit: string | null): number | null {
+  if (amount === null || !unit) return null;
+  if (unit === "kg") return amount;
+  if (unit === "g") return amount / 1000;
+  // Litro de líquido alimentar fica perto de 1 kg; é a aproximação que a
+  // estimativa de CO₂ já usava por padrão.
+  if (unit === "l") return amount;
+  if (unit === "ml") return amount / 1000;
+  return null;
 }
 
 /** Menor valor cobrado entre as faixas — é o "a partir de" mostrado nas listagens. */

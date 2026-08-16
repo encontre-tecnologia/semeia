@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <title>Semeia — pequenos negócios e produtores de São Carlos</title>
 <link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<link rel="stylesheet" href="assets/style.css?v=20260816-voltar">
 <style>
   .hero {
     position: relative;
@@ -871,9 +871,9 @@
 
 <!-- data.js traz as categorias (CATS); o catálogo de demonstração dele não é usado. -->
 <script src="assets/data.js?v=20260812-categories1"></script>
-<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script>
+<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260816-carbono"></script>
 <script src="assets/api.js?v=20260813-single-paint"></script>
-<script src="assets/cart.js?v=20260813-1"></script><script src="assets/main.js?v=20260814-trees"></script>
+<script src="assets/cart.js?v=20260813-1"></script><script src="assets/main.js?v=20260816-volta-produto"></script>
 <script>
   setupReveal();
   setupUIInteractions();
@@ -899,29 +899,9 @@
     return node;
   }
 
-  var CARBON_SAVED_CAPTION = "de gás carbônico na atmosfera";
 
-  function carbonSavedAmount(value) {
-    var kilograms = Math.max(0, Number(value) || 0);
-    return kilograms < 1
-      ? Math.round(kilograms * 1000) + " g"
-      : kilograms.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " kg";
-  }
-
-  function carbonSavedLabel(value) {
-    return "−" + carbonSavedAmount(value) + " " + CARBON_SAVED_CAPTION;
-  }
-
-  function carbonSavedNode(value) {
-    var node = document.createElement("span");
-    node.className = "carbon-saved";
-    node.append(
-      textNode("strong", "carbon-saved-value", "−" + carbonSavedAmount(value)),
-      textNode("span", "carbon-saved-caption", CARBON_SAVED_CAPTION)
-    );
-    node.setAttribute("aria-label", "menos " + carbonSavedAmount(value) + " " + CARBON_SAVED_CAPTION + " (estimativa)");
-    return node;
-  }
+  // Mesmo selo da página da loja, montado em assets/format.js.
+  var carbonSavedNode = SemeiaFormat.carbonSavedNode;
 
   // Cálculo compartilhado (assets/format.js) — antes existia uma cópia por página.
   var priceChangeOf = SemeiaFormat.priceChange;

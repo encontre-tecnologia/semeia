@@ -106,6 +106,9 @@ function welcomeMessage(store: StoreEmailTarget): Message {
     `Oi, ${firstName(store.contactName)}! O cadastro da <strong>${store.name}</strong> chegou aqui e já entrou na fila de revisão.`,
     "A gente confere as informações e os selos antes de publicar — é isso que mantém o catálogo confiável para quem compra.",
     "Assim que a loja for aprovada, você recebe outro e-mail com o link dela no ar. Enquanto isso, você já pode entrar na área do vendedor e ir preparando os produtos e as fotos.",
+    // Primeiro contato de um remetente novo costuma cair no spam; avisar aqui
+    // evita que a loja fique esperando um e-mail que já chegou.
+    "Uma dica: se o próximo e-mail não aparecer na caixa de entrada, procure no spam e marque como <strong>&ldquo;não é spam&rdquo;</strong>. Assim os avisos de pedido chegam direito depois.",
   ];
   return {
     subject: `Cadastro recebido — ${store.name} | Semeia`,
@@ -117,6 +120,7 @@ function welcomeMessage(store: StoreEmailTarget): Message {
       "A gente confere as informações e os selos antes de publicar — é isso que mantém o catálogo confiável para quem compra.",
       "",
       "Assim que a loja for aprovada, você recebe outro e-mail com o link dela no ar.",
+      "Se ele não aparecer na caixa de entrada, procure no spam e marque como \"não é spam\" — assim os avisos de pedido chegam direito depois.",
       `Área do vendedor: ${SITE_URL}/minha-loja`,
       "",
       "Semeia",
@@ -143,6 +147,33 @@ function approvedMessage(store: StoreEmailTarget): Message {
       "",
       "Cadastre os produtos com foto e descrição boas: é o que faz alguém escolher a sua loja.",
       "Pagamento, retirada e entrega você combina direto com quem compra.",
+      "",
+      "Semeia",
+    ].join("\n"),
+  };
+}
+
+function suspendedMessage(store: StoreEmailTarget): Message {
+  const heading = `${store.name} saiu do catálogo por enquanto.`;
+  const blocks = [
+    `Oi, ${firstName(store.contactName)}. Suspendemos temporariamente a <strong>${store.name}</strong> no Semeia, e por isso ela não está aparecendo para os compradores no momento.`,
+    "Isso costuma ser algo simples de resolver — uma informação que precisa ser conferida, uma dúvida sobre um produto ou um contato que não conseguimos completar.",
+    "<strong>Nada foi apagado.</strong> Seus produtos, fotos e pedidos continuam guardados e voltam exatamente como estavam assim que a loja for reativada.",
+    "Responda este e-mail ou chame no WhatsApp (16) 99439-2545 para a gente resolver junto.",
+  ];
+  return {
+    subject: `Sua loja foi suspensa temporariamente — ${store.name} | Semeia`,
+    html: layout(heading, blocks, { href: `${SITE_URL}/minha-loja`, label: "Abrir a área do vendedor" }),
+    text: [
+      `Oi, ${firstName(store.contactName)}.`,
+      "",
+      `Suspendemos temporariamente a ${store.name} no Semeia, e por isso ela não está aparecendo para os compradores.`,
+      "Isso costuma ser algo simples de resolver — uma informação a conferir, uma dúvida sobre um produto ou um contato que não conseguimos completar.",
+      "",
+      "Nada foi apagado: produtos, fotos e pedidos continuam guardados e voltam como estavam quando a loja for reativada.",
+      "",
+      "Responda este e-mail ou chame no WhatsApp (16) 99439-2545 para a gente resolver junto.",
+      `Área do vendedor: ${SITE_URL}/minha-loja`,
       "",
       "Semeia",
     ].join("\n"),
@@ -294,7 +325,7 @@ async function deliverTo(env: Env, to: string, message: Message, kind: string): 
 }
 
 /** Monta o e-mail sem enviar — usado para inspeção e teste. */
-export function previewStoreEmail(kind: "welcome" | "approved" | "order", store: StoreEmailTarget, order?: OrderEmailData): Message {
+export function previewStoreEmail(kind: "welcome" | "approved" | "order" | "suspended", store: StoreEmailTarget, order?: OrderEmailData): Message {
   if (kind === "order") {
     return orderMessage(store, order ?? {
       buyerName: "Ana Prado",
@@ -305,6 +336,7 @@ export function previewStoreEmail(kind: "welcome" | "approved" | "order", store:
       total: 66,
     });
   }
+  if (kind === "suspended") return suspendedMessage(store);
   return kind === "approved" ? approvedMessage(store) : welcomeMessage(store);
 }
 
@@ -316,6 +348,11 @@ export function sendStoreWelcomeEmail(env: Env, store: StoreEmailTarget): Promis
 /** Enviado quando o admin muda o status da loja para "approved". */
 export function sendStoreApprovedEmail(env: Env, store: StoreEmailTarget): Promise<EmailResult> {
   return deliver(env, store, approvedMessage(store), "store_approved");
+}
+
+/** Enviado quando o admin suspende a loja: ela sai do catálogo sem aviso na tela. */
+export function sendStoreSuspendedEmail(env: Env, store: StoreEmailTarget): Promise<EmailResult> {
+  return deliver(env, store, suspendedMessage(store), "store_suspended");
 }
 
 /* ---------- Avisos para a administração ---------- */

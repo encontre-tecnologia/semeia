@@ -2,7 +2,11 @@
   "use strict";
   const icons={cat:"FL",unit:"UN","product-category":"CT","product-type":"AL",processing:"PR","delivery-method":"EN",packaging:"EM"};
   function enhance(select){
-    if(!select||select.dataset.prettyReady)return;
+    // data-pretty="off" mantém o select nativo. Existe para os seletores curtos
+    // que dividem a linha com outro campo: o gatilho bonito tem ícone, texto e
+    // seta, e em pouca largura sobra só o ícone — foi o que aconteceu com a
+    // medida do conteúdo, que aparecia como um "SE" sem sentido.
+    if(!select||select.dataset.prettyReady||select.dataset.pretty==="off")return;
     select.dataset.prettyReady="1";
     select.classList.add("pretty-native");
     const shell=document.createElement("div"),trigger=document.createElement("button"),icon=document.createElement("span"),value=document.createElement("span"),menu=document.createElement("div");

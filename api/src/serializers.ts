@@ -15,7 +15,7 @@ import {
   isProcessing,
   isProductType,
 } from "./impact";
-import { openingStatus, parseImageUrls, parseSeals, parseShippingTiers } from "./parsing";
+import { contentLabel, openingStatus, parseImageUrls, parseSeals, parseShippingTiers } from "./parsing";
 
 export const FULFILLMENT_LABELS: Record<string, string> = {
   walk: "Retirada a pé",
@@ -83,6 +83,10 @@ export function serializeProduct(row: db.ProductWithStore, reservedUnits = 0) {
     shippingFee: row.shipping_fee_cents === null ? null : row.shipping_fee_cents / 100,
     shippingTiers: parseShippingTiers(row.shipping_tiers),
     pickupAddress: row.pickup_address,
+    // Quanto vem em cada venda, quando a loja informou: "500 ml", "1,5 kg".
+    contentAmount: row.content_amount,
+    contentUnit: row.content_unit,
+    content: contentLabel(row.content_amount, row.content_unit),
     sponsoredPosition: row.sponsored_position,
     sponsoredCategoryPosition: row.sponsored_category_position,
     sponsoredCategory: row.sponsored_category,
@@ -114,7 +118,6 @@ export function serializeOwnerStore(
       pixCity: store.pix_city,
       logoUrl: store.logo_url,
       coverUrl: store.cover_url,
-      instagram: store.instagram,
       description: store.description,
       ...openingStatus(store.opening_hours),
     },
@@ -139,6 +142,9 @@ export function serializeOwnerStore(
         shippingFee: product.shipping_fee_cents === null ? null : product.shipping_fee_cents / 100,
         shippingTiers: parseShippingTiers(product.shipping_tiers),
         pickupAddress: product.pickup_address,
+        contentAmount: product.content_amount,
+        contentUnit: product.content_unit,
+        content: contentLabel(product.content_amount, product.content_unit),
         views: productViews,
         viewsPerDay: productViews / daysListed,
         daysListed,

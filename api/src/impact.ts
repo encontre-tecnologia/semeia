@@ -72,12 +72,25 @@ const DELIVERY_KG_CO2E_PER_ORDER: Record<DeliveryMethod, number> = {
   dedicated: 1.25,
 };
 
+/**
+ * Peso presumido de uma venda quando o vendedor não informa nem o peso nem o
+ * conteúdo. Só serve à estimativa de CO₂ — nunca é mostrado como se fosse
+ * informação da loja.
+ */
 const DEFAULT_WEIGHT_BY_UNIT: Record<string, number> = {
   "/kg": 1,
+  "/g": 0.1,
+  "/l": 1,
   "/un": 0.5,
+  "/garrafa": 1,
+  "/pote": 0.4,
+  "/duzia": 0.7,
+  "/maco": 0.2,
+  "/bandeja": 0.6,
   "/cesta": 5,
   "/pacote": 0.5,
   "/caixa": 8,
+  "/kit": 2,
 };
 
 const PRODUCT_TYPE_LABELS: Record<ProductType, string> = Object.fromEntries(

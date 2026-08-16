@@ -11,7 +11,7 @@ import { HTTPException } from "hono/http-exception";
 import * as db from "./db";
 import { safeEqual } from "./crypto";
 import { gmailConfigured } from "./gmail";
-import { AdminAlert, sendAdminAlertEmail, sendStoreApprovedEmail, sendStoreOrderEmail, sendStoreWelcomeEmail } from "./email";
+import { AdminAlert, sendAdminAlertEmail, sendStoreApprovedEmail, sendStoreOrderEmail, sendStoreSuspendedEmail, sendStoreWelcomeEmail } from "./email";
 import {
   defaultWeightKg,
   estimateLifecycleSavings,
@@ -24,14 +24,15 @@ import {
 import {
   SERVED_REGIONS,
   cheapestTierCents,
+  contentWeightKg,
   isValidCpf,
-  normalizeInstagram,
   normalizePixKey,
   normalizeRegion,
   openingStatus,
   parseImageUrls,
   parseSeals,
   parseShippingTiers,
+  readContent,
   readOpeningHours,
   readShippingTiers,
   slugifyStoreName,
@@ -481,7 +482,7 @@ app.get("/api/stores/:id", async (c) => {
     store: {
       id: store.id, slug, name: store.name, region: store.region, category: store.category,
       seals: parseSeals(store.seals), logoUrl: store.logo_url, coverUrl: store.cover_url,
-      instagram: store.instagram, whatsapp: store.whatsapp,
+      whatsapp: store.whatsapp,
       description: store.description, ...openingStatus(store.opening_hours),
     },
     products: products.map((product) => serializeProduct(product, reserved.get(product.id) ?? 0)),
@@ -585,6 +586,7 @@ interface StoreProductBody {
   productType?: unknown; weightKg?: unknown; processing?: unknown; packaging?: unknown;
   refrigerated?: unknown; deliveryMethod?: unknown; pesticideFree?: unknown;
   stockQuantity?: unknown; shippingFeeCents?: unknown; shippingTiers?: unknown; pickupAddress?: unknown;
+  contentAmount?: unknown; contentUnit?: unknown;
 }
 
 interface StoreLoginBody { idToken?: unknown; }
@@ -870,8 +872,16 @@ function parseProductFields(body: StoreProductBody): { error: string } | Omit<db
   if (!name || !category || !Number.isFinite(priceCents) || priceCents < 0) return { error: "Revise nome, categoria e preço." };
   const imageUrls = validProductImages(body.imageUrls, body.imageUrl);
   if (!imageUrls) return { error: "Envie de 1 a 5 fotos válidas." };
-  const stockQuantity = typeof body.stockQuantity === "number" ? body.stockQuantity : Number(body.stockQuantity);
-  if (!Number.isFinite(stockQuantity) || stockQuantity <= 0 || stockQuantity > 1_000_000) return { error: "Informe uma quantidade disponivel maior que zero." };
+  // `null` é o produto feito sob encomenda: pão, ovo do dia, marmita. Não tem
+  // quantidade pronta, então também não entra na reserva de estoque — quem
+  // controla a disponibilidade é o vendedor, na conversa.
+  const sobEncomenda = body.stockQuantity === null;
+  const stockQuantity = sobEncomenda ? null : typeof body.stockQuantity === "number" ? body.stockQuantity : Number(body.stockQuantity);
+  if (!sobEncomenda && (!Number.isFinite(stockQuantity as number) || (stockQuantity as number) <= 0 || (stockQuantity as number) > 1_000_000)) {
+    return { error: "Informe uma quantidade disponivel maior que zero, ou marque o produto como sob encomenda." };
+  }
+  const content = readContent(body.contentAmount, body.contentUnit);
+  if ("error" in content) return { error: content.error };
   const parsedTiers = readShippingTiers(body.shippingTiers);
   if ("error" in parsedTiers) return { error: parsedTiers.error };
   const shippingTiers = parsedTiers.tiers;
@@ -887,9 +897,11 @@ function parseProductFields(body: StoreProductBody): { error: string } | Omit<db
   const requestedType = text(body.productType);
   const productType = isProductType(requestedType) ? requestedType : inferProductType(name, category);
   const requestedWeight = typeof body.weightKg === "number" ? body.weightKg : Number(body.weightKg);
+  // Ordem de preferência para o peso da estimativa de CO₂: o que o vendedor
+  // digitou; o que o conteúdo já revela ("500 g" são 0,5 kg); o padrão da unidade.
   const weightKg = Number.isFinite(requestedWeight) && requestedWeight > 0 && requestedWeight <= 1000
     ? requestedWeight
-    : defaultWeightKg(unit);
+    : contentWeightKg(content.amount, content.unit) ?? defaultWeightKg(unit);
   const processingRaw = text(body.processing);
   const packagingRaw = text(body.packaging);
   const deliveryRaw = text(body.deliveryMethod);
@@ -905,6 +917,7 @@ function parseProductFields(body: StoreProductBody): { error: string } | Omit<db
     co2g: Math.round(impact.savingsKg * 1000), imageUrl: imageUrls[0] ?? null, imageUrls, productType,
     weightKg, processing, packaging, refrigerated, deliveryMethod, pesticideFree,
     stockQuantity, shippingFeeCents, shippingTiers, pickupAddress,
+    contentAmount: content.amount, contentUnit: content.unit,
   };
 }
 
@@ -955,6 +968,7 @@ app.post("/api/store-products/:id/detail", async (c) => {
       pesticideFree: Boolean(product.pesticide_free), stockQuantity: product.stock_quantity,
       shippingFeeCents: product.shipping_fee_cents, shippingTiers: parseShippingTiers(product.shipping_tiers),
       pickupAddress: product.pickup_address,
+      contentAmount: product.content_amount, contentUnit: product.content_unit,
     },
   });
 });
@@ -999,21 +1013,24 @@ app.post("/api/store-products/:id/stock", async (c) => {
 
   const delta = Number(body.delta);
   const quantity = Number(body.quantity);
-  const params = body.delta !== undefined
-    ? Number.isInteger(delta) && Math.abs(delta) <= 9999 ? { delta } : null
-    : Number.isInteger(quantity) && quantity >= 0 && quantity <= 999999 ? { quantity } : null;
+  // `quantity: null` volta o produto para "sob encomenda": sem número, sem reserva.
+  const params = body.quantity === null
+    ? { quantity: null }
+    : body.delta !== undefined
+      ? Number.isInteger(delta) && Math.abs(delta) <= 9999 ? { delta } : null
+      : Number.isInteger(quantity) && quantity >= 0 && quantity <= 999999 ? { quantity } : null;
   if (!params) return c.json({ error: "Informe uma quantidade inteira válida." }, 400);
 
   const updated = await db.adjustProductStock(c.env.DB, { productId: product.id, storeId: store.id, ...params });
-  if (updated === null) return c.json({ error: "Produto não encontrado nesta loja." }, 404);
+  if (!updated.ok) return c.json({ error: "Produto não encontrado nesta loja." }, 404);
   trilha("estoque_ajustado", {
     productId: product.id,
     storeId: store.id,
     ...params,
     antes: product.stock_quantity,
-    depois: updated,
+    depois: updated.quantity,
   });
-  return c.json({ ok: true, productId: product.id, quantityAvailable: updated });
+  return c.json({ ok: true, productId: product.id, quantityAvailable: updated.quantity });
 });
 
 app.post("/api/store-products/:id/images", async (c) => {
@@ -1144,22 +1161,19 @@ app.post("/api/store/orders/:orderId/status", async (c) => {
 });
 
 app.post("/api/store/profile", async (c) => {
-  const body = await c.req.json<StoreLoginBody & { description?: unknown; openingHours?: unknown; instagram?: unknown }>().catch(() => null);
+  const body = await c.req.json<StoreLoginBody & { description?: unknown; openingHours?: unknown }>().catch(() => null);
   if (!body) return c.json({ error: "Corpo inválido." }, 400);
   const store = await storeFromLogin(c.env, body);
   if (!store) return c.json({ error: "Faça login para editar a loja." }, 401);
   const description = typeof body.description === "string" ? body.description.trim().slice(0, 280) : "";
-  const instagram = normalizeInstagram(typeof body.instagram === "string" ? body.instagram : "");
-  if (instagram === null) return c.json({ error: "Informe o @ do Instagram, sem espaços." }, 400);
   const parsed = readOpeningHours(body.openingHours);
   if ("error" in parsed) return c.json({ error: parsed.error }, 400);
   const hasHours = parsed.hours.some(Boolean);
   await db.setStoreProfile(c.env.DB, store.id, {
     description: description || null,
     openingHours: hasHours ? JSON.stringify(parsed.hours) : null,
-    instagram: instagram || null,
   });
-  return c.json({ ok: true, description: description || null, instagram: instagram || null, ...openingStatus(hasHours ? JSON.stringify(parsed.hours) : null) });
+  return c.json({ ok: true, description: description || null, ...openingStatus(hasHours ? JSON.stringify(parsed.hours) : null) });
 });
 
 app.post("/api/store/cover", async (c) => {
@@ -1199,6 +1213,13 @@ app.post("/api/store/upload", async (c) => {
   upload.append("file", file, file.name || "imagem.webp");
   upload.append("upload_preset", c.env.CLOUDINARY_UPLOAD_PRESET);
   upload.append("folder", `semeia/${kind}`);
+  // O preset do Cloudinary tira o nome do arquivo enviado, e o site mandava
+  // sempre "produto.jpg": todas as fotos de todas as lojas caíam no mesmo
+  // endereço, uma sobrescrevendo a outra. Era assim que um produto novo
+  // aparecia com a foto de outro — inclusive de um já excluído, porque o
+  // arquivo continua no Cloudinary depois que o anúncio sai do catálogo.
+  // O nome passa a ser decidido aqui, e não pelo navegador.
+  upload.append("public_id", `${store.id}-${crypto.randomUUID()}`);
   const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(c.env.CLOUDINARY_CLOUD_NAME)}/image/upload`, { method: "POST", body: upload });
   const data = await response.json<{ secure_url?: string; error?: { message?: string } }>();
   if (!response.ok || !data.secure_url) return c.json({ error: data.error?.message ?? "Não foi possível enviar a imagem." }, 502);
@@ -1391,7 +1412,20 @@ app.post("/api/admin/stores/:id/status", async (c) => {
 
   await db.setStoreStatus(c.env.DB, store.id, status);
 
-  // Só avisa na virada para "approved": reaprovar uma loja já aprovada não reenvia.
+  // Só avisa nas viradas de verdade: repetir o mesmo status não reenvia e-mail.
+  if (status === "suspended" && store.status !== "suspended") {
+    // A suspensão não aparece em lugar nenhum para o lojista até ele tentar
+    // publicar. Sem este aviso, ele descobre pelo erro.
+    c.executionCtx.waitUntil(
+      trackEmail(c.env, "store_suspended", store, sendStoreSuspendedEmail(c.env, {
+        id: store.id,
+        name: store.name,
+        contactName: store.contact_name,
+        email: store.email,
+        slug: store.slug,
+      })),
+    );
+  }
   if (status === "approved" && store.status !== "approved") {
     c.executionCtx.waitUntil(
       trackEmail(c.env, "store_approved", store, sendStoreApprovedEmail(c.env, {

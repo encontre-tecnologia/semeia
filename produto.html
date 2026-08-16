@@ -17,17 +17,29 @@
 <meta name="twitter:card" content="summary_large_image">
 <title>Produtos locais de São Carlos — Semeia</title>
 <link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<link rel="stylesheet" href="assets/style.css?v=20260816-voltar">
 <style>
-  .breadcrumb { padding: 1.8rem 0 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .breadcrumb { padding: 1.1rem 0 0; margin: 0 0 .2rem; font-size: 0.85rem; color: var(--ink-soft); }
   .breadcrumb a:hover { color: var(--accent); }
 
   .product {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(2rem, 5vw, 4.8rem);
-    padding: 2.3rem 0 5rem;
+    padding: 1.4rem 0 5rem;
     align-items: start;
+  }
+  /* Item de grade não encolhe abaixo do próprio conteúdo por padrão. A linha
+     "Vendido por <loja> · <cidade>" não quebra (é cortada com reticências de
+     propósito), então ela empurrava a coluna para 411px numa tela de 375 — e o
+     `overflow: clip` do body cortava o resto da página, sem barra de rolagem
+     para revelar o que sumiu. */
+  .product-info, .product-visual { min-width: 0; }
+  /* Em tela estreita, esconder o fim da linha com reticências some justamente
+     com a cidade. Melhor quebrar em duas linhas e mostrar tudo. */
+  @media (max-width: 640px) {
+    .product-info a.product-supplier { width: auto; }
+    .product-info a.product-supplier span { white-space: normal; overflow: visible; text-overflow: clip; }
   }
   .product-loading{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4.8rem);width:100%}.loading-visual,.loading-info span{position:relative;overflow:hidden;background:color-mix(in srgb,var(--card) 88%,var(--paper))}.loading-visual{min-height:480px;border:1px solid var(--line);border-radius:32px}.loading-info{padding-top:1.5rem}.loading-info span{display:block;height:1rem;margin-bottom:1rem;border-radius:999px}.loading-info span:nth-child(1){width:28%;height:.7rem}.loading-info span:nth-child(2){width:84%;height:4rem;border-radius:18px}.loading-info span:nth-child(3){width:45%;height:2.3rem}.loading-info span:nth-child(4){width:100%;height:5rem;border-radius:18px}.loading-visual:after,.loading-info span:after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 12%,transparent),transparent);animation:product-shimmer 1.25s ease-in-out infinite}@keyframes product-shimmer{to{transform:translateX(100%)}}
   .product-visual {
@@ -79,6 +91,9 @@
   .price-row { display: flex; align-items: baseline; gap: 0.6rem; margin: 1rem 0 0.3rem; }
   .price-row .price { font-size: 2.25rem; color: var(--accent); font-weight: 700; }
   .price-row .unit { color: var(--ink-soft); font-size: 0.95rem; }
+  /* Conteúdo colado no preço: é lendo os dois juntos que dá para comparar
+     uma garrafa de 300 ml com uma de 1 L. */
+  .price-row .content-badge { display:inline-block; margin-left:.55rem; padding:.24rem .55rem; border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line)); border-radius:999px; background:color-mix(in srgb,var(--accent) 9%,transparent); color:var(--accent); font:700 .72rem/1 "SF Mono",Consolas,monospace; vertical-align:middle; }
   .price-block{margin:1rem 0 .3rem}.price-block .price-row{margin:0}.product-promo{display:flex;align-items:center;gap:.55rem;margin-top:.35rem}.product-old-price{color:var(--ink-soft);font:.78rem "SF Mono",Consolas,monospace;text-decoration:line-through}.product-increase{padding:.27rem .52rem;border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--warn) 10%,transparent);color:var(--warn);font:800 .62rem/1 "SF Mono",Consolas,monospace}.product-discount{padding:.27rem .52rem;border:1px solid color-mix(in srgb,var(--accent-bright) 55%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--accent-bright) 10%,transparent);color:var(--accent-bright);font:800 .62rem/1 "SF Mono",Consolas,monospace}
   .region-line { font-size: 0.88rem; color: var(--ink-soft); margin-bottom: 1.2rem; }
 
@@ -143,7 +158,11 @@
   .pix-code { width:100%; min-height:6rem; box-sizing:border-box; padding:.8rem; border:1px solid var(--line); border-radius:12px; background:var(--paper); color:var(--ink); font:.7rem/1.4 monospace; resize:none; }
   #pix-qr { display:grid; place-items:center; width:220px; height:220px; max-width:100%; margin:1rem auto; padding:.65rem; box-sizing:border-box; border-radius:18px; background:#fff; }#pix-qr img,#pix-qr canvas{display:block;max-width:100%;height:auto!important}
   .pix-close { position:absolute; right:1rem; top:.85rem; border:0; background:transparent; color:var(--ink-soft); font-size:1.5rem; cursor:pointer; }
-  .checkout-progress{display:flex;gap:.45rem;margin:0 2.8rem 1.6rem 0}.checkout-progress span{display:flex;align-items:center;gap:.45rem;color:var(--ink-soft);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.06em}.checkout-progress span+span:before{content:"";width:2.1rem;height:1px;margin-right:.15rem;background:var(--line)}.checkout-progress span.active{color:var(--accent)}.checkout-step[hidden]{display:none}.checkout-eyebrow{display:block;margin-bottom:.35rem;color:var(--accent);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}.checkout-lede{max-width:38rem;margin:.25rem 0 1.25rem}.fulfillment-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.fulfillment-choice{display:grid;grid-template-columns:52px 1fr;gap:.8rem;align-items:center;min-height:104px;padding:.9rem;text-align:left;color:var(--ink);border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--paper) 52%,transparent);cursor:pointer;transition:.25s var(--ease-out)}.fulfillment-choice:hover{transform:translateY(-2px);border-color:var(--accent)}.fulfillment-choice.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,var(--card));box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 10%,transparent)}.choice-art{display:grid;place-items:center;width:52px;height:52px;border-radius:15px;color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent)}.choice-art svg{width:31px;height:31px}.choice-copy strong,.choice-copy small,.choice-copy em{display:block}.choice-copy strong{font-size:.92rem}.choice-copy small{margin:.12rem 0 .35rem;color:var(--ink-soft);font-size:.73rem;line-height:1.35}.choice-copy em{width:max-content;padding:.16rem .42rem;border-radius:999px;color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent);font:normal 700 .62rem "SF Mono",Consolas,monospace}.shipping-table{margin-top:.85rem;padding:.9rem 1rem;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 55%,transparent)}.shipping-table-title{display:block;margin-bottom:.5rem;color:var(--accent);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}.shipping-table ul{list-style:none;margin:0;padding:0;display:grid;gap:.1rem}.shipping-table li{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:.4rem 0;border-top:1px solid var(--line);font-size:.82rem}.shipping-table li:first-child{border-top:0}.shipping-table li span{color:var(--ink-soft)}.shipping-table li strong{color:var(--ink);white-space:nowrap}.shipping-table small{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.7rem;line-height:1.45}/* A nota usa margem negativa para colar no bloco acima; com a tabela no meio, ela precisa voltar ao normal. */.shipping-table+.fulfillment-note{margin-top:.85rem}.shipping-tier-pick{margin-top:.9rem;padding:.9rem 1rem;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--accent) 6%,transparent)}.shipping-tier-pick label{display:block;margin-bottom:.4rem;font:700 .78rem ui-sans-serif,system-ui,sans-serif}.shipping-tier-pick select{width:100%;box-sizing:border-box;min-height:3rem;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit}.shipping-tier-pick small{display:block;margin-top:.45rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}.checkout-actions{display:flex;justify-content:flex-end;gap:.7rem;margin-top:1.35rem}.checkout-actions .btn{justify-content:center}.checkout-summary{display:grid;grid-template-columns:minmax(0,1fr) minmax(235px,.75fr);gap:1rem;margin-top:1.25rem}.summary-card,.impact-confirm{padding:1.1rem;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--paper) 58%,transparent)}.summary-product{display:flex;align-items:center;gap:.8rem;padding-bottom:.9rem;margin-bottom:.65rem;border-bottom:1px solid var(--line)}.summary-product img{width:58px;height:58px;border-radius:14px;object-fit:cover;background:var(--paper-raised)}.summary-product strong,.summary-product span{display:block}.summary-product span{color:var(--ink-soft);font-size:.75rem}.summary-row{display:flex;justify-content:space-between;gap:1rem;padding:.35rem 0;color:var(--ink-soft);font-size:.8rem}.summary-row strong{color:var(--ink);text-align:right}.summary-row.total{margin-top:.4rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:1rem}.summary-row.total strong{color:var(--accent);font-size:1.15rem}.impact-confirm{border-color:color-mix(in srgb,var(--good) 68%,var(--line));background:linear-gradient(145deg,color-mix(in srgb,var(--good) 12%,var(--card)),var(--card))}.impact-confirm svg{width:34px;height:34px;color:var(--good);margin-bottom:.5rem}.impact-confirm strong{color:var(--good)}.impact-confirm p{margin:.45rem 0}.impact-confirm small{display:block;color:var(--ink-soft);font-size:.68rem;line-height:1.45}.pix-success{text-align:center}.pix-success .checkout-eyebrow{margin-top:.2rem}.pix-success h2{max-width:30rem;margin-inline:auto}.pix-success #pix-recipient{max-width:32rem;margin:.4rem auto}.pix-security{padding:.7rem .8rem;border-radius:12px;background:color-mix(in srgb,var(--good) 9%,transparent);font-size:.72rem!important}.checkout-feedback{min-height:1.25rem;margin:.65rem 0 0!important;color:var(--ink-soft)}
+  .checkout-progress{display:flex;gap:.45rem;margin:0 2.8rem 1.6rem 0}.checkout-progress span{display:flex;align-items:center;gap:.45rem;color:var(--ink-soft);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.06em}.checkout-progress span+span:before{content:"";width:2.1rem;height:1px;margin-right:.15rem;background:var(--line)}.checkout-progress span.active{color:var(--accent)}.checkout-step[hidden]{display:none}.checkout-eyebrow{display:block;margin-bottom:.35rem;color:var(--accent);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}.checkout-lede{max-width:38rem;margin:.25rem 0 1.25rem}.fulfillment-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.fulfillment-choice{display:grid;grid-template-columns:52px 1fr;gap:.8rem;align-items:center;min-height:104px;padding:.9rem;text-align:left;color:var(--ink);border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--paper) 52%,transparent);cursor:pointer;transition:.25s var(--ease-out)}.fulfillment-choice:hover{transform:translateY(-2px);border-color:var(--accent)}.fulfillment-choice.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,var(--card));box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 10%,transparent)}.choice-art{display:grid;place-items:center;width:52px;height:52px;border-radius:15px;color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent)}.choice-art svg{width:31px;height:31px}.choice-copy strong,.choice-copy small,.choice-copy em{display:block}.choice-copy strong{font-size:.92rem}.choice-copy small{margin:.12rem 0 .35rem;color:var(--ink-soft);font-size:.73rem;line-height:1.35}.choice-copy em{width:max-content;padding:.16rem .42rem;border-radius:999px;color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent);font:normal 700 .62rem "SF Mono",Consolas,monospace}.shipping-table{margin-top:.85rem;padding:.9rem 1rem;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 55%,transparent)}.shipping-table-title{display:block;margin-bottom:.5rem;color:var(--accent);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}.shipping-table ul{list-style:none;margin:0;padding:0;display:grid;gap:.1rem}.shipping-table li{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:.4rem 0;border-top:1px solid var(--line);font-size:.82rem}
+  /* Sem coluna de valor, a regra ocupa a linha inteira em vez de ficar
+     encostada na esquerda com um vazio do lado. */
+  .shipping-table.is-written li{justify-content:flex-start}
+  .shipping-table.is-written li span{color:var(--ink)}.shipping-table li:first-child{border-top:0}.shipping-table li span{color:var(--ink-soft)}.shipping-table li strong{color:var(--ink);white-space:nowrap}.shipping-table small{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.7rem;line-height:1.45}/* A nota usa margem negativa para colar no bloco acima; com a tabela no meio, ela precisa voltar ao normal. */.shipping-table+.fulfillment-note{margin-top:.85rem}.shipping-tier-pick{margin-top:.9rem;padding:.9rem 1rem;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--accent) 6%,transparent)}.shipping-tier-pick label{display:block;margin-bottom:.4rem;font:700 .78rem ui-sans-serif,system-ui,sans-serif}.shipping-tier-pick select{width:100%;box-sizing:border-box;min-height:3rem;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit}.shipping-tier-pick small{display:block;margin-top:.45rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}.checkout-actions{display:flex;justify-content:flex-end;gap:.7rem;margin-top:1.35rem}.checkout-actions .btn{justify-content:center}.checkout-summary{display:grid;grid-template-columns:minmax(0,1fr) minmax(235px,.75fr);gap:1rem;margin-top:1.25rem}.summary-card,.impact-confirm{padding:1.1rem;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--paper) 58%,transparent)}.summary-product{display:flex;align-items:center;gap:.8rem;padding-bottom:.9rem;margin-bottom:.65rem;border-bottom:1px solid var(--line)}.summary-product img{width:58px;height:58px;border-radius:14px;object-fit:cover;background:var(--paper-raised)}.summary-product strong,.summary-product span{display:block}.summary-product span{color:var(--ink-soft);font-size:.75rem}.summary-row{display:flex;justify-content:space-between;gap:1rem;padding:.35rem 0;color:var(--ink-soft);font-size:.8rem}.summary-row strong{color:var(--ink);text-align:right}.summary-row.total{margin-top:.4rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:1rem}.summary-row.total strong{color:var(--accent);font-size:1.15rem}.impact-confirm{border-color:color-mix(in srgb,var(--good) 68%,var(--line));background:linear-gradient(145deg,color-mix(in srgb,var(--good) 12%,var(--card)),var(--card))}.impact-confirm svg{width:34px;height:34px;color:var(--good);margin-bottom:.5rem}.impact-confirm strong{color:var(--good)}.impact-confirm p{margin:.45rem 0}.impact-confirm small{display:block;color:var(--ink-soft);font-size:.68rem;line-height:1.45}.pix-success{text-align:center}.pix-success .checkout-eyebrow{margin-top:.2rem}.pix-success h2{max-width:30rem;margin-inline:auto}.pix-success #pix-recipient{max-width:32rem;margin:.4rem auto}.pix-security{padding:.7rem .8rem;border-radius:12px;background:color-mix(in srgb,var(--good) 9%,transparent);font-size:.72rem!important}.checkout-feedback{min-height:1.25rem;margin:.65rem 0 0!important;color:var(--ink-soft)}
 
   .vendor-note {
     margin-top: 1.6rem;
@@ -155,6 +174,10 @@
   @media (max-width: 720px) {
     .product { grid-template-columns: 1fr; }
     .product-visual { min-height: 300px; }
+    /* No celular a linha "Produtos / Hortifruti" ficava com quase 80px de ar em
+       volta — mais espaço do que a própria linha ocupa. */
+    .breadcrumb { padding-top: .9rem; margin: 0 0 .2rem; }
+    .product { padding-top: 1rem; }
     .product-loading{grid-template-columns:1fr}.loading-visual{min-height:300px}.loading-info{padding-top:0}
   }
   @media (max-width: 900px) { .product-info>.actions { grid-template-columns:1fr; } }
@@ -272,9 +295,9 @@
 </footer>
 
 <script src="assets/data.js"></script>
-<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script>
+<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260816-carbono"></script>
 <script src="assets/api.js?v=20260813-single-paint"></script>
-<script src="assets/seo.js?v=20260815-busca"></script><script src="assets/cart.js?v=20260813-1"></script><script src="assets/notice.js?v=20260813-1"></script><script src="assets/main.js?v=20260814-trees"></script>
+<script src="assets/seo.js?v=20260815-busca"></script><script src="assets/cart.js?v=20260813-1"></script><script src="assets/notice.js?v=20260813-1"></script><script src="assets/main.js?v=20260816-volta-produto"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="assets/pix.js?v=20260814-1"></script>
 <script>
   var params = new URLSearchParams(window.location.search);
@@ -337,7 +360,7 @@
       ? '<div class="product-promo"><span class="product-old-price">De R$ ' + previousPrice.toFixed(2).replace(".", ",") + '</span><span class="' + (priceWentUp ? "product-increase" : "product-discount") + '">' + (priceWentUp ? "+" + changePercent + "%" : changePercent + "% OFF") + '</span></div>'
       : '';
     var quantity = Number(product.quantityAvailable);
-    var stockLabel = product.quantityAvailable == null ? "Consulte o vendedor" : quantity <= 0 ? "Indisponível" : quantity.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " disponíveis";
+    var stockLabel = product.quantityAvailable == null ? "Sob encomenda" : quantity <= 0 ? "Indisponível" : quantity.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " disponíveis";
     // Sem estoque não há o que pedir: só sobram conversar com o vendedor e ver a loja.
     var soldOut = product.quantityAvailable != null && quantity <= 0;
     // Unidades que outros compradores já separaram e ainda não foram confirmadas.
@@ -347,12 +370,22 @@
       ? '<em class="stock-reserved">' + (reserved === 1 ? "1 unidade reservada" : reserved + " unidades reservadas")
         + " em pedidos de outros compradores" + (soldOut ? ". Pode voltar em até 24h" : "") + ".</em>"
       : "";
+    // Quando o vendedor escreve a cobrança com as próprias palavras ("R$ 1,00
+    // por km rodado"), nenhuma faixa tem valor fechado: a coluna da direita
+    // repetiria "A combinar" em toda linha, ao lado de uma regra que já diz o
+    // preço. Nesse caso a lista fica só com as regras.
+    var tiersEscritos = productTiers().every(function (tier) { return tier.label && tier.feeCents == null; });
+    var tituloFrete = tiersEscritos ? "Como o frete é cobrado" : "Frete por distância";
+    var rodapeFrete = tiersEscritos
+      ? "O valor final você combina com o vendedor."
+      : "Você indica sua faixa ao finalizar o pedido.";
     var tierTable = productTiers().length
-      ? '<div class="shipping-table"><span class="shipping-table-title">Frete por distância</span><ul>' +
+      ? '<div class="shipping-table' + (tiersEscritos ? " is-written" : "") + '"><span class="shipping-table-title">' + tituloFrete + '</span><ul>' +
         productTiers().map(function (tier, index) {
-          return '<li><span>' + escapeHTML(tierRangeLabel(index)) + '</span><strong>' + escapeHTML(tierFeeShort(tier)) + '</strong></li>';
+          return '<li><span>' + escapeHTML(tierRangeLabel(index)) + '</span>' +
+            (tiersEscritos ? "" : '<strong>' + escapeHTML(tierFeeShort(tier)) + '</strong>') + '</li>';
         }).join("") +
-        '</ul><small>Você indica sua faixa ao finalizar o pedido.</small></div>'
+        '</ul><small>' + rodapeFrete + '</small></div>'
       : "";
     var shippingLabel = productTiers().length
       ? (cheapestTierFee() == null ? "A combinar" : Number(cheapestTierFee()) === 0 ? "A partir de grátis" : "A partir de " + money(cheapestTierFee() / 100))
@@ -376,7 +409,7 @@
       ? 'Comparamos <strong>' + product.impactEstimate.weightKg + ' kg de ' + product.impactEstimate.productTypeLabel + '</strong> em uma cadeia convencional com o cenário informado pelo vendedor. Produção, processamento, embalagem, refrigeração, distribuição e entrega entram na conta. A produção recebe o mesmo valor nos dois cenários; “sem agrotóxicos” não gera desconto automático de carbono. Valores indicativos, não auditados e não equivalem a certificação.' + lifecycleDetails(product.impactEstimate) + '<span class="impact-sources">Referências de ciclo de vida: <a href="https://www.science.org/doi/10.1126/science.aaq0216" target="_blank" rel="noopener">Poore &amp; Nemecek</a>, <a href="https://www.nature.com/articles/s43016-021-00225-9" target="_blank" rel="noopener">EDGAR-FOOD</a> e <a href="https://pubmed.ncbi.nlm.nih.gov/22947228/" target="_blank" rel="noopener">meta-análise de agricultura orgânica</a>.</span>'
       : '<strong>CO₂e</strong> reúne os gases que aquecem o planeta em uma unidade comparável. Esta estimativa só é exibida quando há informações suficientes sobre o produto.';
 
-    document.getElementById("crumb-cat").textContent = cat.label;
+    document.getElementById("crumb-cat").textContent = product.name;
 
     // O produto entra na busca com nome, preço, loja e cidade. O bloco de dados
     // estruturados é o que permite ao Google mostrar preço e disponibilidade
@@ -424,11 +457,12 @@
       '<div class="product-info">' +
         '<h1>' + product.name + '</h1>' +
         '<a class="supplier product-supplier" href="loja?id=' + encodeURIComponent(product.storeId) + '" aria-label="Conhecer a loja ' + escapeHTML(product.supplier) + '"><img class="product-supplier-avatar" id="product-store-avatar" alt="Logo da loja ' + escapeHTML(product.supplier) + '"><span>Vendido por <strong>' + escapeHTML(product.supplier) + '</strong> · ' + escapeHTML(product.region) + '</span></a>' +
-        '<div class="price-block"><div class="price-row"><span class="price">' + priceLabel + '</span><span class="unit">' + (product.price === 0 ? "" : product.unit) + '</span></div>' + promoPriceHTML + '</div>' +
+        '<div class="price-block"><div class="price-row"><span class="price">' + priceLabel + '</span><span class="unit">' + (product.price === 0 ? "" : product.unit) + '</span>' + (product.content ? '<span class="content-badge">contém ' + escapeHTML(product.content) + '</span>' : "") + '</div>' + promoPriceHTML + '</div>' +
         (product.desc ? '<p class="desc">' + product.desc + '</p>' : '') +
         '<div class="fulfillment' + (tierTable ? " is-pair" : "") + '" aria-label="Disponibilidade e entrega">' +
           '<div class="fulfillment-item' + (soldOut ? ' is-unavailable' : '') + '">' + fulfillmentIcon("stock") + '<small>Quantidade disponível</small><strong>' + escapeHTML(stockLabel) + '</strong>' + reservedNote + '</div>' +
           (tierTable ? "" : '<div class="fulfillment-item">' + fulfillmentIcon("shipping") + '<small>Frete</small><strong>' + escapeHTML(shippingLabel) + '</strong></div>') +
+          (product.content ? '<div class="fulfillment-item">' + fulfillmentIcon("stock") + '<small>Cada venda contém</small><strong>' + escapeHTML(product.content) + '</strong></div>' : "") +
           '<div class="fulfillment-item">' + fulfillmentIcon("pickup") + '<small>Ponto de retirada</small><strong>' + escapeHTML(pickupLabel) + '</strong></div>' +
         '</div>' + tierTable + '<p class="fulfillment-note">Informações fornecidas pelo vendedor. Confirme antes de pagar.</p>' +
         '<div class="co2-box">' +

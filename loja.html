@@ -19,7 +19,7 @@
 <link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
 <!-- A página usa /loja?id=<slug>; o base garante que assets e links relativos continuem resolvendo a partir da raiz. -->
 <base href="/">
-<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<link rel="stylesheet" href="assets/style.css?v=20260816-voltar">
 <style>
   .shop { max-width: 1120px; padding-block: 2rem 4rem; }
 
@@ -296,9 +296,9 @@
 </footer>
 
 <script src="assets/data.js"></script>
-<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script>
+<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260816-carbono"></script>
 <script src="assets/api.js?v=20260813-single-paint"></script>
-<script src="assets/seo.js?v=20260815-busca"></script><script src="assets/cart.js?v=20260813-1"></script><script src="assets/main.js?v=20260814-trees"></script>
+<script src="assets/seo.js?v=20260815-busca"></script><script src="assets/cart.js?v=20260813-1"></script><script src="assets/main.js?v=20260816-volta-produto"></script>
 <script>
   var app = document.getElementById("app");
   var API = String(window.SEMEIA_API_URL || "").replace(/\/+$/, "");
@@ -606,15 +606,6 @@
     share.innerHTML = icon('<circle cx="6" cy="12" r="2.6"/><circle cx="17.5" cy="5.5" r="2.6"/><circle cx="17.5" cy="18.5" r="2.6"/><path d="m8.4 10.8 6.8-4M8.4 13.2l6.8 4"/>') + "<span>Compartilhar loja</span>";
     actions.appendChild(share);
 
-    if (store.instagram) {
-      var insta = el("a", "btn btn-ghost");
-      insta.innerHTML = icon('<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/>') + "<span>@" + store.instagram + "</span>";
-      insta.href = "https://instagram.com/" + encodeURIComponent(store.instagram);
-      insta.target = "_blank";
-      insta.rel = "noopener";
-      actions.appendChild(insta);
-    }
-
     var backToAll = el("a", "btn btn-ghost");
     backToAll.innerHTML = icon('<path d="M4 7h16v12H4z"/><path d="M3 7l2-3h14l2 3M8 11v4M12 11v4M16 11v4"/>') + "<span>Ver outras lojas</span>";
     backToAll.href = "index.html#produtos";
@@ -683,8 +674,12 @@
       card.style.setProperty("--index", index);
 
       var swatch = el("div", "swatch");
-      swatch.style.background = catTint(product.cat);
-      swatch.style.backgroundImage = "url(" + JSON.stringify(product.imageUrl || "assets/product-placeholder-basket.webp") + ")";
+      swatch.style.backgroundColor = catTint(product.cat);
+      var cardImage = product.imageUrl || "assets/product-placeholder-basket.webp";
+      // Mesma sobreposição da home: escurece o pé da foto para a etiqueta ficar legível.
+      swatch.style.backgroundImage = "linear-gradient(rgba(16,29,20,.10), rgba(16,29,20,.32)), url(" + JSON.stringify(cardImage) + ")";
+      swatch.style.backgroundSize = "cover";
+      swatch.style.backgroundPosition = "center";
       if (!product.imageUrl) swatch.appendChild(el("span", "image-placeholder-note", "Imagem meramente ilustrativa"));
       if (sponsoredPosition) {
         var sponsoredTag = el("span", "sponsored-tag");
@@ -694,6 +689,7 @@
         sponsoredTag.appendChild(el("strong", "sponsored-position", sponsoredRank + "º"));
         swatch.appendChild(sponsoredTag);
       }
+      swatch.appendChild(el("span", "cat-tag", catLabel(product.cat)));
       card.appendChild(swatch);
 
       var cardBody = el("div", "card-body");
@@ -703,12 +699,7 @@
       metaRow.appendChild(productPriceNode(product));
       cardBody.appendChild(metaRow);
 
-      if (product.co2kg) {
-        var co2 = el("div", "co2-tag");
-        co2.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c3 2 5 5 5 8.5A5 5 0 0 1 12 16a5 5 0 0 1-5-4.5C7 8 9 5 12 3z"/></svg><span></span>';
-        co2.querySelector("span").textContent = "~" + product.co2kg + " kg CO₂ evitado";
-        cardBody.appendChild(co2);
-      }
+      if (product.co2kg) metaRow.appendChild(SemeiaFormat.carbonSavedNode(product.co2kg));
 
       if (product.seals && product.seals.length) {
         var productSeals = el("div", "seals-row");
