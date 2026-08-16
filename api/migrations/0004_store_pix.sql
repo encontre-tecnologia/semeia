@@ -1,0 +1,3 @@
+ALTER TABLE stores ADD COLUMN pix_key TEXT;
+ALTER TABLE stores ADD COLUMN pix_name TEXT;
+ALTER TABLE stores ADD COLUMN pix_city TEXT;

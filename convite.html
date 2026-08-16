@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="O Semeia está começando por São Carlos e procura os primeiros pequenos negócios e produtores para usar a plataforma com os próprios clientes.">
+<link rel="canonical" href="https://semeiabr.com/convite">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Semeia">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Convite às primeiras lojas de São Carlos — Semeia">
+<meta property="og:description" content="O Semeia está começando por São Carlos e procura os primeiros pequenos negócios e produtores para usar a plataforma com os próprios clientes.">
+<meta property="og:url" content="https://semeiabr.com/convite">
+<meta property="og:image" content="https://semeiabr.com/assets/og-semeia.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Convite às primeiras lojas de São Carlos — Semeia</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<style>
+  .invite-page{overflow-x:clip}.invite-page main,.invite-page section,.invite-page article{min-width:0}
+  /* padding-block, não o atalho: o atalho zeraria a margem lateral do .wrap. */
+  .invite-hero{position:relative;padding-block:clamp(4rem,10vw,8rem) clamp(2.5rem,6vw,4rem);text-align:center}
+  .invite-hero:before{content:"";position:absolute;width:26rem;height:26rem;left:-11rem;top:3rem;border-radius:50%;background:radial-gradient(circle,rgba(200,227,107,.12),transparent 68%);pointer-events:none}
+  .invite-hero .hero-copy{position:relative;z-index:1;max-width:900px;margin-inline:auto}
+  .invite-hero h1{margin:.9rem auto 1.2rem;max-width:820px;font-size:clamp(2.6rem,6.4vw,5.6rem);line-height:.94;letter-spacing:-.06em}
+  .invite-hero h1 em{color:var(--accent);font-weight:inherit;font-style:normal}
+  .invite-hero .lede{max-width:620px;margin-inline:auto;color:var(--ink-soft);font-size:clamp(.95rem,1.4vw,1.12rem);line-height:1.72}
+  .hero-actions{display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;margin-top:2rem}
+  .hero-actions .btn{min-height:3.2rem;justify-content:center}
+  .invite-vagas{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.4rem;padding:.5rem .85rem;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:999px;color:var(--accent);font:800 .68rem/1 "SF Mono",Consolas,monospace}
+  .invite-section{padding-bottom:clamp(3.5rem,8vw,6.5rem)}
+  .invite-head{max-width:720px;margin:0 auto 2.2rem;text-align:center}
+  .invite-head h2{margin:.6rem 0 .8rem;font-size:clamp(2rem,4.4vw,3.6rem);line-height:1;letter-spacing:-.05em}
+  .invite-head p{margin:0;color:var(--ink-soft);line-height:1.7}
+  .invite-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+  .invite-card{padding:1.5rem;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,var(--card) 92%,transparent)}
+  .invite-card h3{margin:.9rem 0 .5rem;font-size:1.12rem}
+  .invite-card p{margin:0;color:var(--ink-soft);font-size:.88rem;line-height:1.65}
+  .invite-num{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:14px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);font:800 .82rem/1 "SF Mono",Consolas,monospace}
+  .invite-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;margin:0;padding:0;list-style:none}
+  .invite-list li{display:flex;gap:.7rem;align-items:flex-start;padding:1rem 1.15rem;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 45%,transparent);color:var(--ink-soft);font-size:.88rem;line-height:1.6}
+  .invite-list b{display:block;margin-bottom:.15rem;color:var(--ink);font-size:.92rem}
+  .invite-check{flex:none;width:1.35rem;height:1.35rem;margin-top:.1rem;color:var(--accent)}
+  .invite-deal{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .invite-deal>div{padding:1.5rem;border:1px solid var(--line);border-radius:22px}
+  .invite-deal .is-give{border-color:color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent) 7%,transparent)}
+  .invite-deal h3{margin:0 0 .9rem;font-size:1.15rem}
+  .invite-deal ul{margin:0;padding-left:1.1rem;color:var(--ink-soft);font-size:.88rem;line-height:1.75}
+  .invite-faq{display:grid;gap:.6rem;max-width:760px;margin-inline:auto}
+  .invite-faq details{padding:1.05rem 1.25rem;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--card) 88%,transparent)}
+  .invite-faq summary{font-weight:700;font-size:.95rem;cursor:pointer;list-style:none}
+  .invite-faq summary::-webkit-details-marker{display:none}
+  .invite-faq summary:before{content:"＋";margin-right:.5rem;color:var(--accent)}
+  .invite-faq details[open] summary:before{content:"−"}
+  .invite-faq p{margin:.7rem 0 0;color:var(--ink-soft);font-size:.88rem;line-height:1.7}
+  .invite-close{padding:clamp(2rem,5vw,3.5rem);border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:28px;background:linear-gradient(150deg,color-mix(in srgb,var(--accent) 12%,var(--card)),var(--card));text-align:center}
+  .invite-close h2{margin:0 0 .8rem;font-size:clamp(1.9rem,4vw,3rem);line-height:1.02;letter-spacing:-.04em}
+  .invite-close p{max-width:560px;margin:0 auto 1.6rem;color:var(--ink-soft);line-height:1.7}
+  @media(max-width:900px){.invite-grid,.invite-list,.invite-deal{grid-template-columns:1fr}}
+  @media(max-width:620px){
+    .invite-hero{padding-block-start:3rem}
+    .invite-hero h1{font-size:clamp(2.2rem,10vw,3rem);line-height:1}
+    .hero-actions{width:min(100%,320px);margin-inline:auto}
+    .hero-actions .btn{width:100%}
+    .invite-card,.invite-deal>div{padding:1.15rem;border-radius:18px}
+  }
+</style>
+</head>
+<body class="invite-page">
+<header class="site-nav"><div class="inner"><a class="brand" href="index.html"><img class="brand-mark" src="assets/semeia-mark.svg" alt="">Semeia</a><nav><a href="index.html#produtos">Produtos</a><a href="index.html#como-funciona">Como funciona</a><a class="active" href="convite.html">Para lojas</a><a href="cadastro-loja.html">Cadastrar loja</a></nav></div></header>
+
+<main>
+  <section class="invite-hero wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Convite para negócios locais de São Carlos</span>
+      <h1>Você já vende. A gente <em>organiza</em> o resto.</h1>
+      <p class="lede">O Semeia está começando por São Carlos e procura os primeiros negócios locais — marmitas, lanches e sucos naturais, padarias, cafés, doces, hortifruti, artesanato e produtores — para usar a plataforma com os clientes que já são seus. Seu WhatsApp continua sendo o seu WhatsApp, e o Pix cai direto na sua conta — o Semeia cuida do pedido, do estoque e do frete.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="cadastro-loja.html">Cadastrar minha loja</a>
+        <a class="btn btn-ghost" href="https://wa.me/5516994392545?text=Ol%C3%A1!%20Tenho%20um%20neg%C3%B3cio%20em%20S%C3%A3o%20Carlos%20e%20quero%20saber%20do%20piloto%20do%20Semeia." target="_blank" rel="noopener">Conversar antes</a>
+      </div>
+      <span class="invite-vagas">Primeira turma: 10 lojas em São Carlos</span>
+    </div>
+  </section>
+
+  <section class="invite-section wrap">
+    <div class="invite-head">
+      <span class="eyebrow">Por que agora</span>
+      <h2>Um lugar para quem já tem freguesia.</h2>
+      <p>Não prometemos clientes novos no primeiro mês. Prometemos parar de perder pedido no meio da conversa — e uma vitrine para quem ainda não te conhece.</p>
+    </div>
+    <div class="invite-grid">
+      <article class="invite-card">
+        <span class="invite-num">01</span>
+        <h3>Seus clientes continuam seus</h3>
+        <p>O comprador escolhe, você recebe o pedido com nome e WhatsApp, e a conversa acontece entre vocês dois. O Semeia não entra no meio da venda.</p>
+      </article>
+      <article class="invite-card">
+        <span class="invite-num">02</span>
+        <h3>O dinheiro vai direto</h3>
+        <p>O Pix é gerado com a sua chave: o valor cai na sua conta, sem passar pela nossa. Quem preferir cartão ou dinheiro combina com você.</p>
+      </article>
+      <article class="invite-card">
+        <span class="invite-num">03</span>
+        <h3>Sem taxa por venda</h3>
+        <p>Não cobramos porcentagem do que você vende. No piloto, também não cobramos pelo destaque na vitrine.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="invite-section wrap">
+    <div class="invite-head">
+      <span class="eyebrow">O que já está pronto</span>
+      <h2>Ferramenta de verdade, não maquete.</h2>
+      <p>Tudo isso funciona hoje, com produtos e pedidos reais.</p>
+    </div>
+    <ul class="invite-list">
+      <li><svg class="invite-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b>Estoque que se cuida sozinho</b>Ao fechar o pedido, as unidades saem do catálogo e ficam reservadas. Se ninguém confirmar em 24h, elas voltam.</span></li>
+      <li><svg class="invite-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b>Frete por distância</b>Você define faixas em km com o valor de cada uma. O comprador escolhe a dele antes de finalizar.</span></li>
+      <li><svg class="invite-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b>Sacola com várias lojas</b>O comprador junta produtos de lojas diferentes; cada loja vira um pedido separado, com um frete só.</span></li>
+      <li><svg class="invite-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b>Aviso de pedido por e-mail</b>Chega com os itens, o total, o WhatsApp de quem comprou e o botão para confirmar.</span></li>
+      <li><svg class="invite-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b>Painel do vendedor</b>Pedidos, vendas confirmadas por produto, estoque para repor na hora e horário de funcionamento da loja.</span></li>
+      <li><svg class="invite-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b>Página da loja para compartilhar</b>Um link seu, com todos os seus produtos, para mandar no grupo dos clientes.</span></li>
+    </ul>
+  </section>
+
+  <section class="invite-section wrap">
+    <div class="invite-head">
+      <span class="eyebrow">Como começa</span>
+      <h2>Quinze minutos e sua loja está no ar.</h2>
+    </div>
+    <div class="invite-grid">
+      <article class="invite-card">
+        <span class="invite-num">01</span>
+        <h3>Cadastro</h3>
+        <p>Você entra com a conta Google, preenche a loja e sua chave Pix. A gente confere as informações antes de publicar — é isso que mantém o catálogo confiável.</p>
+      </article>
+      <article class="invite-card">
+        <span class="invite-num">02</span>
+        <h3>Produtos</h3>
+        <p>Foto, preço, quantidade e faixas de frete. Se quiser, marcamos junto uma conversa de 15 minutos para cadastrar os primeiros com você.</p>
+      </article>
+      <article class="invite-card">
+        <span class="invite-num">03</span>
+        <h3>Seus clientes</h3>
+        <p>Você manda o link da sua loja no grupo e nas conversas de sempre. Quem já compra de você passa a pedir por ali — e o pedido chega organizado.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="invite-section wrap">
+    <div class="invite-head">
+      <span class="eyebrow">O combinado</span>
+      <h2>O que cada lado leva.</h2>
+      <p>Piloto é troca: você usa de graça, a gente aprende com o uso real.</p>
+    </div>
+    <div class="invite-deal">
+      <div class="is-give">
+        <h3>Você recebe</h3>
+        <ul>
+          <li>Loja e produtos no ar, sem custo</li>
+          <li>Destaque na vitrine sem cobrança durante o piloto</li>
+          <li>Ajuda no cadastro dos primeiros produtos</li>
+          <li>Ajustes na ferramenta a partir do que você pedir</li>
+        </ul>
+      </div>
+      <div>
+        <h3>A gente pede</h3>
+        <ul>
+          <li>Avisar seus clientes de que agora dá para pedir por ali</li>
+          <li>Manter preço e estoque em dia</li>
+          <li>Responder o comprador no WhatsApp com agilidade</li>
+          <li>Contar o que atrapalhou — é isso que faz a ferramenta melhorar</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="invite-section wrap">
+    <div class="invite-head">
+      <span class="eyebrow">Perguntas diretas</span>
+      <h2>Antes que você pergunte.</h2>
+    </div>
+    <div class="invite-faq">
+      <details>
+        <summary>Quanto custa?</summary>
+        <p>No piloto, nada. Não cobramos porcentagem por venda em momento nenhum. No futuro, a única cobrança prevista é o destaque na vitrine — opcional, e você só paga se quiser aparecer em posição de destaque.</p>
+      </details>
+      <details>
+        <summary>Preciso de CNPJ?</summary>
+        <p>Não. Produtor pessoa física pode cadastrar, usando a chave Pix que já usa para receber dos clientes.</p>
+      </details>
+      <details>
+        <summary>E se eu não usar Pix?</summary>
+        <p>Funciona também. Sem chave Pix, o pedido é enviado direto para o seu WhatsApp e o pagamento vocês combinam como já fazem hoje.</p>
+      </details>
+      <details>
+        <summary>O Semeia fica com o dinheiro em algum momento?</summary>
+        <p>Nunca. O Pix é gerado com a sua chave e o valor vai da conta do comprador para a sua. Não processamos pagamento, não retemos valor e não somos parte da compra.</p>
+      </details>
+      <details>
+        <summary>Posso sair quando quiser?</summary>
+        <p>Pode. Seus produtos saem do catálogo quando você pedir, e seus clientes continuam com o seu WhatsApp — eles sempre foram seus.</p>
+      </details>
+      <details>
+        <summary>Sou de fora de São Carlos.</summary>
+        <p>Por enquanto atendemos só São Carlos, porque queremos densidade de lojas na mesma cidade antes de abrir outra. Fale com a gente pelo WhatsApp: avisamos assim que sua região entrar.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="invite-section wrap">
+    <div class="invite-close">
+      <h2>Vamos plantar isso junto?</h2>
+      <p>Se o seu negócio é em São Carlos e você já vende para uma freguesia fiel, é exatamente com você que a gente quer começar.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="cadastro-loja.html">Cadastrar minha loja</a>
+        <a class="btn btn-ghost" href="https://wa.me/5516994392545?text=Ol%C3%A1!%20Tenho%20um%20neg%C3%B3cio%20em%20S%C3%A3o%20Carlos%20e%20quero%20saber%20do%20piloto%20do%20Semeia." target="_blank" rel="noopener">Falar no WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer"><div class="wrap"><span>Semeia — vitrine de negócios locais de São Carlos.</span><a href="index.html#produtos">Ver o catálogo →</a></div></footer>
+<script src="assets/main.js?v=20260814-trees"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){setupUIInteractions()});</script>
+</body>
+</html>

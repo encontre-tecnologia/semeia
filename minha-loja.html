@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://semeiabr.com/minha-loja">
+<title>Painel da sua loja — Semeia</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<style>
+  .owner{max-width:1080px;padding-block:3.4rem 5rem}.owner-intro{text-align:center;margin:0 auto 1.8rem}.owner-intro h1{font-size:clamp(2.8rem,7vw,4.5rem);line-height:1;margin:.65rem auto}.owner-intro>p{max-width:38rem;margin-inline:auto;color:var(--ink-soft)}
+  .panel{background:color-mix(in srgb,var(--card) 94%,transparent);border:1px solid var(--line);border-radius:26px;box-shadow:0 24px 55px -48px var(--shadow)}
+  .login-panel{position:relative;overflow:hidden;max-width:620px;margin-inline:auto;padding:clamp(1.35rem,4vw,2.15rem)}.login-panel:before{content:"";position:absolute;width:14rem;height:7rem;left:50%;top:-6.5rem;transform:translateX(-50%);border-radius:50%;background:var(--accent);filter:blur(45px);opacity:.17;pointer-events:none}.login-panel .form-grid{grid-template-columns:1fr}.login-panel .btn-primary{min-height:3.35rem;justify-content:center;margin-top:.1rem}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.full{grid-column:1/-1}label{display:block;margin-bottom:.38rem;font:700 .78rem/1.2 ui-sans-serif,system-ui,sans-serif;color:var(--ink)}
+  input,select,textarea{width:100%;box-sizing:border-box;min-height:3.15rem;padding:.78rem .9rem;border:1px solid var(--line);border-radius:13px;background:var(--paper);color:var(--ink);font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 10%,transparent)}textarea{min-height:7rem;resize:vertical}
+  .or{display:flex;align-items:center;gap:.8rem;margin:1.15rem 0;color:var(--ink-soft);font-size:.72rem}.or:before,.or:after{content:"";height:1px;flex:1;background:var(--line)}.google{width:100%;min-height:3.2rem;justify-content:center;gap:.65rem;background:#fff;color:#202124;border:1px solid #dadce0}.google:hover{background:#f8f9fa}.google-mark{width:1.65rem;height:1.65rem;display:grid;place-items:center;border:1px solid #e3e5e7;border-radius:50%;font:700 .9rem/1 Arial,sans-serif;color:#4285f4}.login-note{text-align:center;margin:1rem 0 0;color:var(--ink-soft);font-size:.76rem;line-height:1.45}
+  .session-check{max-width:620px;margin-inline:auto;padding:2.4rem;text-align:center}.session-check strong{display:block;margin:.9rem 0 .25rem;font-size:1rem}.session-check p{margin:0;color:var(--ink-soft);font-size:.82rem}.session-spinner{width:2rem;height:2rem;margin:auto;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:session-spin .75s linear infinite}@keyframes session-spin{to{transform:rotate(360deg)}}
+  .dashboard{display:grid;max-width:780px;margin-inline:auto;gap:1rem}.dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.5rem 1.7rem}.dashboard-head h2{font-size:clamp(1.8rem,4vw,2.7rem)}.dashboard-head p{margin:.35rem 0 0;color:var(--ink-soft)}
+  .dashboard-tabs{display:flex;gap:.35rem;padding:.35rem;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--card) 86%,transparent);overflow:auto;scrollbar-width:none}.dashboard-tabs::-webkit-scrollbar{display:none}.dashboard-tab{flex:1 0 max-content;min-height:2.7rem;padding:.55rem .8rem;border:0;border-radius:12px;background:transparent;color:var(--ink-soft);font:700 .72rem/1.1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s}.dashboard-tab:hover{color:var(--ink);background:color-mix(in srgb,var(--accent) 7%,transparent)}.dashboard-tab.is-active{color:#102016;background:var(--accent);box-shadow:0 7px 18px color-mix(in srgb,var(--accent) 22%,transparent)}.dashboard-tab:disabled{opacity:.45;cursor:not-allowed}.dashboard-tab-pane{min-width:0}.settings-stack{display:grid;gap:1rem}.settings-panel{padding:1.35rem 1.45rem}.settings-panel .store-panel-identity{margin:0;padding:0;border:0}
+  .dashboard-grid{display:grid;grid-template-columns:1fr;gap:1rem}.profile-panel,.products-panel,.publish-panel{padding:1.4rem}.section-kicker{font:700 .68rem/1.2 "SF Mono",Consolas,monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+  .profile-panel{display:flex;align-items:center;justify-content:space-between;gap:1.5rem}.profile-copy{max-width:27rem}.profile-copy h3{margin:.32rem 0}.logo-editor{display:flex;align-items:center;gap:.85rem;margin:0;flex:0 0 auto}.logo-preview{width:88px;height:88px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);background:var(--paper)}.logo-help{margin:.45rem 0 0;color:var(--ink-soft);font-size:.82rem;line-height:1.5}.file-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .pix-panel{position:relative;overflow:hidden;padding:0!important}.pix-panel:before{content:"";position:absolute;right:-4rem;top:-5rem;width:15rem;height:15rem;border-radius:50%;background:var(--accent);filter:blur(65px);opacity:.08;pointer-events:none}.pix-panel-head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.35rem 1.45rem;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--accent) 4%,transparent)}.pix-heading{display:flex;align-items:center;gap:.9rem}.pix-symbol{display:grid;place-items:center;width:2.8rem;height:2.8rem;flex:0 0 auto;border-radius:14px;background:color-mix(in srgb,var(--accent) 14%,transparent);border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));color:var(--accent)}.pix-symbol svg{width:1.35rem;height:1.35rem}.pix-panel-head h3{margin:.18rem 0 0;font-size:1.35rem}.pix-panel-head p{max-width:31rem;margin:.3rem 0 0;color:var(--ink-soft);font-size:.78rem;line-height:1.5}.pix-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem .7rem;border:1px solid var(--line);border-radius:999px;color:var(--ink-soft);background:color-mix(in srgb,var(--paper) 55%,transparent);font:700 .65rem "SF Mono",Consolas,monospace;white-space:nowrap}.pix-badge:before{content:"";width:.42rem;height:.42rem;border-radius:50%;background:currentColor}.pix-badge.ready{border-color:color-mix(in srgb,var(--good) 48%,var(--line));color:var(--good);background:color-mix(in srgb,var(--good) 8%,transparent)}#pix-form{position:relative;padding:1.3rem 1.45rem 1.4rem}.pix-form{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(150px,.65fr);gap:.85rem}.pix-form>div:first-child{grid-column:1/-1}.pix-form input{background:color-mix(in srgb,var(--paper) 86%,transparent)}.pix-form-actions{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line)}.pix-form-actions:before{content:"O QR Code é criado na página de cada produto.";max-width:24rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}.pix-form-actions .btn{min-width:10.5rem;min-height:3rem;justify-content:center}.pix-feedback{min-height:1.1rem;margin:.7rem 0 0;color:var(--good);font-size:.78rem}
+  .products-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:.6rem}.product-count{font:700 .72rem "SF Mono",Consolas,monospace;color:var(--accent)}.products-empty{padding:2.2rem 0;color:var(--ink-soft)}.owner-product{display:grid;grid-template-columns:54px 1fr auto;gap:.85rem;align-items:center;padding:.85rem 0;border-top:1px solid var(--line)}.owner-product img{width:54px;height:54px;border-radius:13px;object-fit:cover;background:var(--paper)}.owner-product strong{display:block}.owner-product small{color:var(--ink-soft)}.owner-price{font:700 .82rem "SF Mono",Consolas,monospace;color:var(--accent);white-space:nowrap}.owner-product-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:.4rem}.owner-product-actions a,.owner-product-actions button{padding:0;border:0;background:none;color:var(--accent);font:700 .69rem ui-sans-serif,system-ui,sans-serif;text-decoration:none;cursor:pointer}.owner-product-actions a:hover,.owner-product-actions button:hover{text-decoration:underline;text-underline-offset:3px}.owner-product-actions .delete-product{color:#df8c76}
+  .publish-panel{max-width:780px;margin:1.2rem auto 0}.publish-head{display:flex;justify-content:space-between;gap:1rem;align-items:end;padding-bottom:1.2rem;border-bottom:1px solid var(--line);margin-bottom:1.2rem}.publish-head p{margin:0;color:var(--ink-soft)}.product-form{gap:1.05rem}.money-input{position:relative}.money-input span{position:absolute;z-index:1;left:.9rem;top:50%;transform:translateY(-50%);color:var(--accent);font:700 .82rem "SF Mono",Consolas,monospace}.money-input input{padding-left:2.65rem}.photo-picker{display:flex;align-items:center;gap:1rem;min-height:5.2rem;padding:.85rem;border:1px dashed color-mix(in srgb,var(--accent) 55%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--accent) 4%,transparent);cursor:pointer;transition:border-color .2s,background .2s}.photo-picker:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}.photo-icon{width:3rem;height:3rem;display:grid;place-items:center;flex:0 0 auto;border-radius:13px;background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--accent);font-size:1.3rem}.photo-copy strong,.photo-copy span{display:block}.photo-copy span{margin-top:.2rem;color:var(--ink-soft);font-size:.76rem}.photo-preview{width:3.8rem;height:3.8rem;margin-left:auto;border-radius:13px;object-fit:cover}.optional{font-weight:400;color:var(--ink-soft)}.publish-panel textarea{min-height:5.5rem}.submit-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-top:.4rem}.submit-row .btn{min-width:12rem;justify-content:center}.impact-auto-note{display:flex;align-items:center;gap:.45rem;max-width:24rem;color:var(--ink-soft);font-size:.75rem;line-height:1.45}.impact-auto-note svg{width:18px;height:18px;flex:none;color:var(--accent)}
+  .impact-fields{grid-column:1/-1;margin:.1rem 0 0;padding:1rem;border:1px solid var(--line);border-radius:17px}.impact-fields legend{padding:0 .4rem;font:700 .82rem/1.2 ui-sans-serif,system-ui,sans-serif}.impact-fields>p{margin:.15rem 0 .9rem;color:var(--ink-soft);font-size:.76rem;line-height:1.45}.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}.check-row{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.8rem}.check-option{display:flex;align-items:center;gap:.5rem;margin:0;padding:.65rem .75rem;border:1px solid var(--line);border-radius:12px;color:var(--ink-soft);font-weight:600;cursor:pointer}.check-option input{width:1rem;min-height:1rem;margin:0;accent-color:var(--accent)}
+  [hidden]{display:none!important}@media(max-width:760px){.owner{padding-block:2.4rem 4rem}.owner-intro{margin-bottom:1.4rem}.dashboard-head,.publish-head,.pix-panel-head{align-items:flex-start;flex-direction:column}.profile-panel{align-items:flex-start;flex-direction:column}.logo-editor{width:100%;justify-content:space-between}.pix-form,.dashboard-grid,.form-grid,.impact-grid{grid-template-columns:1fr}.pix-form-actions .btn{width:100%;justify-content:center}.full{grid-column:auto}.impact-fields{grid-column:auto}.dashboard-head .btn{width:100%;justify-content:center}.owner-product{grid-template-columns:48px 1fr}.owner-price{grid-column:2}.submit-row{align-items:stretch;flex-direction:column}.submit-row .btn{width:100%;justify-content:center}}
+  @media(max-width:760px){.pix-panel-head{padding:1.15rem}.pix-heading{align-items:flex-start}.pix-symbol{width:2.5rem;height:2.5rem;border-radius:12px}#pix-form{padding:1.1rem}.pix-form-actions{align-items:stretch;flex-direction:column}.pix-form-actions:before{max-width:none}.pix-form-actions .btn{width:100%}}
+  .dashboard-head-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem}.share-store-feedback{width:100%;min-height:.9rem;color:var(--good);font:700 .68rem "SF Mono",Consolas,monospace}@media(max-width:760px){.dashboard-head-actions{width:100%}.dashboard-head-actions .btn{flex:1;justify-content:center}}
+  .store-panel{padding:clamp(1.2rem,3vw,1.7rem)}.store-panel-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1.2rem;flex-wrap:wrap}.store-panel-info h2{font-size:clamp(1.8rem,4vw,2.7rem);margin:.3rem 0 .55rem}.store-panel-meta-row{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem}.store-panel-meta-row p{margin:0;color:var(--ink-soft)}.status-note{margin:.4rem 0 0;color:var(--ink-soft);font-size:.82rem;max-width:34rem}
+  .status-pill{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .7rem;border-radius:999px;font:700 .66rem "SF Mono",Consolas,monospace;background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}.status-pill:before{content:"";width:.42rem;height:.42rem;border-radius:50%;background:currentColor}.status-pill.pending{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}.status-pill.suspended{background:color-mix(in srgb,var(--accent-2) 18%,transparent);color:var(--accent-2)}
+  .store-panel-identity{display:flex;align-items:center;gap:1rem;margin-top:1.4rem;padding-top:1.3rem;border-top:1px solid var(--line)}.store-panel-identity .logo-copy{flex:1;min-width:0}.store-panel-identity .logo-copy strong{display:block;margin-bottom:.2rem}.store-panel-identity .logo-help{margin:0;color:var(--ink-soft);font-size:.82rem;line-height:1.5}
+  .performance-panel{padding:1.3rem 1.5rem}
+  .metrics-grid.performance-grid{grid-template-columns:repeat(4,1fr)}
+  .performance-hint{margin:.85rem 0 0;color:var(--ink-soft);font-size:.78rem;line-height:1.5}
+  @media(max-width:900px){.metrics-grid.performance-grid{grid-template-columns:repeat(2,1fr)}.metrics-grid.performance-grid div:nth-child(-n+2){border-bottom:1px solid var(--line)}.metrics-grid.performance-grid div:nth-child(odd){border-left:0}}
+  @media(max-width:520px){.metrics-grid.performance-grid{grid-template-columns:1fr}.metrics-grid.performance-grid div{border-left:0;border-top:1px solid var(--line)}.metrics-grid.performance-grid div:first-child{border-top:0}}
+  .metrics-panel{padding:1.3rem 1.5rem}.metrics-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:1rem}.metrics-head h3{margin:.3rem 0 0;font-size:1.25rem}.metrics-period{margin:0;color:var(--accent);font:700 .68rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.07em}.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:18px;overflow:hidden}.metrics-grid div{padding:1.1rem .7rem;text-align:center;border-left:1px solid var(--line)}.metrics-grid div:first-child{border-left:0}.metrics-grid .n{display:block;font-size:1.45rem;letter-spacing:-.04em;color:var(--accent);font-variant-numeric:tabular-nums}.metrics-grid .l{display:block;margin-top:.35rem;color:var(--ink-soft);font-size:.68rem;font-family:"SF Mono",Consolas,monospace;line-height:1.35}.metric-product-list{display:grid;gap:.15rem;margin-top:1rem}.metric-product-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:.8rem;padding:.9rem 0;border-top:1px solid var(--line)}.metric-product-row strong{display:block;font-size:.9rem}.metric-product-row small{display:block;margin-top:.2rem;color:var(--ink-soft);font-size:.72rem}.metric-product-value{min-width:5.3rem;text-align:right;color:var(--accent);font:700 .8rem "SF Mono",Consolas,monospace}.metric-product-value small{color:var(--ink-soft);font:500 .62rem "SF Mono",Consolas,monospace}.metrics-empty{margin:1rem 0 0;color:var(--ink-soft);font-size:.83rem}
+  .boost-estimate{margin-top:.9rem;padding:.8rem .95rem;border:1px solid var(--line);border-radius:13px;background:color-mix(in srgb,var(--paper) 55%,transparent);font-size:.84rem;line-height:1.55}.boost-estimate strong{color:var(--accent)}.boost-estimate-disclaimer{display:block;margin-top:.45rem;color:var(--ink-soft);font-size:.68rem;line-height:1.4}
+  @media(max-width:760px){.store-panel-identity{flex-wrap:wrap}.dashboard-tabs{margin-inline:-.15rem;border-radius:15px}.dashboard-tab{flex:0 0 auto}.metrics-head{align-items:flex-start;flex-direction:column}.metrics-grid{grid-template-columns:1fr}.metrics-grid div{border-left:0;border-top:1px solid var(--line)}.metrics-grid div:first-child{border-top:0}.metric-product-row{grid-template-columns:minmax(0,1fr) auto}.metric-product-row .metric-product-value:last-child{grid-column:2}.settings-panel{padding:1.15rem}.settings-panel .store-panel-identity{align-items:flex-start}}
+  .field-help{display:block;margin-top:.4rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}.fulfillment-title{display:block;margin:.35rem 0 -.35rem;color:var(--accent);font:700 .68rem "SF Mono",Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}.store-overview #publish{display:none!important}.catalog-actions{display:flex;align-items:center;gap:.75rem}.catalog-actions .btn{min-height:2.7rem;padding:.7rem 1rem}.catalog-actions .product-count{white-space:nowrap}@media(max-width:560px){.products-head{align-items:stretch;flex-direction:column}.catalog-actions{justify-content:space-between}.catalog-actions .btn{flex:1;justify-content:center}}
+  .boost-panel{padding:clamp(1.2rem,3vw,1.7rem);background:linear-gradient(140deg,color-mix(in srgb,var(--card) 88%,var(--accent) 12%),var(--card))}.boost-head{display:flex;justify-content:space-between;gap:1rem;align-items:start}.boost-head h3{margin:.35rem 0}.boost-head p{margin:.3rem 0 0;color:var(--ink-soft);font-size:.8rem;line-height:1.5}.boost-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.35rem}.boost-grid .boost-wide{grid-column:1/-1}.boost-control{position:relative;min-width:0}.boost-control label{margin:0 0 .55rem;color:var(--ink-soft);font:700 .66rem/1.2 "SF Mono",Consolas,monospace;letter-spacing:.07em;text-transform:uppercase}.boost-control select{appearance:none;-webkit-appearance:none;min-height:4rem;padding:1rem 3.25rem 1rem 3.15rem;border-color:color-mix(in srgb,var(--accent) 18%,var(--line));border-radius:17px;background:linear-gradient(135deg,color-mix(in srgb,var(--paper) 94%,var(--accent) 6%),var(--paper));font-size:1rem;font-weight:700;cursor:pointer;box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 4%,transparent);transition:border-color .2s,box-shadow .2s,transform .2s}.boost-control select:hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line));transform:translateY(-1px)}.boost-control select:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 11%,transparent),0 14px 30px -24px var(--accent)}.boost-control:before,.boost-control:after{position:absolute;z-index:2;pointer-events:none}.boost-control:before{content:"✦";left:1.15rem;top:2.72rem;color:var(--accent);font:700 1rem/1 "SF Mono",Consolas,monospace}.boost-control:after{content:"⌄";right:1.15rem;top:2.55rem;color:var(--accent);font:700 1.25rem/1 ui-sans-serif,system-ui,sans-serif}.boost-control-scope:before{content:"⌖"}.boost-control-position:before{content:"#"}.boost-control-duration:before{content:"◷"}.boost-control-category:before{content:"⌁"}.boost-placement-help{display:block;margin:.55rem .15rem 0;color:var(--ink-soft);font-size:.7rem;line-height:1.4}.boost-position-help{display:flex;align-items:flex-start;gap:.55rem;min-height:2.2rem;margin-top:.6rem;padding:.75rem .85rem;border:1px solid var(--line);border-radius:14px;color:var(--ink-soft);background:color-mix(in srgb,var(--paper) 62%,transparent);font-size:.7rem;line-height:1.45}.boost-position-help:before{content:"";width:.48rem;height:.48rem;flex:0 0 auto;margin-top:.22rem;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px color-mix(in srgb,var(--good) 10%,transparent)}.boost-position-help.waiting:before{background:#e7c67e;box-shadow:0 0 0 4px color-mix(in srgb,#e7c67e 10%,transparent)}.boost-position-help strong{color:var(--ink)}.boost-summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line)}.boost-price{font:700 1.2rem "SF Mono",Consolas,monospace;color:var(--accent)}.boost-old-price{margin-left:.5rem;color:var(--ink-soft);font-size:.8rem;font-weight:400;text-decoration:line-through}.boost-note{max-width:31rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}.promotion-list{display:grid;gap:.55rem;margin-top:1rem}  .store-profile-panel h3{margin:.3rem 0 .35rem}
+  .profile-lede{margin:0 0 1.1rem;max-width:44rem;color:var(--ink-soft);font-size:.84rem;line-height:1.55}
+  #store-profile-form textarea{min-height:6.5rem}
+  .cover-editor{margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--line)}
+  .cover-preview{width:140px;height:84px;border-radius:14px;object-fit:cover;border:1px solid var(--line);background:var(--paper)}
+  @media(max-width:760px){.cover-preview{width:100%;height:120px}}
+  .hours-title{display:block;margin:1.3rem 0 .6rem;font:700 .78rem/1.2 ui-sans-serif,system-ui,sans-serif}
+  .hours-hint{margin:-.2rem 0 .85rem;max-width:42rem;color:var(--ink-soft);font-size:.78rem;line-height:1.5}
+  .hours-hint strong{color:var(--ink)}
+  .hours-row.is-closed .hours-day{color:var(--ink-soft)}
+  .hours-row .hours-closed-tag{color:var(--warn);font:800 .64rem/1 "SF Mono",Consolas,monospace;white-space:nowrap}
+  .hours-grid{display:grid;gap:.5rem}
+  .hours-row{display:grid;grid-template-columns:7.5rem auto minmax(0,1fr) .8rem minmax(0,1fr) 4.5rem;gap:.5rem;align-items:center}
+  .hours-row .hours-day{font:700 .78rem ui-sans-serif,system-ui,sans-serif}
+  .hours-row input[type=time]{min-height:2.9rem;padding:.5rem .7rem}
+  .hours-row .hours-sep{color:var(--ink-soft);font-size:.78rem;text-align:center}
+  .hours-row.is-closed input[type=time]{opacity:.35;pointer-events:none}
+  .hours-toggle{display:inline-flex;align-items:center;gap:.4rem;color:var(--ink-soft);font:700 .7rem ui-sans-serif,system-ui,sans-serif;white-space:nowrap}
+  .hours-toggle input{width:auto;min-height:0;margin:0}
+  .profile-actions{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--line)}
+  .profile-actions .btn{min-width:10.5rem;min-height:3rem;justify-content:center}
+  @media(max-width:620px){.hours-row{grid-template-columns:1fr 1fr;row-gap:.35rem}.hours-row .hours-day{grid-column:1/-1}.hours-row .hours-toggle{grid-column:1/-1}.hours-row .hours-sep{display:none}}
+  .tab-count{display:inline-grid;place-items:center;min-width:1.15rem;height:1.15rem;margin-left:.4rem;padding:0 .28rem;border-radius:999px;background:var(--accent);color:#0f2415;font:800 .62rem/1 "SF Mono",Consolas,monospace}
+  /* O painel base nao tem padding: sem isso os cards encostavam na moldura. */
+  .orders-panel{padding:1.3rem 1.5rem 1.5rem}
+  .orders-panel .metrics-head{margin-bottom:.2rem}
+  .orders-lede{margin:0 0 1.2rem;max-width:44rem;color:var(--ink-soft);font-size:.82rem;line-height:1.55}
+  .sales-box{margin:0 0 1.3rem;padding:1.1rem 1.15rem;border:1px solid color-mix(in srgb,var(--good) 40%,var(--line));border-radius:18px;background:color-mix(in srgb,var(--good) 7%,transparent)}
+  .sales-title{display:block;margin-bottom:.85rem;color:var(--good);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}
+  .sales-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}
+  .sales-cell{padding:.7rem .85rem;border:1px solid color-mix(in srgb,var(--line) 70%,transparent);border-radius:14px;background:color-mix(in srgb,var(--card) 55%,transparent)}
+  .sales-cell .n{display:block;font:700 1.35rem/1.1 "SF Mono",Consolas,monospace;color:var(--good)}
+  .sales-cell .l{display:block;margin-top:.2rem;color:var(--ink-soft);font-size:.72rem;line-height:1.4}
+  .sales-products{display:grid;gap:.1rem;margin-top:.9rem}
+  .sales-row{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:.42rem 0;border-top:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:.84rem}
+  .sales-row:first-child{border-top:0}
+  .sales-row-name{color:var(--ink)}
+  .sales-row-name small{display:block;color:var(--ink-soft);font-size:.72rem}
+  .sales-row-value{font:700 .86rem "SF Mono",Consolas,monospace;color:var(--good);white-space:nowrap}
+  @media(max-width:620px){.sales-grid{grid-template-columns:1fr}}
+  .orders-list{display:grid;gap:.9rem}
+  .orders-empty{padding:2rem 0;color:var(--ink-soft)}
+  /* Segue o card da sacola: faixa de cabeçalho, corpo e rodapé de ação. */
+  .order-card{
+    border:1px solid var(--line);border-radius:20px;overflow:hidden;
+    background:linear-gradient(165deg,color-mix(in srgb,var(--card) 97%,transparent),color-mix(in srgb,var(--accent) 5%,var(--card)));
+    box-shadow:0 14px 30px -26px var(--shadow),inset 0 1px 0 color-mix(in srgb,white 7%,transparent);
+  }
+  .order-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.9rem 1.15rem;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--accent) 5%,transparent)}
+  .order-head strong{display:block;font-size:1.02rem;line-height:1.25}
+  .order-head small{display:block;margin-top:.15rem;color:var(--ink-soft);font-size:.74rem}
+  .order-body{padding:.9rem 1.15rem 1rem}
+  .order-items{display:grid;gap:.3rem;margin:0;padding:0;list-style:none}
+  .order-item{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;font-size:.86rem}
+  .order-item span{color:var(--ink)}
+  .order-item strong{color:var(--ink-soft);font:600 .82rem "SF Mono",Consolas,monospace;white-space:nowrap}
+  .order-money{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.75rem;padding-top:.7rem;border-top:1px solid color-mix(in srgb,var(--line) 72%,transparent)}
+  .order-money small{color:var(--ink-soft);font-size:.76rem}
+  .order-total{font:700 1rem "SF Mono",Consolas,monospace;color:var(--accent);white-space:nowrap}
+  .order-hint{display:block;margin:.6rem 0 0;color:var(--ink-soft);font-size:.74rem;line-height:1.5}
+  .order-foot{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.8rem 1.15rem;border-top:1px solid var(--line);background:color-mix(in srgb,var(--paper) 34%,transparent)}
+  .order-foot .btn{min-height:2.8rem;padding:.5rem 1.1rem;font-size:.78rem}
+  .order-whats{display:inline-flex;align-items:center;gap:.4rem;min-height:2.8rem;padding:.5rem .95rem;border:1px solid color-mix(in srgb,var(--good) 42%,var(--line));border-radius:999px;color:var(--good);font:700 .76rem ui-sans-serif,system-ui,sans-serif;text-decoration:none;white-space:nowrap}
+  .order-whats:hover{background:color-mix(in srgb,var(--good) 12%,transparent)}
+  .order-whats svg{width:.95rem;height:.95rem}
+  .order-extra{display:flex;align-items:center;gap:.9rem;margin-left:auto}
+  .order-link{padding:0;border:0;background:none;color:var(--ink-soft);font:700 .74rem ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+  .order-link:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+  .order-link.is-danger:hover{color:#df8c76}
+  .order-status{display:inline-flex;align-items:center;gap:.42rem;padding:.34rem .7rem;border:1px solid var(--line);border-radius:999px;color:var(--ink-soft);background:color-mix(in srgb,var(--paper) 42%,transparent);font:800 .64rem/1.35 "SF Mono",Consolas,monospace;white-space:nowrap}
+  .order-status:before{content:"";width:.42rem;height:.42rem;border-radius:50%;background:currentColor}
+  .order-status.is-paid,.order-status.is-delivered{border-color:color-mix(in srgb,var(--good) 50%,var(--line));color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+  .order-status.is-cancelled{border-color:color-mix(in srgb,#df8c76 45%,var(--line));color:#df8c76;background:color-mix(in srgb,#df8c76 9%,transparent)}
+  .order-card.is-paid,.order-card.is-delivered{border-color:color-mix(in srgb,var(--good) 40%,var(--line))}
+  .order-card.is-cancelled{opacity:.7}
+  @media(max-width:620px){.order-foot{flex-direction:column;align-items:stretch}.order-foot .btn,.order-whats{width:100%;justify-content:center}.order-extra{margin-left:0;justify-content:center;padding-top:.3rem}}
+  .promotion-item{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem;border:1px solid var(--line);border-radius:14px}.promotion-item small{display:block;margin-top:.2rem;color:var(--ink-soft)}.promotion-status{font:700 .66rem "SF Mono",Consolas,monospace;text-transform:uppercase;color:var(--accent);text-align:right}.boost-feedback{min-height:1rem;margin:.65rem 0 0;font-size:.76rem;color:var(--accent)}@media(max-width:760px){.boost-grid{grid-template-columns:1fr}.boost-grid .boost-wide{grid-column:auto}.boost-head,.boost-summary,.promotion-item{align-items:stretch;flex-direction:column}.boost-summary .btn{width:100%;justify-content:center}.promotion-status{text-align:left}.boost-control select{min-height:3.7rem;font-size:.94rem}}
+  /* Seletor próprio: evita a lista branca do select nativo no Chrome/Windows. */
+  .boost-control:before,.boost-control:after{display:none}.pretty-select{position:relative}.pretty-native{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;padding:0!important;opacity:0;pointer-events:none}.pretty-trigger{display:flex;align-items:center;gap:.8rem;width:100%;min-height:4rem;padding:.8rem 1rem;border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));border-radius:17px;background:linear-gradient(135deg,color-mix(in srgb,var(--paper) 94%,var(--accent) 6%),var(--paper));color:var(--ink);font:700 1rem/1.25 Georgia,serif;text-align:left;cursor:pointer;box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 5%,transparent);transition:border-color .2s,box-shadow .2s,transform .2s}.pretty-trigger:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));transform:translateY(-1px)}.pretty-trigger:focus-visible,.pretty-select.is-open .pretty-trigger{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 11%,transparent)}.pretty-icon{display:grid;place-items:center;width:2rem;height:2rem;flex:0 0 auto;border-radius:10px;background:color-mix(in srgb,var(--accent) 11%,transparent);color:var(--accent);font:700 .78rem/1 "SF Mono",Consolas,monospace}.pretty-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pretty-chevron{width:18px;height:18px;margin-left:auto;flex:0 0 auto;color:var(--accent);transition:transform .2s}.pretty-select.is-open .pretty-chevron{transform:rotate(180deg)}.pretty-menu{position:absolute;z-index:40;top:calc(100% + .45rem);left:0;right:0;display:grid;gap:.25rem;max-height:17rem;margin:0;padding:.45rem;overflow:auto;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:16px;background:#101c14;box-shadow:0 22px 55px -22px rgba(0,0,0,.8)}.pretty-menu[hidden]{display:none}.pretty-option{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;padding:.82rem .9rem;border:0;border-radius:11px;background:transparent;color:var(--ink-soft);font:700 .9rem/1.25 ui-sans-serif,system-ui,sans-serif;text-align:left;cursor:pointer}.pretty-option:hover,.pretty-option:focus-visible{outline:0;background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--ink)}.pretty-option.is-selected{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}.pretty-option.is-selected:after{content:"";width:.5rem;height:.5rem;flex:0 0 auto;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 12%,transparent)}@media(max-width:760px){.pretty-trigger{min-height:3.7rem;font-size:.94rem}.pretty-menu{position:fixed;z-index:100;left:1rem;right:1rem;top:auto;bottom:1rem;max-height:min(55vh,22rem);border-radius:20px;padding:.6rem}.pretty-option{padding:1rem}}
+  /* ---- Diálogo de pagamento do destaque (Pix) ---- */
+  .pix-dialog{width:min(430px,calc(100% - 1.6rem));padding:0;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:24px;color:var(--ink);background:linear-gradient(150deg,color-mix(in srgb,var(--paper-raised) 96%,transparent),color-mix(in srgb,var(--accent) 7%,var(--paper-raised)));box-shadow:0 36px 90px -38px #000}
+  .pix-dialog::backdrop{background:rgba(4,13,8,.7);backdrop-filter:blur(7px)}
+  .pix-dialog-inner{padding:1.5rem}
+  .pix-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+  .pix-dialog-head h3{margin:.3rem 0 0;font-size:1.5rem;line-height:1.15}
+  .pix-dialog-close{width:34px;height:34px;flex:none;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink-soft);font-size:1.2rem;line-height:1;cursor:pointer}
+  .pix-dialog-close:hover{color:var(--ink);border-color:var(--accent)}
+  .pix-dialog-amount{margin:1rem 0 .2rem;font-size:2.3rem;line-height:1;letter-spacing:-.04em;color:var(--accent)}
+  .pix-dialog-meta{margin:0;color:var(--ink-soft);font-size:.78rem;line-height:1.5}
+  .pix-qr-box{display:grid;place-items:center;width:200px;height:200px;margin:1.15rem auto .9rem;padding:.6rem;box-sizing:content-box;border-radius:16px;background:#fff}
+  .pix-qr-box img,.pix-qr-box canvas{display:block;width:100%;height:100%}
+  .pix-qr-fallback{color:#4b5a44;font-size:.72rem;text-align:center;padding:.6rem}
+  .pix-key-row{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 .5rem;padding:.7rem .85rem;border:1px solid var(--line);border-radius:13px;background:color-mix(in srgb,var(--paper) 62%,transparent)}
+  .pix-key-row div{min-width:0}
+  .pix-key-row small{display:block;color:var(--ink-soft);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em}
+  .pix-key-row strong{font:700 .95rem/1.3 "SF Mono",Consolas,monospace;overflow-wrap:anywhere}
+  .pix-dialog-actions{display:grid;gap:.5rem;margin-top:1rem}
+  .pix-dialog-actions .btn{width:100%;justify-content:center;min-height:3rem}
+  .pix-copy-feedback{min-height:1.1rem;margin:.55rem 0 0;color:var(--good);font-size:.76rem;text-align:center}
+  .pix-card-alt{margin-top:.9rem;display:grid;gap:.5rem}
+  .pix-card-or{display:flex;align-items:center;gap:.7rem;color:var(--ink-soft);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em}
+  .pix-card-or::before,.pix-card-or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .pix-card-alt .btn{width:100%;justify-content:center;min-height:3rem}
+  .pix-card-alt small{color:var(--ink-soft);font-size:.72rem;line-height:1.5;text-align:center}
+  /* Ações do produto como pastilhas: a principal preenchida, as outras contornadas. */
+  /* Estoque na lista do vendedor: esgotado some da vitrine, então é aviso, não detalhe. */
+  .stock-flag{display:inline-block;margin-left:.5rem;padding:.16rem .5rem;border-radius:999px;font:800 .58rem/1.4 "SF Mono",Consolas,monospace;vertical-align:middle}
+  .stock-flag.is-out{border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line));color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+  .stock-flag.is-low{border:1px solid color-mix(in srgb,var(--accent) 50%,var(--line));color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+  .owner-product.is-out img{filter:grayscale(1);opacity:.6}
+  .product-count.has-out{color:var(--warn)}
+  .owner-product-actions{gap:.4rem}
+  .owner-product-actions .action-chip{display:inline-flex;align-items:center;padding:.34rem .7rem;border:1px solid var(--line);border-radius:999px;color:var(--ink-soft);font:600 .7rem ui-sans-serif,system-ui,sans-serif;line-height:1.2;text-decoration:none;white-space:nowrap;transition:border-color .15s,color .15s,background .15s}
+  .owner-product-actions a.action-chip:hover,.owner-product-actions button.action-chip:hover{border-color:var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 9%,transparent);text-decoration:none}
+  .owner-product-actions .action-chip.is-primary{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+  .owner-product-actions .action-chip.is-pending{border-color:color-mix(in srgb,var(--accent) 60%,var(--line));color:var(--accent)}
+  .owner-product-actions .action-chip.is-danger{color:#df8c76;border-color:transparent}
+  .owner-product-actions .action-chip.is-danger:hover{border-color:#df8c76;color:#df8c76;background:color-mix(in srgb,#df8c76 12%,transparent)}
+  /* Cada produto vira um card: linha fina com texto miúdo escondia o que importa. */
+  .owner-product{grid-template-columns:78px minmax(0,1fr) auto;gap:1.05rem;align-items:start;margin-top:.7rem;padding:1.15rem;border:1px solid var(--line);border-radius:20px;background:color-mix(in srgb,var(--paper) 42%,transparent);transition:border-color .18s ease}
+  .owner-product:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+  .owner-product img{width:78px;height:78px;border-radius:18px}
+  .owner-product strong{font-size:1.08rem;line-height:1.4}
+  .owner-product small{margin-top:.35rem;font-size:.82rem;line-height:1.6}
+  .owner-price{font:700 1.05rem "SF Mono",Consolas,monospace}
+  .owner-product .stock-row{grid-column:2/-1;margin-top:.5rem}
+  .owner-product .owner-product-actions{grid-column:2/-1;margin-top:.3rem;gap:.5rem}
+  .owner-product-actions .action-chip{padding:.52rem .95rem;font-size:.76rem}
+  /* Repor estoque sem abrir o anúncio inteiro: é a mexida mais comum do dia a dia. */
+  .stock-row{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-top:.85rem}
+  .stock-row>.stock-caption{color:var(--ink-soft);font:700 .74rem ui-sans-serif,system-ui,sans-serif}
+  .stock-stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--card) 70%,transparent);overflow:hidden}
+  .stock-stepper button{width:2.3rem;height:2.3rem;border:0;background:transparent;color:var(--ink);font-size:1.05rem;line-height:1;cursor:pointer;transition:background .15s}
+  .stock-stepper button:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 16%,transparent)}
+  .stock-stepper button:disabled{opacity:.3;cursor:not-allowed}
+  .stock-stepper input{width:3.4rem;height:2.3rem;min-height:0;box-sizing:border-box;padding:0;border:0;border-radius:0;border-inline:1px solid var(--line);background:transparent;color:var(--ink);text-align:center;font:700 .84rem "SF Mono",Consolas,monospace;-moz-appearance:textfield}
+  .stock-stepper input::-webkit-outer-spin-button,.stock-stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .stock-stepper input:focus{outline:none;background:color-mix(in srgb,var(--accent) 10%,transparent)}
+  .stock-quick{height:2.3rem;padding:0 .85rem;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink-soft);font:700 .72rem ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+  .stock-quick:hover{border-color:var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 9%,transparent)}
+  /* Tracejado porque é reserva, não venda: pode voltar ao catálogo sozinha. */
+  .stock-held{height:2.3rem;display:inline-flex;align-items:center;padding:0 .8rem;border:1px dashed color-mix(in srgb,var(--accent) 50%,var(--line));border-radius:999px;color:var(--accent);font:700 .72rem "SF Mono",Consolas,monospace;white-space:nowrap;cursor:help}
+  .stock-state{font-size:.74rem;color:var(--ink-soft)}
+  .stock-state.is-saved{color:var(--good)}
+  .stock-state.is-error{color:var(--warn)}
+  @media(max-width:640px){
+    .owner-product{grid-template-columns:60px minmax(0,1fr);padding:1rem}
+    .owner-product img{width:60px;height:60px;border-radius:15px}
+    .owner-price{grid-column:2;margin-top:.2rem}
+    .owner-product .stock-row,.owner-product .owner-product-actions{grid-column:1/-1}
+  }
+  .promotion-item.is-payable{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  .promotion-item.is-payable:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 11%,transparent)}
+  /* Em telas maiores o diálogo abre em duas colunas: QR à esquerda, formas de pagar à direita. */
+  @media (min-width:820px){
+    .pix-dialog{width:min(760px,calc(100% - 3rem))}
+    .pix-dialog-inner{padding:2rem 2.25rem}
+    .pix-dialog-amount{font-size:2.7rem}
+    .pix-dialog-body{display:grid;grid-template-columns:auto 1fr;gap:1.6rem;align-items:start;margin-top:1.2rem}
+    .pix-dialog-body .pix-qr-box{margin:0}
+    .pix-dialog-side{min-width:0;display:flex;flex-direction:column;justify-content:center}
+    .pix-dialog-side .pix-key-row{margin-top:0}
+  }
+  .pix-dialog-note{margin:.9rem 0 0;padding-top:.9rem;border-top:1px solid var(--line);color:var(--ink-soft);font-size:.72rem;line-height:1.5}
+</style>
+</head>
+<body class="store-overview">
+<header class="site-nav"><div class="inner"><a class="brand" href="index.html"><img class="brand-mark" src="assets/semeia-mark.svg" alt="">Semeia</a><nav><a href="index.html#produtos">Produtos</a><a href="index.html#como-funciona">Como funciona</a></nav></div></header>
+<main class="wrap owner">
+  <div class="owner-intro"><span class="eyebrow">Área do vendedor</span><h1>Minha loja</h1><p>Acompanhe a aprovação, cuide da identidade da sua loja e gerencie seu catálogo.</p></div>
+  <section class="panel session-check" id="session-check"><div class="session-spinner" aria-hidden="true"></div><strong>Verificando seu acesso</strong><p>Preparando o painel da sua loja…</p></section>
+  <section class="panel login-panel" id="login" hidden>
+    <button class="btn google" id="google-login" type="button"><span class="google-mark" aria-hidden="true">G</span>Continuar com Google</button><p class="login-note">Use o mesmo e-mail informado no cadastro da loja. Não é necessário lembrar outra senha.</p>
+  </section>
+  <div class="dashboard" id="dashboard" hidden>
+    <section class="panel store-panel" id="store-logo-box">
+      <div class="store-panel-top">
+        <div class="store-panel-info">
+          <span class="section-kicker">Painel da loja</span>
+          <h2 id="name"></h2>
+          <div class="store-panel-meta-row"><p id="meta"></p><span class="status-pill" id="status-pill"></span></div>
+          <p class="status-note" id="status"></p>
+        </div>
+        <div class="dashboard-head-actions"><a class="btn btn-ghost" id="public-store" href="#">Ver loja pública</a><button class="btn btn-primary" id="share-store" type="button">Compartilhar link</button><small class="share-store-feedback" id="share-store-feedback" aria-live="polite"></small></div>
+      </div>
+    </section>
+    <nav class="dashboard-tabs" aria-label="Seções da loja" role="tablist">
+      <button class="dashboard-tab is-active" type="button" data-dashboard-tab="products" role="tab" aria-selected="true">Produtos</button>
+      <button class="dashboard-tab" type="button" data-dashboard-tab="orders" role="tab" aria-selected="false">Pedidos<span class="tab-count" id="orders-count" hidden>0</span></button><button class="dashboard-tab" type="button" data-dashboard-tab="views" role="tab" aria-selected="false">Visualizações</button>
+      <button class="dashboard-tab" type="button" data-dashboard-tab="whatsapp" role="tab" aria-selected="false">Cliques no WhatsApp</button>
+      <button class="dashboard-tab" type="button" data-dashboard-tab="settings" role="tab" aria-selected="false">Configurações</button>
+    </nav>
+    <section class="panel performance-panel dashboard-tab-pane" data-dashboard-panel="products">
+      <div class="metrics-head"><div><span class="section-kicker">Este mês</span><h3>Desempenho da sua loja</h3></div><p class="metrics-period" id="performance-period"></p></div>
+      <div class="metrics-grid performance-grid" id="performance-grid"></div>
+      <p class="performance-hint" id="performance-hint"></p>
+    </section>
+    <section class="panel products-panel dashboard-tab-pane" data-dashboard-panel="products"><div class="products-head"><div><span class="section-kicker">Catálogo</span><h3>Meus produtos</h3></div><span class="product-count" id="product-count">0 produtos</span></div><div id="products"></div></section>
+    <section class="panel orders-panel dashboard-tab-pane" data-dashboard-panel="orders" hidden>
+      <div class="metrics-head"><div><span class="section-kicker">Informado pelos compradores</span><h3>Pedidos</h3></div></div>
+      <p class="orders-lede">Cada pedido abaixo foi finalizado no site por um comprador. O Semeia não confirma pagamento: confira o Pix na sua conta antes de separar.</p>
+      <div class="sales-box" id="sales-box" hidden>
+        <span class="sales-title">Vendas confirmadas por você</span>
+        <div class="sales-grid" id="sales-grid"></div>
+        <div class="sales-products" id="sales-products"></div>
+      </div>
+      <div class="orders-list" id="orders-list"></div>
+    </section>
+    <section class="panel metrics-panel dashboard-tab-pane" data-dashboard-panel="views" hidden><div class="metrics-head"><div><span class="section-kicker">Este mês</span><h3>Alcance da sua loja</h3></div><p class="metrics-period" id="metrics-period"></p></div><div class="metrics-grid" id="metrics-grid"></div><div class="metric-product-list" id="views-by-product"></div></section>
+    <section class="panel metrics-panel dashboard-tab-pane" data-dashboard-panel="whatsapp" hidden><div class="metrics-head"><div><span class="section-kicker">Este mês</span><h3>Conversas iniciadas</h3></div><p class="metrics-period">WhatsApp</p></div><div class="metrics-grid" id="whatsapp-metrics-grid"></div><div class="metric-product-list" id="whatsapp-by-product"></div></section>
+    <section class="panel boost-panel dashboard-tab-pane" id="boost-panel" data-dashboard-panel="products" hidden><div class="boost-head"><div><span class="section-kicker">Destaque patrocinado</span><h3>Escolha onde seu produto aparece primeiro</h3><p>Cada posição é exclusiva durante o período contratado. Se ela estiver ocupada, você verá quando sua promoção poderá começar.</p></div></div><div class="boost-grid"><div class="boost-control boost-wide"><label for="boost-target">O que destacar?</label><select id="boost-target"><option value="product">Um produto</option><option value="store">Minha loja inteira</option></select><small class="boost-placement-help" id="boost-target-help">O anúncio escolhido aparece entre os primeiros do catálogo.</small></div><div class="boost-control boost-wide" id="boost-product-wrap"><label for="boost-product">Produto</label><select id="boost-product"></select></div><div class="boost-control boost-control-scope"><label for="boost-scope">Onde destacar?</label><select id="boost-scope"><option value="home">Catálogo geral</option><option value="both">Catálogo geral + categoria</option><option value="category">Somente em uma categoria</option></select><small class="boost-placement-help" id="boost-scope-help">Aparece entre todos os produtos da página principal.</small></div><div class="boost-control boost-control-category" id="boost-category-wrap" hidden><label for="boost-category">Categoria do destaque</label><select id="boost-category"></select></div><div class="boost-control boost-control-position"><label for="boost-position">Posição</label><select id="boost-position"><option value="1">1º lugar</option><option value="2">2º lugar</option><option value="3">3º lugar</option><option value="4">4º lugar</option><option value="5">5º lugar</option></select><small class="boost-position-help" id="boost-position-help">Consultando a agenda desta posição…</small></div><div class="boost-control boost-control-duration"><label for="boost-duration">Período</label><select id="boost-duration"><option value="7">7 dias</option><option value="14">14 dias</option><option value="30">30 dias</option></select></div></div><div class="boost-summary"><div><strong class="boost-price" id="boost-price">R$ 29,90</strong><div class="boost-note">Sem cobrança durante o piloto em São Carlos. O período completo é preservado: começa quando a administração liberar ou assim que a posição ficar livre.</div></div><button class="btn btn-primary" id="boost-pay" type="button">Solicitar destaque</button></div><div class="boost-estimate" id="boost-estimate"></div><small class="boost-estimate-disclaimer">Estimativa ilustrativa a partir das visitas já registradas deste produto. Não é garantia de resultado.</small><p class="boost-feedback" id="boost-feedback" aria-live="polite"></p><div class="promotion-list" id="promotion-list"></div></section>
+    <div class="settings-stack dashboard-tab-pane" data-dashboard-panel="settings" hidden>
+      <section class="panel settings-panel store-profile-panel">
+        <span class="section-kicker">Sua loja</span>
+        <h3>Descrição e horário</h3>
+        <p class="profile-lede">Aparece na página da sua loja e nos cards do catálogo. Com o horário preenchido, o comprador vê se você está aberto antes de tentar comprar.</p>
+        <form id="store-profile-form">
+          <label for="store-description">Sobre a loja <span class="optional">(opcional)</span></label>
+          <textarea id="store-description" maxlength="280" placeholder="Conte em poucas linhas o que sua loja oferece, desde quando, e o que ela tem de diferente."></textarea>
+          <small class="field-help"><span id="store-description-count">0</span>/280 caracteres</small>
+          <label for="store-instagram">Instagram <span class="optional">(opcional)</span></label>
+          <input id="store-instagram" maxlength="60" autocomplete="off" placeholder="@sualoja">
+          <small class="field-help">Aparece como botão na sua vitrine. Pode colar o link do perfil.</small>
+          <span class="hours-title">Horário de funcionamento</span><p class="hours-hint">Desmarque <strong>Abre</strong> nos dias em que você não atende: a loja aparece como <strong>fechada</strong> nesses dias, para o comprador não tentar pedir à toa.</p>
+          <div class="hours-grid" id="store-hours"></div>
+          <div class="profile-actions">
+            <p class="pix-feedback" id="store-profile-feedback" aria-live="polite"></p>
+            <button class="btn btn-primary" type="submit">Salvar loja</button>
+          </div>
+        </form>
+      </section>
+      <section class="panel settings-panel"><span class="section-kicker">Identidade</span><div class="store-panel-identity"><img class="logo-preview" id="logo-preview" src="assets/how-find.png" alt="Logo da loja"><div class="logo-copy"><strong>Logo da loja</strong><p class="logo-help">Use uma imagem quadrada e nítida para representar sua loja.</p></div><input class="file-hidden" id="logo-file" type="file" accept="image/jpeg,image/png,image/webp"><label class="btn btn-ghost" for="logo-file">Alterar logo</label></div>
+        <div class="store-panel-identity cover-editor"><img class="cover-preview" id="cover-preview" src="assets/local-market-store.webp" alt="Capa da loja"><div class="logo-copy"><strong>Imagem de capa</strong><p class="logo-help">Fica no topo da sua vitrine. Uma foto deitada do balcão, da banca ou dos produtos funciona bem.</p></div><input class="file-hidden" id="cover-file" type="file" accept="image/jpeg,image/png,image/webp"><label class="btn btn-ghost" for="cover-file">Alterar capa</label></div>
+      </section>
+      <section class="panel pix-panel"><div class="pix-panel-head"><div class="pix-heading"><span class="pix-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7.5 8.5 11 5a1.4 1.4 0 0 1 2 0l3.5 3.5M7.5 15.5 11 19a1.4 1.4 0 0 0 2 0l3.5-3.5M8.5 7.5 5 11a1.4 1.4 0 0 0 0 2l3.5 3.5M15.5 7.5 19 11a1.4 1.4 0 0 1 0 2l-3.5 3.5"/><path d="m9 12 3-3 3 3-3 3z"/></svg></span><div><span class="section-kicker">Pagamento direto</span><h3>Recebimento por Pix</h3><p>Configure os dados que serão usados no pagamento dos seus produtos.</p></div></div><span class="pix-badge" id="pix-badge">Não configurado</span></div><form id="pix-form"><div class="pix-form"><div><label for="pix-key">Chave Pix da loja</label><input id="pix-key" autocomplete="off" placeholder="CPF, e-mail, telefone ou chave aleatória"><small class="field-help">Se a chave for celular, informe o número com DDD. O Semeia adiciona o +55 corretamente ao QR Code.</small></div><div><label for="pix-name">Nome de quem recebe</label><input id="pix-name" maxlength="25" placeholder="Nome do titular"></div><div><label for="pix-city">Cidade</label><input id="pix-city" maxlength="15" placeholder="Sua cidade"></div></div><div class="pix-form-actions"><button class="btn btn-primary" type="submit"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 3h12l2 2v16H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg>Salvar alterações</button></div><p class="pix-feedback" id="pix-feedback" aria-live="polite"></p></form></section>
+    </div>
+    <div class="semeia-security"><span>Proteção para envio de imagens</span><div class="cf-turnstile" data-sitekey="0x4AAAAAAENPXnq4jBtZ6CA3" data-action="turnstile-spin-v1" data-theme="dark"></div></div>
+  </div>
+  <section class="panel publish-panel" id="publish" hidden><div class="publish-head"><div><span class="section-kicker">Novo produto</span><h2>O que você quer vender?</h2></div><p>Leva menos de um minuto.</p></div><form class="form-grid product-form" id="product-form"><input id="slug" type="hidden"><div class="full"><label for="photo">Foto do produto</label><input class="file-hidden" id="photo" type="file" accept="image/*" required><label class="photo-picker" for="photo"><span class="photo-icon" aria-hidden="true">＋</span><span class="photo-copy"><strong id="photo-title">Adicionar uma foto</strong><span>Escolha uma imagem clara do produto</span></span><img class="photo-preview" id="photo-preview" alt="Prévia da foto" hidden></label></div><div class="full"><label for="product-name">Nome do produto</label><input id="product-name" required placeholder="Ex.: Cesta de verduras da semana"></div><div><label for="price">Preço</label><div class="money-input"><span>R$</span><input id="price" type="number" step="0.01" min="0" inputmode="decimal" required placeholder="0,00"></div></div><div><label for="unit">Como é vendido?</label><select id="unit"><option value="/un">Por unidade</option><option value="/kg">Por quilo</option><option value="/cesta">Por cesta</option><option value="/pacote">Por pacote</option><option value="/caixa">Por caixa</option></select></div><div class="full"><label for="description">Descrição <span class="optional">(opcional)</span></label><textarea id="description" placeholder="Ex.: Colhido hoje, contém alface, tomate e cenoura."></textarea></div><fieldset class="impact-fields"><legend>Sobre este produto</legend><p>Três respostas rápidas deixam a comparação ambiental mais honesta.</p><div class="impact-grid"><div><label for="product-type">Tipo de alimento</label><select id="product-type" required><option value="leafy_vegetables">Hortaliças e folhas</option><option value="vegetables">Legumes e verduras</option><option value="fruit">Frutas</option><option value="roots">Raízes e tubérculos</option><option value="grains">Grãos e farinhas</option><option value="bread">Pães e massas</option><option value="eggs">Ovos</option><option value="milk">Leite</option><option value="cheese">Queijos</option><option value="prepared_food">Alimento preparado</option><option value="other_food">Outro alimento</option></select></div><div><label for="processing">Como é preparado?</label><select id="processing"><option value="fresh">Fresco, sem processamento</option><option value="minimal">Minimamente processado</option><option value="processed">Processado</option></select></div><div><label for="delivery-method">Entrega mais comum</label><select id="delivery-method"><option value="pickup">Retirada pelo comprador</option><option value="grouped">Entrega em rota com vários pedidos</option><option value="dedicated">Entrega exclusiva de carro ou moto</option></select></div><div><label for="weight-kg">Peso aproximado da venda <span class="optional">(kg)</span></label><input id="weight-kg" type="number" min="0.01" max="1000" step="0.01" inputmode="decimal" placeholder="Calculado pela unidade"></div><div><label for="packaging">Embalagem</label><select id="packaging"><option value="none">Sem embalagem</option><option value="paper">Papel ou papelão</option><option value="plastic">Plástico</option><option value="glass">Vidro</option></select></div></div><div class="check-row"><label class="check-option"><input id="refrigerated" type="checkbox">Precisa de refrigeração</label><label class="check-option"><input id="pesticide-free" type="checkbox">Cultivado sem agrotóxicos</label></div></fieldset><div class="full submit-row"><span class="impact-auto-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3c3 2 5 5 5 8.5A5 5 0 0 1 12 16a5 5 0 0 1-5-4.5C7 8 9 5 12 3z"/><path d="M12 16v5"/></svg>Compararemos a cadeia local com um equivalente convencional, incluindo a entrega.</span><button class="btn btn-primary">Publicar produto</button></div></form></section>
+</main>
+<dialog class="pix-dialog" id="boost-pix" aria-labelledby="boost-pix-title">
+  <div class="pix-dialog-inner">
+    <div class="pix-dialog-head">
+      <div>
+        <span class="section-kicker">Pagamento do destaque</span>
+        <h3 id="boost-pix-title">Falta só o pagamento</h3>
+      </div>
+      <button class="pix-dialog-close" type="button" id="boost-pix-close" aria-label="Fechar">×</button>
+    </div>
+    <div class="pix-dialog-amount" id="boost-pix-amount">R$ 0,00</div>
+    <p class="pix-dialog-meta" id="boost-pix-meta"></p>
+    <div class="pix-dialog-body">
+    <div class="pix-qr-box" id="boost-pix-qr" role="img" aria-label="QR Code do Pix"></div>
+    <div class="pix-dialog-side">
+    <div class="pix-key-row">
+      <div>
+        <small>Chave Pix (celular)</small>
+        <strong id="boost-pix-key">16 99439-2545</strong>
+      </div>
+    </div>
+    <div class="pix-dialog-actions">
+      <button class="btn btn-primary" type="button" id="boost-pix-copy">Copiar código Pix</button>
+      <a class="btn btn-ghost" id="boost-pix-whats" href="#" target="_blank" rel="noopener">Enviar comprovante no WhatsApp</a>
+    </div>
+    <p class="pix-copy-feedback" id="boost-pix-feedback" aria-live="polite"></p>
+    <div class="pix-card-alt">
+      <span class="pix-card-or">ou pague com cartão</span>
+      <a class="btn btn-ghost" id="boost-card-link" href="https://link.mercadopago.com.br/semeia" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>
+      <small>No Mercado Pago você digita o valor <strong id="boost-card-amount">R$ 0,00</strong> — o mesmo mostrado aqui em cima. Depois é só mandar o comprovante no WhatsApp.</small>
+    </div>
+    </div>
+    </div>
+    <p class="pix-dialog-note">O destaque começa depois que a gente confirmar o pagamento — por isso o comprovante no WhatsApp acelera. A solicitação já está registrada e aparece na sua lista como aguardando confirmação.</p>
+  </div>
+</dialog>
+
+<script src="assets/data.js?v=20260812-categories1"></script><script src="assets/main.js?v=20260814-trees"></script><script src="assets/config.js?v=20260813-api-url"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="assets/pix.js?v=20260814-1"></script>
+<script src="assets/notice.js?v=20260813-1"></script><script src="assets/security.js"></script><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>window.SemeiaFirebaseReady=import("./assets/firebase-auth.js").then(function(module){window.SemeiaFirebase=module;return module;});</script>
+<script>
+(()=>{const A=SEMEIA_API_URL.replace(/\/$/,''),E=q=>document.querySelector(q);let auth,store,boostAvailability=[],salesByProduct=new Map(),productsById=new Map(),promotionsById=new Map(),pendingPromotionByProduct=new Map();
+// Enquanto não confirmamos o pagamento, o vendedor pode reabrir o diálogo de Pix/cartão da solicitação.
+const PAYABLE_PROMOTION=new Set(['payment_pending','paid_pending_review','payment_failed']);
+function isPayable(p){return PAYABLE_PROMOTION.has(p.status)&&Number(p.amount)>0}
+function indexPromotions(data){promotionsById=new Map();pendingPromotionByProduct=new Map();(data.promotions||[]).forEach(p=>{promotionsById.set(p.id,p);if(isPayable(p)&&!pendingPromotionByProduct.has(p.productId))pendingPromotionByProduct.set(p.productId,p)})}const boostWeekly={1:29.9,2:24.9,3:19.9,4:14.9,5:9.9},boostMultiplier={7:1,14:1.8,30:3.4},boostScopeMultiplier={home:1,category:.7,both:1.45};
+// Destaque é cortesia no piloto de São Carlos. Quem manda é a API: a tela só
+// confirma a flag e usa a tabela cheia para mostrar o valor riscado.
+let boostFree=true;
+async function loadBoostPrices(){try{const r=await fetch(A+'/api/promotions/prices'),d=await r.json();if(typeof d.free==='boolean')boostFree=d.free;(d.positions||[]).forEach(x=>{if(x.tablePrice)boostWeekly[x.position]=x.tablePrice});updateBoostPrice()}catch(_){}}
+// Multiplicadores ilustrativos de alcance por posição e escopo — não vêm de dados medidos de cliques, servem só para dar uma noção de escala ao vendedor.
+const boostReachMultiplier={1:3.2,2:2.4,3:1.8,4:1.4,5:1.15},boostReachScope={home:1,category:.6,both:1.3};
+function slug(v){return v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')}
+function promotionStatus(promotion){const status=promotion.status;if(status==='approved'&&promotion.startsAt&&promotion.startsAt*1000>Date.now()){const days=Math.max(1,Math.ceil((promotion.startsAt*1000-Date.now())/86400000));return'Começa em '+days+' '+(days===1?'dia':'dias')}// Cortesia do piloto: não há pagamento pendente, só liberação pendente.
+if(Number(promotion.amount)===0&&(status==='payment_pending'||status==='paid_pending_review'||status==='payment_failed'))return'Aguardando liberação';
+return({payment_pending:'Pagamento a combinar',paid_pending_review:'Aguardando confirmação da administração',approved:'Destaque ativo',rejected:'Não aprovado',payment_failed:'Pagamento não confirmado'})[status]||status}
+function boostScopeLabel(scope,category){const categoryName=CATS[category]?.label||category||'';return scope==='both'?'Geral + '+categoryName:scope==='category'?'Somente '+categoryName:'Catálogo geral'}
+// Loja e produto usam o mesmo formulário: só o alvo muda.
+function boostTarget(){return E('#boost-target').value}
+function isStoreBoost(){return boostTarget()==='store'}
+function syncBoostTarget(){
+  const store=isStoreBoost();
+  E('#boost-product-wrap').hidden=store;
+  E('#boost-target-help').textContent=store
+    ? 'Sua loja aparece como um card no catálogo, na posição escolhida, levando o comprador para todo o seu catálogo.'
+    : 'O anúncio escolhido aparece entre os primeiros do catálogo.';
+  E('#boost-estimate').hidden=store;
+  E('.boost-estimate-disclaimer').hidden=store;
+  updateBoostPrice();loadBoostAvailability();
+}
+function syncBoostScope(){const scope=E('#boost-scope').value,needsCategory=scope!=='home';E('#boost-category-wrap').hidden=!needsCategory;E('#boost-category').required=needsCategory;E('#boost-scope-help').textContent=scope==='both'?'Reserva a mesma posição no catálogo geral e na categoria escolhida.':scope==='category'?'Seu produto fica patrocinado apenas quando essa categoria estiver selecionada.':'Aparece entre todos os produtos da página principal.';updateBoostPrice();loadBoostAvailability()}
+function selectedBoostSlot(){return boostAvailability.find(slot=>slot.position===Number(E('#boost-position').value))}
+function renderBoostAvailability(){const help=E('#boost-position-help'),slot=selectedBoostSlot();if(!slot){help.className='boost-position-help';help.textContent='Consultando a agenda desta posição…';return}if(slot.availableNow){help.className='boost-position-help';help.innerHTML='<span><strong>Disponível agora.</strong> Começa assim que a administração liberar.</span>'}else{const date=new Date(slot.availableAt*1000).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});help.className='boost-position-help waiting';help.innerHTML='<span><strong>Posição concorrida.</strong> Se aprovada agora, começará em '+slot.daysUntil+' '+(slot.daysUntil===1?'dia':'dias')+', após o destaque atual terminar ('+date+').</span>'}}
+async function loadBoostAvailability(){if(!auth)return;const help=E('#boost-position-help'),scope=E('#boost-scope').value;help.className='boost-position-help';help.textContent='Consultando a agenda desta posição…';try{const r=await fetch(A+(isStoreBoost()?'/api/store/store-promotions/availability':'/api/store/promotions/availability'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...auth,placementScope:scope,placementCategory:scope==='home'?null:E('#boost-category').value})}),d=await r.json();if(!r.ok)throw Error(d.error);boostAvailability=d.positions||[];renderBoostAvailability()}catch(x){boostAvailability=[];help.className='boost-position-help waiting';help.textContent=x.message}}
+function updateBoostPrice(){const position=Number(E('#boost-position').value),days=Number(E('#boost-duration').value),scope=E('#boost-scope').value,price=boostWeekly[position]*boostMultiplier[days]*boostScopeMultiplier[scope];const label=price.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),el=E('#boost-price');if(boostFree){el.innerHTML='Grátis <s class="boost-old-price">'+label+'</s>';el.title='Sem cobrança durante o piloto em São Carlos'}else{el.textContent=label;el.title=''}renderBoostAvailability();updateBoostEstimate()}
+function updateBoostEstimate(){const box=E('#boost-estimate');if(!box||isStoreBoost())return;const product=productsById.get(E('#boost-product').value);if(!product){box.textContent='';return}const days=Number(E('#boost-duration').value),position=Number(E('#boost-position').value),scope=E('#boost-scope').value;if(!product.views){box.innerHTML='<strong>'+product.name+'</strong> ainda não tem visitas registradas. Publique por mais tempo para ver uma estimativa de alcance.';return}const baseline=product.viewsPerDay*days,reach=boostReachMultiplier[position]*boostReachScope[scope],projected=baseline*reach,gainPct=Math.round((reach-1)*100);box.innerHTML='Sem destaque, <strong>'+product.name+'</strong> teria cerca de <strong>~'+Math.round(baseline)+' visitas</strong> em '+days+' dias, no ritmo atual. Com esta posição, a estimativa sobe para <strong>~'+Math.round(projected)+' visitas</strong> (+'+gainPct+'%).'}
+function renderPromotions(data){
+  const select=E('#boost-product'),list=E('#promotion-list');
+  select.innerHTML='';productsById=new Map(data.products.map(p=>[p.id,p]));
+  data.products.forEach(p=>select.add(new Option(p.name,p.id)));
+  E('#boost-pay').disabled=!data.products.length;
+  list.innerHTML='';promotionsById=new Map();pendingPromotionByProduct=new Map();
+  // Destaques de produto e de loja saem na mesma lista, do mais recente para o mais antigo.
+  const entries=[]
+    .concat((data.promotions||[]).map(p=>({...p,kind:'product'})))
+    .concat((data.storePromotions||[]).map(p=>({...p,kind:'store'})))
+    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  entries.forEach(p=>{
+    promotionsById.set(p.id,p);
+    if(p.kind==='product'&&isPayable(p)&&!pendingPromotionByProduct.has(p.productId))pendingPromotionByProduct.set(p.productId,p);
+    const payable=isPayable(p),item=document.createElement(payable?'button':'div');
+    item.className='promotion-item'+(payable?' is-payable':'');
+    if(payable){item.type='button';item.title='Abrir o pagamento deste destaque';item.onclick=()=>openBoostPix({...p,promotionId:p.id})}
+    const copy=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('small'),status=document.createElement('span');
+    title.textContent=p.kind==='store'?'Minha loja inteira':p.productName;
+    meta.textContent=p.position+'º lugar · '+boostScopeLabel(p.placementScope,p.placementCategory)+' · '+p.durationDays+' dias · '+(Number(p.amount)>0?'R$ '+p.amount.toFixed(2).replace('.',','):'grátis no piloto')+(payable?' · toque para pagar':'');
+    status.className='promotion-status';status.textContent=promotionStatus(p);
+    copy.append(title,meta);item.append(copy,status);list.append(item);
+  });
+  if(!entries.length){const empty=document.createElement('small');empty.className='boost-note';empty.textContent='Nenhum destaque contratado ainda.';list.append(empty)}
+  updateBoostPrice();loadBoostAvailability();
+}
+const ORDER_STATUS_LABELS={reported:'Informado',paid:'Pix recebido',delivered:'Entregue',cancelled:'Cancelado'};
+const WHATS_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3z"/></svg>';
+// Compradores digitam o nome em CAIXA ALTA com frequência: gritar no painel fica ruim.
+function buyerLabel(name){
+  if(!name)return 'Comprador não identificado';
+  if(name!==name.toUpperCase())return name;
+  return name.toLowerCase().replace(/(^|\s)(\p{L})/gu,(m,space,letter)=>space+letter.toUpperCase());
+}
+function orderMoney(value){return 'R$ '+Number(value||0).toFixed(2).replace('.',',')}
+function orderCard(order){
+  const status=order.status||'reported';
+  const card=document.createElement('article');card.className='order-card is-'+status;
+
+  const head=document.createElement('div');head.className='order-head';
+  const who=document.createElement('div');
+  const name=document.createElement('strong');name.textContent=buyerLabel(order.buyerName);
+  const when=document.createElement('small');
+  when.textContent=new Date(order.createdAt*1000).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+' · '+order.fulfillmentLabel;
+  who.append(name,when);
+  const pill=document.createElement('span');pill.className='order-status is-'+status;pill.textContent=ORDER_STATUS_LABELS[status]||status;
+  head.append(who,pill);card.append(head);
+
+  const body=document.createElement('div');body.className='order-body';
+  const items=document.createElement('ul');items.className='order-items';
+  order.items.forEach(item=>{
+    const row=document.createElement('li');row.className='order-item';
+    const label=document.createElement('span');label.textContent=item.quantity+'× '+item.name;
+    const value=document.createElement('strong');value.textContent=orderMoney(item.amount);
+    row.append(label,value);items.append(row);
+  });
+  body.append(items);
+
+  const money=document.createElement('div');money.className='order-money';
+  const note=document.createElement('small');
+  note.textContent=order.shippingFee==null?'Frete a combinar com o comprador':order.shippingFee===0?'Sem frete (retirada)':'Frete de '+orderMoney(order.shippingFee);
+  const total=document.createElement('span');total.className='order-total';
+  total.textContent=order.total==null?orderMoney(order.productAmount)+' + frete':orderMoney(order.total);
+  money.append(note,total);body.append(money);
+
+  const hint=orderStatusHint(order,status);
+  if(hint)body.append(hint);
+  card.append(body);
+
+  const foot=orderFoot(order,status);
+  if(foot)card.append(foot);
+  return card;
+}
+// A explicação fica junto do valor, não disputando espaço com os botões.
+function orderStatusHint(order,status){
+  const text=status==='reported'?(order.stockApplied
+      ?'Estoque reservado para este pedido. Se ninguém confirmar em 24h, ele volta ao catálogo.'
+      :'A reserva de 24h venceu e o estoque voltou ao catálogo. Confirmar o Pix dá baixa de novo.')
+    :status==='paid'?'Estoque já baixado. Marque como entregue quando o comprador receber.'
+    :status==='delivered'?'Entregue'+(order.deliveredAt?' em '+new Date(order.deliveredAt*1000).toLocaleDateString('pt-BR'):'')+'. Pedido concluído.'
+    :'Cancelado. O estoque voltou para o catálogo.';
+  return orderHint(text);
+}
+function orderFoot(order,status){
+  const foot=document.createElement('div');foot.className='order-foot';
+  if(status==='reported')foot.append(orderButton(order,'paid','Confirmei o Pix','btn btn-primary'));
+  if(status==='paid')foot.append(orderButton(order,'delivered','Marcar como entregue','btn btn-primary'));
+  if(status==='cancelled')foot.append(orderButton(order,'reported','Reabrir pedido','btn btn-ghost'));
+  if(order.buyerWhatsapp){
+    const talk=document.createElement('a');talk.className='order-whats';talk.target='_blank';talk.rel='noopener';
+    talk.href='https://wa.me/'+String(order.buyerWhatsapp).replace(/\D/g,'')+'?text='+encodeURIComponent('Olá! Recebi seu pedido no Semeia.');
+    talk.innerHTML=WHATS_ICON+'<span>Chamar no WhatsApp</span>';foot.append(talk);
+  }
+  const extra=document.createElement('div');extra.className='order-extra';
+  if(status!=='delivered'&&status!=='cancelled'){
+    const cancel=document.createElement('button');cancel.type='button';cancel.className='order-link';
+    cancel.textContent='Cancelar';cancel.onclick=()=>changeOrderStatus(order,'cancelled',cancel);
+    extra.append(cancel);
+  }
+  const remove=document.createElement('button');remove.type='button';remove.className='order-link is-danger';
+  remove.textContent='Excluir';remove.onclick=()=>deleteOrder(order,remove);
+  extra.append(remove);
+  foot.append(extra);
+  return foot.children.length?foot:null;
+}
+function orderHint(text){const hint=document.createElement('span');hint.className='order-hint';hint.textContent=text;return hint}
+function orderButton(order,status,label,className){
+  const button=document.createElement('button');button.type='button';button.className=className;button.textContent=label;
+  button.onclick=()=>changeOrderStatus(order,status,button);
+  return button;
+}
+// Excluir some com o pedido do painel, das vendas e do impacto — e devolve o estoque.
+async function deleteOrder(order,button){
+  const aviso='Excluir este pedido de '+(buyerLabel(order.buyerName))+'? Ele sai da sua lista, das vendas confirmadas e do impacto.'
+    +(order.stockApplied?' O estoque dos itens volta para o catálogo.':'');
+  if(!(await SemeiaNotice.confirm(aviso,{title:'Excluir pedido',confirmLabel:'Excluir',tone:'danger'})))return;
+  const original=button.textContent;button.disabled=true;button.textContent='Excluindo…';
+  try{
+    const r=await fetch(A+'/api/store/orders/'+encodeURIComponent(order.id)+'/delete',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(auth)}),d=await r.json();
+    if(!r.ok)throw Error(d.error);
+    await me();
+  }catch(x){SemeiaNotice.alert(x.message);button.disabled=false;button.textContent=original}
+}
+async function changeOrderStatus(order,status,button){
+  if(status==='cancelled'&&!(await SemeiaNotice.confirm('Cancelar este pedido? O estoque reservado volta para o catálogo.',{title:'Cancelar pedido',confirmLabel:'Cancelar pedido',tone:'danger'})))return;
+  const original=button.textContent;button.disabled=true;button.textContent='Salvando…';
+  try{
+    const r=await fetch(A+'/api/store/orders/'+encodeURIComponent(order.id)+'/status',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...auth,status})}),d=await r.json();
+    if(!r.ok)throw Error(d.error);
+    await me();
+  }catch(x){SemeiaNotice.alert(x.message);button.disabled=false;button.textContent=original}
+}
+// Só entram vendas que o vendedor confirmou: é o número em que ele confia.
+function renderSales(data){
+  const box=E('#sales-box'),grid=E('#sales-grid'),list=E('#sales-products');
+  const sales=data.sales||{totals:{orders:0,delivered:0,units:0,revenue:0},byProduct:[]};
+  if(!sales.totals.orders){box.hidden=true;return}
+  box.hidden=false;
+  grid.innerHTML='';
+  [[String(sales.totals.orders),sales.totals.orders===1?'venda confirmada':'vendas confirmadas'],
+   [String(sales.totals.units),sales.totals.units===1?'item vendido':'itens vendidos'],
+   [orderMoney(sales.totals.revenue),'em produtos (sem frete)']].forEach(pair=>{
+    const cell=document.createElement('div');cell.className='sales-cell';
+    const n=document.createElement('span');n.className='n';n.textContent=pair[0];
+    const l=document.createElement('span');l.className='l';l.textContent=pair[1];
+    cell.append(n,l);grid.append(cell);
+  });
+  list.innerHTML='';
+  sales.byProduct.forEach(row=>{
+    const line=document.createElement('div');line.className='sales-row';
+    const name=document.createElement('div');name.className='sales-row-name';
+    name.append(document.createTextNode(row.productName));
+    const detail=document.createElement('small');
+    detail.textContent=row.units+(row.units===1?' item':' itens')+' em '+row.orders+(row.orders===1?' pedido':' pedidos')
+      +(row.lastAt?' · última em '+new Date(row.lastAt*1000).toLocaleDateString('pt-BR'):'');
+    name.append(detail);
+    const value=document.createElement('span');value.className='sales-row-value';value.textContent=orderMoney(row.revenue);
+    line.append(name,value);list.append(line);
+  });
+  if(sales.totals.delivered<sales.totals.orders){
+    const note=document.createElement('div');note.className='sales-row';
+    const name=document.createElement('div');name.className='sales-row-name';
+    const detail=document.createElement('small');
+    detail.textContent=sales.totals.delivered+' de '+sales.totals.orders+' já marcadas como entregues.';
+    name.append(detail);note.append(name);list.append(note);
+  }
+}
+function renderOrders(data){
+  const list=E('#orders-list'),badge=E('#orders-count'),orders=data.orders||[];
+  // O contador mostra o que ainda espera ação, não o total histórico.
+  const pending=orders.filter(o=>(o.status||'reported')==='reported').length;
+  badge.textContent=pending>99?'99+':String(pending);badge.hidden=!pending;
+  list.innerHTML='';
+  if(!orders.length){
+    const empty=document.createElement('p');empty.className='orders-empty';
+    empty.textContent='Nenhum pedido informado ainda. Quando alguém finalizar uma compra no site, ela aparece aqui e você recebe um e-mail.';
+    list.append(empty);return;
+  }
+  orders.forEach(order=>list.append(orderCard(order)));
+}
+function formatMetric(value){return Number(value||0).toLocaleString('pt-BR')}
+function metricCells(grid,pairs){if(!grid)return;grid.innerHTML='';pairs.forEach(pair=>{const cell=document.createElement('div'),n=document.createElement('span'),l=document.createElement('span');n.className='n';n.textContent=pair[0];l.className='l';l.textContent=pair[1];cell.append(n,l);grid.append(cell)})}
+function metricRows(target,products,kind){if(!target)return;target.innerHTML='';const rows=products.filter(p=>Number(kind==='views'?p.monthlyViews:p.monthlyWhatsAppClicks)>0).sort((a,b)=>Number(kind==='views'?b.monthlyViews:b.monthlyWhatsAppClicks)-Number(kind==='views'?a.monthlyViews:a.monthlyWhatsAppClicks));if(!rows.length){const empty=document.createElement('p');empty.className='metrics-empty';empty.textContent=kind==='views'?'As visualizações dos seus produtos aparecerão aqui quando alguém abrir um anúncio.':'Os cliques para conversar no WhatsApp aparecerão aqui quando um comprador iniciar uma conversa.';target.append(empty);return}rows.forEach(p=>{const row=document.createElement('div'),info=document.createElement('div'),title=document.createElement('strong'),sub=document.createElement('small'),main=document.createElement('span'),label=document.createElement('small');row.className='metric-product-row';title.textContent=p.name;sub.textContent='Dados deste mês';info.append(title,sub);main.className='metric-product-value';main.textContent=formatMetric(kind==='views'?p.monthlyViews:p.monthlyWhatsAppClicks);label.className='metric-product-value';label.innerHTML='<small>'+ (kind==='views'?'visualizações':'cliques')+'</small>';row.append(info,main,label);target.append(row)})}
+// Desempenho: os quatro números que mostram se o Semeia está trazendo gente.
+// Tudo vem do que a API já devolve — nada é estimado nem inventado aqui.
+function renderPerformance(data){
+  const grid=E('#performance-grid');if(!grid)return;
+  const metrics=data.metrics||{},pedidos=(data.orders||[]).length;
+  const periodo=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const periodEl=E('#performance-period');if(periodEl)periodEl.textContent=periodo;
+  metricCells(grid,[
+    [formatMetric(metrics.totalViews),'visitas à sua loja'],
+    [formatMetric(metrics.productViews),'visualizações dos produtos'],
+    [formatMetric(metrics.whatsappClicks),'cliques no WhatsApp'],
+    [formatMetric(pedidos),pedidos===1?'pedido recebido':'pedidos recebidos'],
+  ]);
+  const hint=E('#performance-hint');
+  if(!hint)return;
+  const total=Number(metrics.totalViews||0)+Number(metrics.productViews||0);
+  hint.textContent=total
+    ? 'Visitas e visualizações contam o mês atual. Compartilhe o link da sua loja para trazer mais gente.'
+    : 'Ainda sem visitas este mês. Compartilhe o link da sua loja com seus clientes para começar a aparecer aqui.';
+}
+function renderMetrics(data){const metrics=data.metrics||{},products=data.products||[],period=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});const periodEl=E('#metrics-period');if(periodEl)periodEl.textContent=period;metricCells(E('#metrics-grid'),[[formatMetric(metrics.totalViews),'visualizações da loja'],[formatMetric(metrics.productViews),'visualizações de produtos'],[formatMetric(metrics.whatsappClicks),'cliques no WhatsApp']]);metricCells(E('#whatsapp-metrics-grid'),[[formatMetric(metrics.whatsappClicks),'cliques no WhatsApp'],[formatMetric(products.filter(p=>Number(p.monthlyWhatsAppClicks)>0).length),'produtos com conversas'],[formatMetric(metrics.productViews),'visitas aos produtos']]);metricRows(E('#views-by-product'),products,'views');metricRows(E('#whatsapp-by-product'),products,'whatsapp')}
+// O contador do topo é lido das próprias linhas, então acompanha as reposições.
+function countStock(){
+  const list=E('#products');if(!list)return;
+  const total=list.querySelectorAll('.owner-product').length,out=list.querySelectorAll('.owner-product.is-out').length;
+  const label=E('#product-count');if(!label)return;
+  label.textContent=total+(total===1?' produto':' produtos')+(out?' · '+out+(out===1?' esgotado':' esgotados'):'');
+  label.classList.toggle('has-out',Boolean(out));
+}
+function productRow(p){const row=document.createElement('div');row.className='owner-product';row.dataset.productId=p.id;row.dataset.productName=p.name;const img=document.createElement('img');img.src=p.imageUrl||'assets/product-placeholder-basket.webp';img.alt='';const info=document.createElement('div'),name=document.createElement('strong'),meta=document.createElement('small'),price=document.createElement('span'),actions=document.createElement('div'),view=document.createElement('a'),edit=document.createElement('a'),remove=document.createElement('button');name.textContent=p.name;
+// Estoque zerado tira o produto da vitrine: precisa saltar aos olhos na lista.
+// paintStock roda de novo a cada reposição, sem recarregar o painel inteiro.
+let stock=p.quantityAvailable==null?null:Number(p.quantityAvailable);
+function paintStock(){
+  name.querySelectorAll('.stock-flag').forEach(flag=>flag.remove());
+  row.classList.toggle('is-out',stock!=null&&stock<=0);
+  if(stock!=null&&stock<=0){const flag=document.createElement('span');flag.className='stock-flag is-out';flag.textContent='Esgotado';name.append(flag)}
+  else if(stock!=null&&stock<=3){const flag=document.createElement('span');flag.className='stock-flag is-low';flag.textContent=stock===1?'Última unidade':'Restam '+stock;name.append(flag)}
+  const metaParts=[p.active?'Publicado':'Oculto'];
+  if(stock!=null)metaParts.push(stock<=0?'sem estoque':stock===1?'1 disponível':stock+' disponíveis');
+  metaParts.push(formatMetric(p.monthlyViews)+(Number(p.monthlyViews)===1?' visualização este mês':' visualizações este mês'));
+  const sold=salesByProduct.get(p.id);if(sold)metaParts.push(sold.units+(sold.units===1?' venda confirmada':' vendas confirmadas'));
+  if(Number(p.monthlyWhatsAppClicks))metaParts.push(formatMetric(p.monthlyWhatsAppClicks)+(Number(p.monthlyWhatsAppClicks)===1?' clique no WhatsApp':' cliques no WhatsApp'));
+  meta.textContent=metaParts.join(' · ');
+}
+paintStock();actions.className='owner-product-actions';view.href='produto.html?id='+encodeURIComponent(p.id);view.textContent='Ver anúncio';view.className='action-chip';edit.href='cadastro-produto.html?id='+encodeURIComponent(p.id);edit.textContent='Editar anúncio';edit.className='action-chip is-primary';remove.type='button';remove.className='action-chip is-danger delete-product';remove.textContent='Apagar';remove.title='Apagar este produto do catálogo';remove.dataset.deleteProduct=p.id;const boost=document.createElement('button');boost.type='button';
+// Destacar e Pagar destaque são o mesmo passo em momentos diferentes: mostramos só o que cabe agora.
+const pending=pendingPromotionByProduct.get(p.id);
+if(pending){boost.className='action-chip is-pending';boost.textContent='Pagar destaque';boost.dataset.payPromotion=pending.id}
+else{boost.className='action-chip';boost.textContent='Destacar';boost.dataset.boostProduct=p.id}
+actions.append(edit,view,boost,remove);price.className='owner-price';price.textContent='R$ '+p.price.toFixed(2).replace('.',',')+p.unit;
+
+// ---- Repor estoque na própria linha ----
+const stockRow=document.createElement('div');stockRow.className='stock-row';
+const caption=document.createElement('span');caption.className='stock-caption';caption.textContent='Estoque';
+const stepper=document.createElement('div');stepper.className='stock-stepper';
+const less=document.createElement('button');less.type='button';less.textContent='−';less.setAttribute('aria-label','Tirar uma unidade de '+p.name);
+const field=document.createElement('input');field.inputMode='numeric';field.placeholder='livre';field.title='Deixe vazio para vender sem controle de estoque';field.setAttribute('aria-label','Quantidade em estoque de '+p.name);
+const more=document.createElement('button');more.type='button';more.textContent='+';more.setAttribute('aria-label','Adicionar uma unidade de '+p.name);
+stepper.append(less,field,more);
+const state=document.createElement('span');state.className='stock-state';state.setAttribute('aria-live','polite');
+// Unidades presas em pedidos que ainda não foram confirmados: é o que explica
+// um produto esgotado sem venda registrada.
+const reserved=Number(p.reservedUnits)||0;
+const held=document.createElement('span');held.className='stock-held';
+if(reserved){
+  held.textContent=reserved===1?'1 reservada':reserved+' reservadas';
+  held.title=(reserved===1?'1 unidade está':reserved+' unidades estão')+' em pedidos aguardando você confirmar o Pix. Se ninguém confirmar em 24h, elas voltam ao catálogo.';
+}else held.hidden=true;
+const quick=(label,amount)=>{const b=document.createElement('button');b.type='button';b.className='stock-quick';b.textContent=label;b.onclick=()=>bumpStock(amount);return b};
+stockRow.append(caption,stepper,quick('+5',5),quick('+10',10),held,state);
+
+function refreshStock(){field.value=stock==null?'':String(stock);less.disabled=stock==null||stock<=0;paintStock();countStock()}
+let pendingDelta=0,saveTimer=null,confirmedStock=stock;
+// Cliques seguidos viram um pedido só: a tela responde na hora, a API recebe o total.
+function bumpStock(amount){
+  stock=Math.max(0,(stock==null?0:stock)+amount);
+  pendingDelta+=amount;refreshStock();
+  state.className='stock-state';state.textContent='Salvando…';
+  clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const delta=pendingDelta;pendingDelta=0;saveStock({delta})},700);
+}
+async function saveStock(body){
+  try{
+    const r=await fetch(A+'/api/store-products/'+encodeURIComponent(p.id)+'/stock',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...auth,...body})});
+    const d=await r.json();
+    if(!r.ok)throw Error(d.error||'Não foi possível salvar o estoque.');
+    stock=d.quantityAvailable==null?null:Number(d.quantityAvailable);confirmedStock=stock;refreshStock();
+    state.className='stock-state is-saved';state.textContent='Salvo';
+    setTimeout(()=>{if(state.textContent==='Salvo'){state.textContent='';state.className='stock-state'}},2200);
+  }catch(x){
+    // Se a gravação falhou, a tela não pode continuar mostrando um número que a loja não tem.
+    pendingDelta=0;stock=confirmedStock;refreshStock();
+    state.className='stock-state is-error';state.textContent=x.message;
+  }
+}
+less.onclick=()=>bumpStock(-1);more.onclick=()=>bumpStock(1);
+field.addEventListener('input',()=>{field.value=field.value.replace(/\D/g,'').slice(0,6)});
+// Digitar um número é contagem de prateleira: grava o valor fechado, não soma.
+field.addEventListener('change',()=>{
+  const typed=field.value.trim();
+  if(!typed)return refreshStock();
+  const value=Math.max(0,Math.min(999999,Number(typed)));
+  if(value===stock)return refreshStock();
+  stock=value;refreshStock();
+  state.className='stock-state';state.textContent='Salvando…';
+  clearTimeout(saveTimer);saveStock({quantity:value});
+});
+refreshStock();
+
+// Estoque e ações são filhos do card (não do bloco de texto): no celular eles
+// ocupam a largura inteira em vez de espremer numa coluna de 180px.
+info.append(name,meta);row.append(img,info,price,stockRow,actions);return row}
+const productCount=E('#product-count'),catalogActions=document.createElement('div'),newProductLink=document.createElement('a');catalogActions.className='catalog-actions';newProductLink.className='btn btn-primary';newProductLink.href='cadastro-produto.html';newProductLink.innerHTML='<span aria-hidden="true">＋</span> Novo produto';productCount.replaceWith(catalogActions);catalogActions.append(productCount,newProductLink);
+function selectDashboardTab(name){const requested=document.querySelector('[data-dashboard-tab="'+name+'"]');if(requested?.disabled)name='products';document.querySelectorAll('[data-dashboard-tab]').forEach(button=>{const active=button.dataset.dashboardTab===name;button.classList.toggle('is-active',active);button.setAttribute('aria-selected',String(active))});document.querySelectorAll('[data-dashboard-panel]').forEach(panel=>panel.hidden=panel.dataset.dashboardPanel!==name);
+// O painel de destaques mora junto do catálogo, mas só faz sentido com a loja aprovada.
+if(store&&store.status!=='approved')E('#boost-panel').hidden=true}
+document.querySelectorAll('[data-dashboard-tab]').forEach(button=>button.addEventListener('click',()=>selectDashboardTab(button.dataset.dashboardTab)));
+async function me(){const r=await fetch(A+'/api/store/me',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(auth)}),d=await r.json();if(!r.ok)throw Error(d.error);store=d.store;E('#session-check').hidden=true;E('#login').hidden=true;E('#name').textContent=d.store.name;E('#meta').textContent=d.store.region+' · '+d.store.email;E('#public-store').href=storePublicUrl(d.store);E('#logo-preview').src=d.store.logoUrl||'assets/how-find.png';E('#cover-preview').src=d.store.coverUrl||'assets/local-market-store.webp';E('#store-instagram').value=d.store.instagram?'@'+d.store.instagram:'';E('#store-description').value=d.store.description||'';E('#store-description-count').textContent=(d.store.description||'').length;fillHours(d.store.openingHours);E('#pix-key').value=d.store.pixKey||'';E('#pix-name').value=d.store.pixName||d.store.name||'';E('#pix-city').value=d.store.pixCity||(d.store.region||'').split(',')[0];const badge=E('#pix-badge');badge.textContent=d.store.pixConfigured?'Pix configurado':'Não configurado';badge.className='pix-badge'+(d.store.pixConfigured?' ready':'');const statusLabels={approved:'Aprovada',pending:'Em análise',suspended:'Suspensa'};E('#status-pill').textContent=statusLabels[d.store.status]||d.store.status;E('#status-pill').className='status-pill '+d.store.status;const status=E('#status');status.textContent=d.store.status==='approved'?'Loja aprovada — seu catálogo está disponível para os compradores.':d.store.status==='pending'?'Cadastro em análise — você poderá publicar assim que a loja for aprovada.':'Loja suspensa — entre em contato com o suporte.';indexPromotions(d);salesByProduct=new Map(((d.sales||{}).byProduct||[]).map(row=>[row.productId,row]));const list=E('#products');list.innerHTML='';if(d.products.length)d.products.forEach(p=>list.appendChild(productRow(p)));else{const empty=document.createElement('p');empty.className='products-empty';empty.textContent='Nenhum produto publicado ainda.';list.appendChild(empty)}countStock();renderPerformance(d);renderMetrics(d);renderSales(d);renderOrders(d);renderPromotions(d);E('#dashboard').hidden=false;E('#publish').hidden=d.store.status!=='approved';selectDashboardTab(document.querySelector('[data-dashboard-tab].is-active')?.dataset.dashboardTab||'products')}
+const nonFoodOption=new Option('Produto não alimentício','not_applicable');E('#product-type').append(nonFoodOption);function syncImpactType(){if(store&&/cosmeticos|artesanato|reuso|moda/.test(store.category))E('#product-type').value='not_applicable'}new MutationObserver(syncImpactType).observe(E('#dashboard'),{attributes:true,attributeFilter:['hidden']});
+function storePublicUrl(s){return location.origin+'/loja?id='+encodeURIComponent(s.slug||s.id)}
+E('#share-store').onclick=async()=>{if(!store)return;const url=storePublicUrl(store),feedback=E('#share-store-feedback');const copy=async()=>{try{await navigator.clipboard.writeText(url);feedback.textContent='Link copiado: '+url.replace(/^https?:\/\//,'')}catch{feedback.textContent=url}setTimeout(()=>feedback.textContent='',4000)};if(navigator.share){try{await navigator.share({title:store.name+' — Semeia',text:'Conheça a loja '+store.name+' no Semeia:',url})}catch(x){if(x&&x.name!=='AbortError')copy()}}else copy()};
+E('#google-login').onclick=async()=>{try{const firebase=await window.SemeiaFirebaseReady;auth={idToken:await firebase.signInWithGoogle()};await me()}catch(x){SemeiaNotice.alert(x.message)}};
+E('#product-name').oninput=e=>E('#slug').value=slug(e.target.value);
+const unitField=E('#unit').parentElement;
+unitField.insertAdjacentHTML('afterend','<span class="full fulfillment-title">Disponibilidade e retirada</span><div><label for="stock-quantity">Quantidade disponível</label><input id="stock-quantity" type="number" min="1" max="1000000" step="1" inputmode="numeric" required placeholder="Ex.: 12"></div><div><label for="shipping-fee">Valor do frete <span class="optional">(opcional)</span></label><div class="money-input"><span>R$</span><input id="shipping-fee" type="number" min="0" step="0.01" inputmode="decimal" placeholder="A combinar"></div><small class="field-help">Deixe vazio para combinar. Use 0 para frete grátis.</small></div><div class="full"><label for="pickup-address">Ponto de retirada</label><input id="pickup-address" maxlength="240" autocomplete="street-address" required placeholder="Ex.: Feira do Centro, Rua das Flores, 120"><small class="field-help">Informe uma loja, feira ou ponto público. Evite divulgar seu endereço residencial.</small></div>');
+E('#photo').onchange=()=>{const file=E('#photo').files[0],preview=E('#photo-preview');if(!file){preview.hidden=true;E('#photo-title').textContent='Adicionar uma foto';return}preview.src=URL.createObjectURL(file);preview.hidden=false;E('#photo-title').textContent=file.name};
+async function upload(f,kind){if(!auth?.idToken)throw Error('Entre com Google novamente.');await SemeiaSecurity.verify(document);const fd=new FormData();fd.append('file',f);fd.append('kind',kind||'product');const r=await fetch(A+'/api/store/upload',{method:'POST',headers:{authorization:'Bearer '+auth.idToken},body:fd}),d=await r.json();if(!r.ok)throw Error(d.error);if(window.turnstile)window.turnstile.reset();return d.url}
+E('#logo-file').onchange=async()=>{try{const file=E('#logo-file').files[0];if(!file)return;const logoUrl=await upload(file,'logo'),r=await fetch(A+'/api/store/logo',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...auth,logoUrl})}),d=await r.json();if(!r.ok)throw Error(d.error);E('#logo-preview').src=d.logoUrl}catch(x){SemeiaNotice.alert(x.message)}};
+E('#cover-file').onchange=async()=>{try{const file=E('#cover-file').files[0];if(!file)return;const coverUrl=await upload(file,'logo'),r=await fetch(A+'/api/store/cover',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...auth,coverUrl})}),d=await r.json();if(!r.ok)throw Error(d.error);E('#cover-preview').src=d.coverUrl}catch(x){SemeiaNotice.alert(x.message)}};
+// ---- Descrição e horário da loja ----
+const WEEKDAYS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+function buildHoursRows(){
+  const box=E('#store-hours');box.innerHTML='';
+  WEEKDAYS.forEach((day,index)=>{
+    const row=document.createElement('div');row.className='hours-row';row.dataset.day=index;
+    const label=document.createElement('span');label.className='hours-day';label.textContent=day;
+    const toggle=document.createElement('label');toggle.className='hours-toggle';
+    const open=document.createElement('input');open.type='checkbox';open.className='hours-open';open.checked=true;
+    toggle.append(open,document.createTextNode('Abre'));
+    const from=document.createElement('input');from.type='time';from.className='hours-from';from.value='08:00';from.setAttribute('aria-label','Abre em '+day);
+    const sep=document.createElement('span');sep.className='hours-sep';sep.textContent='às';
+    const to=document.createElement('input');to.type='time';to.className='hours-to';to.value='18:00';to.setAttribute('aria-label','Fecha em '+day);
+    const closedTag=document.createElement('span');closedTag.className='hours-closed-tag';closedTag.textContent='Fechada';closedTag.hidden=true;
+    const syncRow=()=>{const closed=!open.checked;row.classList.toggle('is-closed',closed);closedTag.hidden=!closed};
+    open.onchange=syncRow;
+    row.append(label,toggle,from,sep,to,closedTag);box.append(row);syncRow();
+  });
+}
+function fillHours(hours){
+  const rows=[...E('#store-hours').querySelectorAll('.hours-row')];
+  rows.forEach((row,index)=>{
+    const slot=(hours||[])[index],open=row.querySelector('.hours-open');
+    open.checked=Boolean(slot);
+    row.classList.toggle('is-closed',!slot);
+    const tag=row.querySelector('.hours-closed-tag');if(tag)tag.hidden=Boolean(slot);
+    if(slot){row.querySelector('.hours-from').value=slot.from;row.querySelector('.hours-to').value=slot.to}
+  });
+}
+function readHours(){
+  return [...E('#store-hours').querySelectorAll('.hours-row')].map(row=>{
+    if(!row.querySelector('.hours-open').checked)return null;
+    return {from:row.querySelector('.hours-from').value,to:row.querySelector('.hours-to').value};
+  });
+}
+buildHoursRows();
+E('#store-description').oninput=()=>{E('#store-description-count').textContent=E('#store-description').value.length};
+E('#store-profile-form').onsubmit=async e=>{
+  e.preventDefault();
+  const button=e.submitter,feedback=E('#store-profile-feedback');
+  button.disabled=true;const original=button.textContent;button.textContent='Salvando…';feedback.textContent='';
+  try{
+    const r=await fetch(A+'/api/store/profile',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...auth,description:E('#store-description').value,instagram:E('#store-instagram').value,openingHours:readHours()})}),d=await r.json();
+    if(!r.ok)throw Error(d.error);
+    store={...store,description:d.description,instagram:d.instagram,openingHours:d.openingHours,openNow:d.openNow};E('#store-instagram').value=d.instagram?'@'+d.instagram:'';
+    feedback.textContent=d.hoursConfigured?'Loja atualizada. '+(d.openNow?'Agora você aparece como aberta.':'Agora você aparece como fechada.'):'Loja atualizada.';
+  }catch(x){feedback.textContent=x.message}
+  finally{button.disabled=false;button.textContent=original}
+};
+
+E('#pix-form').onsubmit=async e=>{e.preventDefault();const button=e.submitter;button.disabled=true;const original=button.innerHTML;button.textContent='Salvando…';E('#pix-feedback').textContent='';try{const r=await fetch(A+'/api/store/pix',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...auth,pixKey:E('#pix-key').value,pixName:E('#pix-name').value,pixCity:E('#pix-city').value})}),d=await r.json();if(!r.ok)throw Error(d.error);E('#pix-badge').textContent=d.pixConfigured?'Pix configurado':'Não configurado';E('#pix-badge').className='pix-badge'+(d.pixConfigured?' ready':'');E('#pix-feedback').textContent=d.pixConfigured?'Pix salvo. O QR Code já aparecerá nos seus produtos.':'Chave Pix removida.';store={...store,...d}}catch(x){E('#pix-feedback').textContent=x.message}finally{button.disabled=false;button.innerHTML=original}};
+E('#products').onclick=async event=>{const pay=event.target.closest('button[data-pay-promotion]');if(pay){const promotion=promotionsById.get(pay.dataset.payPromotion);if(promotion)openBoostPix({...promotion,promotionId:promotion.id});return}
+const boost=event.target.closest('button[data-boost-product]');if(boost){const select=E('#boost-product');select.value=boost.dataset.boostProduct;select.dispatchEvent(new Event('change',{bubbles:true}));E('#boost-panel').scrollIntoView({behavior:'smooth',block:'start'});return}
+const button=event.target.closest('button[data-delete-product]');if(!button)return;const row=button.closest('.owner-product'),name=row?.dataset.productName||'este produto';if(!(await SemeiaNotice.confirm('Apagar “'+name+'”? Ele sairá do catálogo e qualquer destaque ligado a ele será encerrado.',{title:'Apagar produto',confirmLabel:'Apagar',tone:'danger'})))return;button.disabled=true;button.textContent='Apagando…';try{const r=await fetch(A+'/api/store-products/'+encodeURIComponent(button.dataset.deleteProduct)+'/delete',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(auth)}),d=await r.json();if(!r.ok)throw Error(d.error);await me()}catch(x){SemeiaNotice.alert(x.message);button.disabled=false;button.textContent='Apagar produto'}};
+function enhanceSelect(select,icon){if(!select||select.dataset.enhanced)return;select.dataset.enhanced='true';select.classList.add('pretty-native');const shell=document.createElement('div'),trigger=document.createElement('button'),iconEl=document.createElement('span'),value=document.createElement('span'),chevron=document.createElementNS('http://www.w3.org/2000/svg','svg'),path=document.createElementNS('http://www.w3.org/2000/svg','path'),menu=document.createElement('div');shell.className='pretty-select';trigger.type='button';trigger.className='pretty-trigger';trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');iconEl.className='pretty-icon';iconEl.textContent=icon;value.className='pretty-value';chevron.classList.add('pretty-chevron');chevron.setAttribute('viewBox','0 0 24 24');chevron.setAttribute('fill','none');chevron.setAttribute('stroke','currentColor');chevron.setAttribute('stroke-width','2');path.setAttribute('d','m7 9 5 5 5-5');chevron.append(path);menu.className='pretty-menu';menu.setAttribute('role','listbox');menu.hidden=true;select.parentNode.insertBefore(shell,select);shell.append(select,trigger,menu);trigger.append(iconEl,value,chevron);function close(){shell.classList.remove('is-open');menu.hidden=true;trigger.setAttribute('aria-expanded','false')}function render(){value.textContent=select.options[select.selectedIndex]?.text||'Escolha uma opção';menu.innerHTML='';Array.from(select.options).forEach(option=>{const button=document.createElement('button');button.type='button';button.className='pretty-option'+(option.value===select.value?' is-selected':'');button.textContent=option.text;button.setAttribute('role','option');button.setAttribute('aria-selected',String(option.value===select.value));button.onclick=()=>{select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));render();close()};menu.append(button)})}trigger.onclick=()=>{const opening=menu.hidden;document.querySelectorAll('.pretty-select.is-open').forEach(other=>{if(other!==shell){other.classList.remove('is-open');other.querySelector('.pretty-menu').hidden=true;other.querySelector('.pretty-trigger').setAttribute('aria-expanded','false')}});shell.classList.toggle('is-open',opening);menu.hidden=!opening;trigger.setAttribute('aria-expanded',String(opening))};select.addEventListener('change',render);new MutationObserver(render).observe(select,{childList:true});document.addEventListener('click',event=>{if(!shell.contains(event.target))close()});render()}
+Object.keys(CATS).forEach(key=>E('#boost-category').add(new Option(CATS[key].label,key)));enhanceSelect(E('#boost-product'),'P');enhanceSelect(E('#boost-scope'),'A');enhanceSelect(E('#boost-category'),'C');enhanceSelect(E('#boost-position'),'#');enhanceSelect(E('#boost-duration'),'D');enhanceSelect(E('#boost-target'),'T');E('#boost-position').onchange=updateBoostPrice;E('#boost-duration').onchange=updateBoostPrice;E('#boost-product').onchange=updateBoostEstimate;E('#boost-scope').onchange=syncBoostScope;E('#boost-target').onchange=syncBoostTarget;E('#boost-category').onchange=loadBoostAvailability;syncBoostScope();syncBoostTarget();loadBoostPrices();
+// ---- Pagamento do destaque via Pix ----
+// Chave da plataforma (celular). O banco sempre mostra o nome real do titular,
+// os campos abaixo são apenas identificação no código copia-e-cola.
+const BOOST_PIX_KEY='16994392545',BOOST_PIX_PHONE='5516994392545',BOOST_PIX_NAME='SEMEIA',BOOST_PIX_CITY='BRASIL';
+
+let boostPixCode='';
+// `info` descreve a promoção a pagar: pode vir da solicitação recém-criada ou de uma já registrada na lista.
+function openBoostPix(info){
+  const dialog=E('#boost-pix'),amount=Number(info.amount)||0,product=info.kind==='store'?{name:'Minha loja inteira'}:(info.productName?{name:info.productName}:null),
+        position=Number(info.position),days=Number(info.durationDays),
+        scope=info.scopeLabel||boostScopeLabel(info.placementScope,info.placementCategory);
+  boostPixCode=SemeiaPix.payload({key:'+'+BOOST_PIX_PHONE,rawKey:true,name:BOOST_PIX_NAME,city:BOOST_PIX_CITY,amount});
+  const amountLabel=amount.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  E('#boost-pix-amount').textContent=amountLabel;
+  E('#boost-card-amount').textContent=amountLabel;
+  E('#boost-pix-meta').textContent=(product?product.name+' · ':'')+position+'º lugar · '+days+' dias · '+scope;
+  E('#boost-pix-feedback').textContent='';
+  const box=E('#boost-pix-qr');box.innerHTML='';
+  if(typeof window.QRCode==='function'){new window.QRCode(box,{text:boostPixCode,width:188,height:188,colorDark:'#102016',colorLight:'#ffffff',correctLevel:window.QRCode.CorrectLevel.M})}
+  else{box.innerHTML='<p class="pix-qr-fallback">Não foi possível desenhar o QR Code agora. Use o botão "Copiar código Pix" e cole no aplicativo do banco.</p>'}
+  const target=info.kind==='store'?' da minha loja':(product?' do produto "'+product.name+'"':'');
+  const message='Olá! Paguei o destaque'+target+': '+position+'º lugar, '+days+' dias, '+amount.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})+'. Segue o comprovante. (Solicitação '+(info.promotionId||'')+')';
+  E('#boost-pix-whats').href='https://wa.me/'+BOOST_PIX_PHONE+'?text='+encodeURIComponent(message);
+  if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
+}
+E('#boost-pix-close').onclick=()=>E('#boost-pix').close();
+E('#boost-pix-copy').onclick=async()=>{
+  const feedback=E('#boost-pix-feedback');
+  try{await navigator.clipboard.writeText(boostPixCode);feedback.textContent='Código copiado. Cole em "Pix copia e cola" no seu banco.'}
+  catch(_){feedback.textContent='Não consegui copiar. O código é: '+boostPixCode}
+};
+E('#boost-pay').onclick=async()=>{
+  const button=E('#boost-pay'),feedback=E('#boost-feedback'),scope=E('#boost-scope').value,storeBoost=isStoreBoost();
+  const position=Number(E('#boost-position').value),days=Number(E('#boost-duration').value);
+  const placementCategory=scope==='home'?null:E('#boost-category').value;
+  button.disabled=true;feedback.textContent='Enviando sua solicitação…';
+  try{
+    const payload={...auth,position,durationDays:days,placementScope:scope,placementCategory};
+    if(!storeBoost)payload.productId=E('#boost-product').value;
+    const r=await fetch(A+(storeBoost?'/api/store/store-promotions':'/api/store/promotions'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}),d=await r.json();
+    if(!r.ok)throw Error(d.error);
+    feedback.textContent=d.message;
+    // Sem cobrança, não há o que pagar: o pedido segue direto para a liberação.
+    if(!boostFree)openBoostPix({...d,kind:storeBoost?'store':'product',productName:storeBoost?null:productsById.get(E('#boost-product').value)?.name,position,durationDays:days,placementScope:scope,placementCategory});
+    await me();
+  }catch(x){feedback.textContent=x.message}finally{button.disabled=false}
+};
+// A rolagem do mouse sobre um <input type=number> alterava o valor sem querer —
+// era assim que a quantidade virava 3,54. O campo perde o foco antes da roda agir.
+document.addEventListener('wheel',e=>{const campo=e.target;if(campo instanceof HTMLInputElement&&campo.type==='number'&&campo===document.activeElement)campo.blur()},{passive:true});
+E('#product-form').onsubmit=async e=>{
+  e.preventDefault();
+  const button=e.submitter,weightValue=E('#weight-kg').value,shippingValue=E('#shipping-fee').value;
+  button.disabled=true;button.textContent='Publicando…';
+  try{
+    const imageUrl=await upload(E('#photo').files[0]);
+    const payload={...auth,id:E('#slug').value||slug(E('#product-name').value),name:E('#product-name').value,priceCents:Math.round(+E('#price').value*100),unit:E('#unit').value,category:store?.category||'hortifruti',description:E('#description').value,seals:[],imageUrl,productType:E('#product-type').value,weightKg:weightValue?Number(weightValue):null,processing:E('#processing').value,packaging:E('#packaging').value,refrigerated:E('#refrigerated').checked,deliveryMethod:E('#delivery-method').value,pesticideFree:E('#pesticide-free').checked,stockQuantity:Number(E('#stock-quantity').value),shippingFeeCents:shippingValue===''?null:Math.round(Number(shippingValue)*100),pickupAddress:E('#pickup-address').value};
+    const r=await fetch(A+'/api/store-products',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}),d=await r.json();
+    if(!r.ok)throw Error(d.error);
+    e.target.reset();E('#unit').value='/un';E('#photo-preview').hidden=true;E('#photo-title').textContent='Adicionar uma foto';await me();
+  }catch(x){SemeiaNotice.alert(x.message)}finally{button.disabled=false;button.textContent='Publicar produto'}
+};
+async function restoreSession(){sessionStorage.removeItem('semeia-store-login');try{const firebase=await window.SemeiaFirebaseReady,token=await firebase.restoreIdToken();if(token){auth={idToken:token};await me();return}}catch{}E('#session-check').hidden=true;E('#login').hidden=false}
+restoreSession();
+})();
+</script></body></html>

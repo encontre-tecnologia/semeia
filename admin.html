@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://semeiabr.com/admin">
+<title>Administração — Semeia</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<style>
+  .admin { max-width:1180px; padding:clamp(2.5rem,7vw,6rem) 0; }
+  .admin-head { display:flex; align-items:end; justify-content:space-between; gap:2rem; margin-bottom:2rem; }
+  .admin-head h1 { font-size:clamp(3rem,7vw,6.7rem); line-height:.88; letter-spacing:-.075em; margin:.75rem 0 0; max-width:820px; }
+  .admin-head p { color:var(--ink-soft); max-width:380px; line-height:1.65; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:26px; padding:clamp(1.2rem,3vw,2rem); }
+  .login-panel { max-width:760px; margin:2rem auto; }
+  .login-panel h2 { font-size:1.55rem; margin:0 0 .4rem; }
+  .login-panel>p { color:var(--ink-soft); }
+  .access { display:grid; grid-template-columns:1fr 1fr auto; align-items:end; gap:.8rem; margin-top:1.25rem; }
+  label { display:block; font-size:.78rem; font-weight:800; margin-bottom:.42rem; }
+  input { width:100%; box-sizing:border-box; min-height:3.2rem; border:1px solid var(--line); border-radius:13px; padding:.8rem .95rem; background:var(--paper); color:var(--ink); font:inherit; }
+  .btn { border:0; cursor:pointer; min-height:3.2rem; }
+  .notice { display:none; margin-top:1rem; padding:.8rem 1rem; border-radius:12px; font-size:.82rem; }
+  .notice.show { display:block; }.notice.ok{background:rgba(81,143,93,.14);color:var(--good)}.notice.error{background:rgba(186,73,68,.13);color:#df8c76}
+
+  .workspace { display:grid; gap:1.25rem; }
+  .workspace[hidden], .login-panel[hidden] { display:none !important; }
+  .impact-intro { display:flex; justify-content:space-between; gap:2rem; align-items:end; padding:1rem 0 .5rem; }
+  .impact-intro h2 { font-size:clamp(2rem,4vw,3.7rem); line-height:.98; letter-spacing:-.055em; margin:.5rem 0; }
+  .impact-intro p { color:var(--ink-soft); max-width:580px; line-height:1.6; }
+  .live-pill { display:inline-flex; align-items:center; gap:.55rem; border:1px solid var(--line); border-radius:999px; padding:.65rem .9rem; white-space:nowrap; font:700 .7rem/1 "SF Mono",Consolas,monospace; text-transform:uppercase; letter-spacing:.08em; }
+  .live-pill::before { content:""; width:.55rem; height:.55rem; border-radius:50%; background:var(--accent); box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 16%,transparent); animation:pulse 2s infinite; }
+  @keyframes pulse{50%{box-shadow:0 0 0 11px transparent}}
+  .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.8rem; }
+  .metric { min-height:178px; display:flex; flex-direction:column; justify-content:space-between; background:linear-gradient(145deg,color-mix(in srgb,var(--card) 90%,var(--accent) 10%),var(--card)); border:1px solid var(--line); border-radius:22px; padding:1.3rem; }
+  .metric-icon { width:2.35rem; height:2.35rem; display:grid; place-items:center; border-radius:12px; color:var(--accent); border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line)); }
+  .metric-icon svg { width:1.15rem; }
+  .metric strong { font-size:clamp(2.1rem,4vw,3.5rem); line-height:1; color:var(--accent); letter-spacing:-.05em; }
+  .metric small { display:block; color:var(--ink-soft); margin-top:.45rem; font-size:.76rem; line-height:1.35; }
+
+  .impact-grid { display:grid; grid-template-columns:1.25fr .75fr; gap:1.25rem; }
+  .map-card { min-height:510px; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+  .map-card::before { content:""; position:absolute; width:520px; height:520px; right:-180px; bottom:-230px; border:1px solid var(--line); border-radius:48% 52% 44% 56%; box-shadow:0 0 0 55px color-mix(in srgb,var(--accent) 5%,transparent),0 0 0 115px color-mix(in srgb,var(--accent) 3%,transparent); transform:rotate(-18deg); }
+  .panel-kicker { color:var(--accent); font:800 .68rem/1 "SF Mono",Consolas,monospace; letter-spacing:.09em; text-transform:uppercase; }
+  .map-card h3,.diversity h3,.confirmed h3,.review h3 { font-size:1.65rem; margin:.55rem 0 .4rem; }
+  .map-card>p,.diversity>p,.confirmed>p,.review>p { color:var(--ink-soft); font-size:.84rem; line-height:1.55; max-width:620px; }
+  .region-map { flex:1; position:relative; min-height:330px; margin-top:1rem; }
+  .region-map::before { content:""; position:absolute; inset:4% 9% 5%; background:radial-gradient(ellipse at 38% 25%,rgba(151,197,155,.22),transparent 23%),radial-gradient(ellipse at 62% 55%,rgba(200,227,107,.11),transparent 30%); border:1px solid var(--line); border-radius:55% 45% 62% 38%/45% 56% 44% 55%; transform:rotate(8deg); }
+  .region-dot { position:absolute; z-index:1; display:grid; place-items:center; min-width:74px; min-height:74px; padding:.55rem; border-radius:50%; background:color-mix(in srgb,var(--paper-raised) 88%,var(--accent) 12%); border:1px solid var(--accent); box-shadow:0 12px 30px -20px var(--shadow); text-align:center; animation:float 5s ease-in-out infinite; }
+  .region-dot strong { display:block; color:var(--accent); font-size:1.15rem; }.region-dot span{display:block;max-width:74px;font-size:.61rem;line-height:1.25;margin-top:.2rem}
+  @keyframes float{50%{transform:translateY(-7px)}}
+  .empty-map { position:absolute; inset:0; display:grid; place-items:center; color:var(--ink-soft); text-align:center; }
+  .right-stack { display:grid; gap:1.25rem; }
+  .bars { display:grid; gap:.9rem; margin-top:1.25rem; }
+  .bar-head { display:flex; justify-content:space-between; font-size:.76rem; margin-bottom:.35rem; }.bar-head strong{text-transform:capitalize}.bar-head span{color:var(--ink-soft)}
+  .bar-track { height:8px; border-radius:999px; background:color-mix(in srgb,var(--line) 75%,transparent); overflow:hidden; }.bar-fill{height:100%;width:var(--bar);background:linear-gradient(90deg,var(--accent),var(--accent-bright));border-radius:inherit;transition:width .8s ease}
+  .confirmed { background:linear-gradient(140deg,color-mix(in srgb,var(--card) 86%,var(--accent) 14%),var(--card)); }
+  .confirmed-number { font-size:clamp(2.4rem,5vw,4.3rem); color:var(--accent); letter-spacing:-.06em; margin:1.2rem 0 .2rem; }
+  .confirmed-meta { display:flex; gap:.65rem; flex-wrap:wrap; margin-top:1rem; }.confirmed-meta span{border:1px solid var(--line);border-radius:999px;padding:.5rem .7rem;font-size:.68rem}
+
+  /* ---- Lojas cadastradas ---- */
+  /* Aviso de e-mail: o vendedor não fica sabendo do pedido quando isto falha. */
+  .email-alert { display:grid; gap:.5rem; margin-bottom:1.2rem; padding:1.1rem 1.3rem; border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line)); border-radius:18px; background:color-mix(in srgb,var(--warn) 10%,transparent); }
+  .email-alert strong { color:var(--warn); font-size:.95rem; }
+  .email-alert p { margin:0; color:var(--ink-soft); font-size:.85rem; line-height:1.6; }
+  .email-alert ul { margin:.2rem 0 0; padding-left:1.1rem; color:var(--ink-soft); font-size:.78rem; line-height:1.7; }
+  .email-alert code { font:600 .74rem "SF Mono",Consolas,monospace; }
+  .panel-head { display:flex; align-items:flex-end; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; }
+  .filter-chips { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .filter-chips button { display:inline-flex; align-items:center; gap:.4rem; border:1px solid var(--line); border-radius:999px; padding:.5rem .8rem; background:transparent; color:var(--ink-soft); cursor:pointer; font:700 .74rem/1 ui-sans-serif,system-ui,sans-serif; transition:color .2s,border-color .2s,background .2s; }
+  .filter-chips button span { display:inline-grid; place-items:center; min-width:1.35rem; height:1.35rem; padding:0 .3rem; border-radius:999px; background:color-mix(in srgb,var(--line) 60%,transparent); font-size:.68rem; }
+  .filter-chips button:hover { color:var(--ink); border-color:color-mix(in srgb,var(--accent) 45%,var(--line)); }
+  .filter-chips button[aria-pressed="true"] { color:var(--ink); border-color:color-mix(in srgb,var(--accent) 60%,var(--line)); background:color-mix(in srgb,var(--accent) 12%,transparent); }
+  .filter-chips button[aria-pressed="true"] span { background:color-mix(in srgb,var(--accent) 26%,transparent); color:var(--ink); }
+
+  .stores { display:grid; gap:.65rem; margin-top:1.4rem; }
+  .store { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:1rem; padding:1rem 1.1rem; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--paper) 45%,transparent); transition:border-color .2s,transform .2s var(--ease-out); }
+  .store:hover { border-color:color-mix(in srgb,var(--accent) 42%,var(--line)); transform:translateY(-2px); }
+  .store-avatar { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line)); background:color-mix(in srgb,var(--accent) 12%,transparent); color:var(--accent); font:800 1.05rem/1 ui-sans-serif,system-ui,sans-serif; }
+  .store-info { min-width:0; }
+  .store-title { display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; }
+  .store-title strong { font-size:1.02rem; }
+  .store small { display:block; color:var(--ink-soft); margin-top:.25rem; font-size:.76rem; line-height:1.45; overflow-wrap:anywhere; }
+  .status-pill { display:inline-flex; align-items:center; gap:.35rem; border-radius:999px; padding:.24rem .55rem; border:1px solid currentColor; font:800 .62rem/1.4 "SF Mono",Consolas,monospace; text-transform:uppercase; letter-spacing:.06em; }
+  .status-pill::before { content:""; width:.4rem; height:.4rem; border-radius:50%; background:currentColor; }
+  .status-pill.approved { color:var(--good); }
+  .status-pill.pending { color:var(--warn); }
+  .status-pill.suspended { color:#df8c76; }
+  .store-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.4rem; }
+  .store-actions button, .store-actions a { display:inline-flex; align-items:center; gap:.35rem; border:1px solid var(--line); background:transparent; color:var(--ink-soft); border-radius:999px; padding:.5rem .78rem; cursor:pointer; font:700 .72rem/1 ui-sans-serif,system-ui,sans-serif; transition:color .2s,border-color .2s,background .2s; }
+  .store-actions button:hover, .store-actions a:hover { color:var(--ink); border-color:color-mix(in srgb,var(--accent) 45%,var(--line)); background:color-mix(in srgb,var(--accent) 8%,transparent); }
+  .store-actions .approve { color:var(--good); border-color:color-mix(in srgb,var(--good) 55%,var(--line)); }
+  .store-actions .approve:hover { background:color-mix(in srgb,var(--good) 12%,transparent); }
+  .store-actions .danger { color:#df8c76; border-color:color-mix(in srgb,#df8c76 45%,var(--line)); }
+  .store-actions button[disabled] { opacity:.5; cursor:progress; }
+  .list-empty { padding:2rem 1rem; border:1px dashed var(--line); border-radius:18px; color:var(--ink-soft); text-align:center; font-size:.85rem; }
+
+  /* ---- Solicitações de destaque ---- */
+  .promotion-queue { display:grid; gap:.65rem; margin-top:1.4rem; }
+  .promotion-review { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:1rem; padding:1rem 1.1rem; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--paper) 45%,transparent); transition:border-color .2s,transform .2s var(--ease-out); }
+  .promotion-review:hover { border-color:color-mix(in srgb,var(--accent) 42%,var(--line)); transform:translateY(-2px); }
+  .rank { display:grid; place-items:center; width:46px; height:46px; border-radius:50%; border:1px solid color-mix(in srgb,var(--accent-bright) 55%,var(--line)); background:radial-gradient(circle at 32% 28%,color-mix(in srgb,var(--accent-bright) 30%,transparent),transparent 70%); color:var(--accent-bright); font:800 1rem/1 "SF Mono",Consolas,monospace; }
+  .rank.rank-1 { border-color:#d8c15e; color:#e8d478; background:radial-gradient(circle at 32% 28%,rgba(216,193,94,.28),transparent 70%); }
+  .promotion-review strong { display:block; font-size:1.02rem; }
+  .promotion-review small { display:block; margin-top:.25rem; color:var(--ink-soft); font-size:.76rem; line-height:1.45; }
+  .promo-tags { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.55rem; }
+  .promo-tags span { border:1px solid var(--line); border-radius:999px; padding:.28rem .55rem; font:700 .68rem/1.3 "SF Mono",Consolas,monospace; color:var(--ink-soft); }
+  .promo-tags .amount { color:var(--accent); border-color:color-mix(in srgb,var(--accent) 50%,var(--line)); }
+
+  /* Retorno das ações, no lugar de alert() */
+  .toast { position:fixed; z-index:60; left:50%; bottom:1.6rem; transform:translate(-50%,1.5rem); max-width:min(92vw,520px); padding:.85rem 1.1rem; border:1px solid var(--line); border-radius:14px; background:var(--paper-raised); color:var(--ink); box-shadow:0 26px 60px -30px #000; font-size:.84rem; opacity:0; pointer-events:none; transition:opacity .25s,transform .25s var(--ease-out); }
+  .toast.show { opacity:1; transform:translate(-50%,0); }
+  .toast.error { border-color:color-mix(in srgb,#df8c76 55%,var(--line)); color:#f0b3a2; }
+  .toast.ok { border-color:color-mix(in srgb,var(--good) 55%,var(--line)); }
+
+  .truth-note { display:flex; gap:.7rem; align-items:flex-start; margin-top:1rem; padding:1rem; border-radius:15px; background:color-mix(in srgb,var(--paper) 75%,transparent); color:var(--ink-soft); font-size:.75rem; line-height:1.5; }.truth-note strong{color:var(--ink)}
+  @media(max-width:900px){.admin-head,.impact-intro{align-items:start;flex-direction:column}.metrics{grid-template-columns:repeat(2,1fr)}.impact-grid{grid-template-columns:1fr}.access{grid-template-columns:1fr 1fr}.access .btn{grid-column:1/-1}}
+  @media(max-width:600px){.metrics{grid-template-columns:1fr 1fr}.metric{min-height:150px;padding:1rem}.access{grid-template-columns:1fr}.access .btn{grid-column:auto}.store,.promotion-review{align-items:stretch;grid-template-columns:1fr}.store-actions{justify-content:flex-start}.panel-head{flex-direction:column;align-items:stretch}.map-card{min-height:460px}.promotion-review .store-actions{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<header class="site-nav"><div class="inner"><a class="brand" href="index.html"><img class="brand-mark" src="assets/semeia-mark.svg" alt="">Semeia</a><a class="nav-cta" href="index.html">Ver plataforma</a></div></header>
+<main class="wrap admin">
+  <div class="admin-head"><div><span class="eyebrow">Centro de impacto</span><h1>Veja o que estamos fazendo crescer.</h1></div><p>Mais do que vendas: negócios locais visíveis, dinheiro circulando no bairro e comunidades conectadas ao redor do Semeia.</p></div>
+  <section class="panel login-panel" id="access-panel"><h2>Acesso do administrador</h2><p>Use a conta Google autorizada para acompanhar o piloto e revisar novas lojas.</p><div class="access"><button class="btn btn-primary" id="enter" type="button">Continuar com Google</button></div><div class="notice" id="access-notice"></div></section>
+
+  <div class="workspace" id="workspace" hidden>
+    <div class="email-alert" id="email-alert" role="status" hidden></div>
+    <div class="impact-intro"><div><span class="eyebrow">Retrato vivo do piloto</span><h2>Cada número começa com uma pessoa.</h2><p>Os indicadores abaixo vêm diretamente das lojas, produtos e pedidos registrados na plataforma.</p></div><span class="live-pill">Dados atuais</span></div>
+    <section class="metrics" aria-label="Resumo de impacto">
+      <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 10h16v10H4zM3 10l2-6h14l2 6M8 20v-5h4v5"/></svg></span><div><strong id="m-stores">0</strong><small>produtores e negócios locais aprovados</small></div></article>
+      <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 6h16v14H4zM8 3v6m8-6v6M4 11h16"/></svg></span><div><strong id="m-products">0</strong><small>produtos frescos e locais disponíveis</small></div></article>
+      <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s7-5 7-12a7 7 0 1 0-14 0c0 7 7 12 7 12z"/><circle cx="12" cy="9" r="2"/></svg></span><div><strong id="m-regions">0</strong><small>territórios e comunidades representados</small></div></article>
+      <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M19 4C10 4 5 8 5 15c4 1 8 0 11-3M5 20c2-6 6-10 14-16"/></svg></span><div><strong id="m-potential">0 kg</strong><small>potencial estimado do catálogo por uma unidade de cada item</small></div></article>
+    </section>
+
+    <div class="impact-grid">
+      <section class="panel map-card"><span class="panel-kicker">Onde a rede cria raízes</span><h3>Territórios alcançados</h3><p>Cada ponto representa uma região informada por uma loja aprovada — não uma projeção.</p><div class="region-map" id="region-map"></div></section>
+      <div class="right-stack">
+        <section class="panel diversity"><span class="panel-kicker">Diversidade do catálogo</span><h3>O que a comunidade oferece</h3><p>Distribuição real dos produtos ativos por categoria.</p><div class="bars" id="category-bars"></div></section>
+        <section class="panel confirmed"><span class="panel-kicker">Impacto registrado</span><h3>Escolhas que já viraram ação</h3><div class="confirmed-number" id="confirmed-co2">0 kg</div><p>CO₂e estimado em compras finalizadas e informadas pelos compradores.</p><div class="confirmed-meta"><span id="paid-orders">0 finalizações registradas</span><span id="pending-stores">0 lojas aguardando revisão</span></div><div class="truth-note"><span>◎</span><div><strong>Transparência primeiro.</strong> Este total combina pagamentos registrados e finalizações informadas pelo comprador. É uma estimativa de impacto, não uma auditoria ambiental.</div></div></section>
+      </div>
+    </div>
+
+    <section class="panel review"><span class="panel-kicker">Receita da plataforma</span><h3>Solicitações de destaque</h3><p>Combine o pagamento diretamente com a loja. Depois de conferir o recebimento, confirme a solicitação: se a posição estiver livre, o destaque começa agora; se estiver ocupada, ele entra automaticamente na próxima data disponível.</p><div class="promotion-queue" id="promotions"></div></section>
+
+    <section class="panel review"><span class="panel-kicker">Receita da plataforma</span><h3>Destaques de loja</h3><p>A loja aparece como um card dentro do catálogo, nas mesmas posições dos destaques de produto. Confirme depois de conferir o Pix: entra na hora, ou na próxima data livre se a posição estiver ocupada.</p><div class="promotion-queue" id="store-promotions"></div></section>
+
+    <section class="panel review">
+      <div class="panel-head">
+        <div>
+          <span class="panel-kicker">Cuidado com a comunidade</span>
+          <h3>Lojas cadastradas</h3>
+          <p>A aprovação mantém o catálogo confiável. Aqui também dá para reenviar os dois e-mails quando quiser: o de <em>em análise</em> (cadastro recebido) e o de <em>análise concluída</em> (loja aprovada, com o link dela). Útil quando o lojista diz que não recebeu.</p>
+        </div>
+        <div class="filter-chips" id="store-filters" role="group" aria-label="Filtrar lojas por situação">
+          <button type="button" data-filter="pending" aria-pressed="true">Aguardando <span id="count-pending">0</span></button>
+          <button type="button" data-filter="approved" aria-pressed="false">Aprovadas <span id="count-approved">0</span></button>
+          <button type="button" data-filter="suspended" aria-pressed="false">Suspensas <span id="count-suspended">0</span></button>
+          <button type="button" data-filter="all" aria-pressed="false">Todas <span id="count-all">0</span></button>
+        </div>
+      </div>
+      <div class="stores" id="stores"></div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+<script src="assets/data.js?v=20260812-categories1"></script><script src="assets/config.js?v=20260813-api-url"></script>
+<script>window.SemeiaFirebaseReady=import("./assets/firebase-auth.js");</script>
+<script>
+(()=>{
+  const api=String(window.SEMEIA_API_URL).replace(/\/+$/,'');let credentials='';
+  const $=s=>document.querySelector(s),escape=value=>{const el=document.createElement('span');el.textContent=value||'';return el.innerHTML},format=value=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:2}).format(Number(value)||0);
+  let toastTimer;
+  function toast(message,error){const el=$('#toast');el.textContent=message;el.className='toast show '+(error?'error':'ok');clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.className='toast'},5000)}
+  function notice(message,error){const el=$('#access-notice');el.textContent=message;el.className='notice show '+(error?'error':'ok')}
+  async function request(path,options={}){const response=await fetch(api+path,{...options,headers:{'content-type':'application/json','authorization':'Bearer '+credentials,...options.headers}}),data=await response.json().catch(()=>({}));if(!response.ok)throw Error(data.error||'Não foi possível carregar o painel.');return data}
+  function renderRegions(regions){const map=$('#region-map');if(!regions.length){map.innerHTML='<p class="empty-map">As regiões aparecerão aqui quando as primeiras lojas forem aprovadas.</p>';return}const spots=[[20,24],[55,14],[70,45],[34,57],[58,72],[14,72],[78,75],[43,34]];map.innerHTML=regions.map((region,index)=>{const pos=spots[index%spots.length],delay=(index*.45)+'s';return '<div class="region-dot" style="left:'+pos[0]+'%;top:'+pos[1]+'%;animation-delay:'+delay+'"><div><strong>'+format(region.total)+'</strong><span>'+escape(region.label)+'</span></div></div>'}).join('')}
+  function renderCategories(categories){const el=$('#category-bars');if(!categories.length){el.innerHTML='<p>Nenhum produto ativo ainda.</p>';return}const max=Math.max(...categories.map(item=>item.total));el.innerHTML=categories.map(item=>'<div><div class="bar-head"><strong>'+escape(item.label)+'</strong><span>'+format(item.total)+'</span></div><div class="bar-track"><div class="bar-fill" style="--bar:'+Math.max(8,item.total/max*100)+'%"></div></div></div>').join('')}
+  let allStores=[],storeFilter='pending';
+  const STATUS_LABEL={approved:'Aprovada',pending:'Aguardando',suspended:'Suspensa'};
+  const initial=name=>(String(name||'?').trim()[0]||'?').toUpperCase();
+  const signupDate=seconds=>seconds?new Date(seconds*1000).toLocaleDateString('pt-BR'):'data não registrada';
+  function storeActions(store){
+    const id=escape(store.id),buttons=[];
+    if(store.status!=='approved')buttons.push('<button class="approve" data-status="approved" data-id="'+id+'">Aprovar</button>');
+    if(store.status!=='suspended')buttons.push('<button class="danger" data-status="suspended" data-id="'+id+'">Suspender</button>');
+    buttons.push('<button data-email="welcome" data-id="'+id+'" title="Reenvia o e-mail de cadastro recebido">Enviar &laquo;em an&aacute;lise&raquo;</button>');
+    buttons.push('<button data-email="approved" data-id="'+id+'" title="Reenvia o e-mail com o link da loja no ar">Enviar &laquo;an&aacute;lise conclu&iacute;da&raquo;</button>');
+    if(store.status==='approved'&&(store.slug||store.id))buttons.push('<a href="loja?id='+encodeURIComponent(store.slug||store.id)+'" target="_blank" rel="noopener">Ver loja</a>');
+    return buttons.join('');
+  }
+  function storeCard(store){
+    return '<article class="store"><span class="store-avatar" aria-hidden="true">'+escape(initial(store.name))+'</span>'
+      +'<div class="store-info"><div class="store-title"><strong>'+escape(store.name)+'</strong>'
+      +'<span class="status-pill '+escape(store.status)+'">'+(STATUS_LABEL[store.status]||escape(store.status))+'</span></div>'
+      +'<small>'+escape(store.contactName)+' · '+escape(store.region||'região não informada')+'</small>'
+      +'<small>'+escape(store.email)+' · cadastrada em '+signupDate(store.createdAt)+'</small></div>'
+      +'<div class="store-actions">'+storeActions(store)+'</div></article>';
+  }
+  function renderStores(stores){
+    if(Array.isArray(stores))allStores=stores;
+    const counts={pending:0,approved:0,suspended:0};
+    allStores.forEach(store=>{if(counts[store.status]!==undefined)counts[store.status]++});
+    $('#count-pending').textContent=counts.pending;$('#count-approved').textContent=counts.approved;
+    $('#count-suspended').textContent=counts.suspended;$('#count-all').textContent=allStores.length;
+    document.querySelectorAll('#store-filters button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.filter===storeFilter)));
+    const visible=storeFilter==='all'?allStores:allStores.filter(store=>store.status===storeFilter);
+    const vazio={pending:'Nenhuma loja aguardando revisão. Tudo em dia por aqui.',approved:'Nenhuma loja aprovada ainda.',suspended:'Nenhuma loja suspensa.',all:'Nenhuma loja cadastrada ainda.'};
+    $('#stores').innerHTML=visible.length?visible.map(storeCard).join(''):'<p class="list-empty">'+vazio[storeFilter]+'</p>';
+  }
+  function promotionPlacement(p){const names={home:'Catálogo geral',both:'Catálogo geral + categoria',category:'Somente categoria'},category=p.placementCategory?(' · '+escape((window.CATS&&CATS[p.placementCategory]?.label)||p.placementCategory)):'';return(names[p.placementScope]||'Catálogo geral')+(p.placementScope==='home'?'':category)}
+  function renderPromotions(promotions){
+    const el=$('#promotions');
+    if(!promotions.length){el.innerHTML='<p class="list-empty">Nenhuma solicitação aguardando confirmação.</p>';return}
+    el.innerHTML=promotions.map(p=>{
+      const rank=Number(p.position)||0,amount='R$ '+Number(p.amount).toFixed(2).replace('.',','),id=escape(p.id);
+      return '<article class="promotion-review"><span class="rank rank-'+rank+'" aria-label="'+rank+'º lugar">'+rank+'º</span>'
+        +'<div><strong>'+escape(p.productName)+'</strong>'
+        +'<small>'+escape(p.storeName)+' · '+promotionPlacement(p)+'</small>'
+        +'<div class="promo-tags"><span class="amount">'+amount+'</span><span>'+p.durationDays+' dias</span><span>Confirmação manual de pagamento</span></div></div>'
+        +'<div class="store-actions"><button class="approve" data-promotion="'+id+'" data-action="approve">Confirmar e agendar</button>'
+        +'<button class="danger" data-promotion="'+id+'" data-action="reject">Rejeitar</button></div></article>';
+    }).join('');
+  }
+  function renderStorePromotions(promotions){
+    const el=$('#store-promotions');
+    if(!promotions.length){el.innerHTML='<p class="list-empty">Nenhuma solicitação de destaque de loja aguardando confirmação.</p>';return}
+    el.innerHTML=promotions.map(p=>{
+      const rank=Number(p.position)||0,amount='R$ '+Number(p.amount).toFixed(2).replace('.',','),id=escape(p.id);
+      return '<article class="promotion-review"><span class="rank rank-'+rank+'" aria-label="'+rank+'º lugar">'+rank+'º</span>'
+        +'<div><strong>'+escape(p.storeName||'Loja')+'</strong>'
+        +'<small>Loja inteira · '+escape(p.storeRegion||'')+' · '+promotionPlacement(p)+'</small>'
+        +'<div class="promo-tags"><span class="amount">'+amount+'</span><span>'+p.durationDays+' dias</span><span>Confirmação manual de pagamento</span></div></div>'
+        +'<div class="store-actions"><button class="approve" data-store-promotion="'+id+'" data-action="approve">Confirmar e agendar</button>'
+        +'<button class="danger" data-store-promotion="'+id+'" data-action="reject">Rejeitar</button></div></article>';
+    }).join('');
+  }
+  function renderImpact(data){const s=data.snapshot;$('#m-stores').textContent=format(s.approvedStores);$('#m-products').textContent=format(s.activeProducts);$('#m-regions').textContent=format(s.regions);$('#m-potential').textContent=format(s.catalogPotentialCo2Kg)+' kg';$('#confirmed-co2').textContent=format(s.confirmedCo2Kg)+' kg';$('#paid-orders').textContent=format(s.paidOrders)+' finalizações registradas';$('#pending-stores').textContent=format(s.pendingStores)+' lojas aguardando revisão';renderRegions(data.regions);renderCategories(data.categories)}
+  async function load(){const [stores,impact,promotions,storePromotions,email]=await Promise.all([request('/api/admin/stores'),request('/api/admin/impact'),request('/api/admin/promotions'),request('/api/admin/store-promotions'),request('/api/admin/email-failures').catch(()=>null)]);renderStores(stores.stores);renderImpact(impact);renderPromotions(promotions.promotions);renderStorePromotions(storePromotions.promotions);renderEmailHealth(email)}
+  // Falha de e-mail é invisível por natureza: o pedido entra, o vendedor não sabe.
+  function renderEmailHealth(data){
+    const box=document.getElementById('email-alert');
+    if(!box)return;
+    if(!data){box.hidden=true;return}
+    const falhas=data.failures||[];
+    if(data.configured&&!falhas.length){box.hidden=true;return}
+    const titulo=document.createElement('strong');
+    const texto=document.createElement('p');
+    box.innerHTML='';
+    if(!data.configured){
+      titulo.textContent='O envio de e-mail está desligado';
+      texto.textContent='Nenhum vendedor recebe aviso de pedido, nem de cadastro ou aprovação. Rode scripts/gmail-auth.mjs para reconectar a conta do Gmail.';
+    }else{
+      titulo.textContent=falhas.length===1?'1 e-mail não saiu nos últimos 7 dias':falhas.length+' e-mails não saíram nos últimos 7 dias';
+      texto.textContent='O pedido entrou normalmente, mas o vendedor pode não ter sido avisado. Confira o token do Gmail e avise a loja pelo WhatsApp.';
+    }
+    box.append(titulo,texto);
+    if(falhas.length){
+      const lista=document.createElement('ul');
+      falhas.slice(0,5).forEach(f=>{const li=document.createElement('li');li.textContent=new Date(f.createdAt*1000).toLocaleString('pt-BR')+' · '+f.kind+' · '+(f.recipient||'sem destinatário')+' · '+f.error;lista.append(li)});
+      box.append(lista);
+    }
+    box.hidden=false;
+  }
+  async function enter(){try{const firebase=await window.SemeiaFirebaseReady;credentials=await firebase.signInWithGoogle();await load();$('#workspace').hidden=false;$('#access-panel').hidden=true}catch(error){notice(error.message,true)}}
+  $('#enter').onclick=enter;  $('#store-filters').onclick=event=>{const button=event.target.closest('button[data-filter]');if(!button)return;storeFilter=button.dataset.filter;renderStores()};
+  $('#stores').onclick=async event=>{
+    const button=event.target.closest('button[data-id]');if(!button)return;
+    const id=button.dataset.id,label=button.textContent;button.disabled=true;
+    try{
+      if(button.dataset.email){
+        button.textContent='Enviando…';
+        const result=await request('/api/admin/stores/'+encodeURIComponent(id)+'/email',{method:'POST',body:JSON.stringify({kind:button.dataset.email})});
+        const nome=button.dataset.email==='approved'?'«análise concluída»':'«em análise»';
+        toast('E-mail '+nome+' enviado para '+result.sentTo+'.');
+      }else{
+        await request('/api/admin/stores/'+encodeURIComponent(id)+'/status',{method:'POST',body:JSON.stringify({status:button.dataset.status})});
+        toast(button.dataset.status==='approved'?'Loja aprovada. O e-mail de aprovação saiu automaticamente.':'Loja suspensa.');
+        await load();
+      }
+    }catch(error){toast(error.message,true)}
+    finally{button.disabled=false;button.textContent=label}
+  };
+  $('#promotions').onclick=async event=>{const button=event.target.closest('button[data-promotion]');if(!button)return;button.disabled=true;try{await request('/api/admin/promotions/'+encodeURIComponent(button.dataset.promotion)+'/review',{method:'POST',body:JSON.stringify({action:button.dataset.action})});await load()}catch(error){toast(error.message,true)}finally{button.disabled=false}};
+  $('#store-promotions').onclick=async event=>{const button=event.target.closest('button[data-store-promotion]');if(!button)return;button.disabled=true;try{await request('/api/admin/store-promotions/'+encodeURIComponent(button.dataset.storePromotion)+'/review',{method:'POST',body:JSON.stringify({action:button.dataset.action})});await load()}catch(error){toast(error.message,true)}finally{button.disabled=false}};
+  window.SemeiaFirebaseReady.then(firebase=>firebase.restoreIdToken()).then(token=>{if(!token)return;credentials=token;return load().then(()=>{$('#workspace').hidden=false;$('#access-panel').hidden=true})}).catch(()=>{});
+})();
+</script>
+<script src="assets/main.js?v=20260814-trees"></script>
+</body>
+</html>

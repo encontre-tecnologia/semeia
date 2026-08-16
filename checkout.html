@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://semeiabr.com/checkout">
+<title>Combinar o pedido — Semeia</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<style>
+  .buyer-box{margin:1.1rem 0 .2rem;padding:1.1rem 1.15rem;border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));border-radius:18px;background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  .buyer-title{display:block;color:var(--accent);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}
+  .buyer-lede{margin:.35rem 0 .9rem;color:var(--ink-soft);font-size:.78rem;line-height:1.5}
+  .buyer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+  .buyer-grid label{display:block;margin-bottom:.35rem;font:700 .76rem ui-sans-serif,system-ui,sans-serif}
+  .buyer-grid input{width:100%;box-sizing:border-box;min-height:3rem;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;outline:none}
+  .buyer-grid input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent)}
+  .buyer-error{min-height:1.05rem;margin:.5rem 0 0;color:#df8c76;font-size:.76rem}
+  @media(max-width:560px){.buyer-grid{grid-template-columns:1fr}}
+  .review-items{display:grid;gap:.15rem;margin:.2rem 0 1rem;padding:.75rem .9rem;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 55%,transparent)}
+  .review-items div{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;font-size:.82rem;color:var(--ink-soft)}
+  .review-items strong{color:var(--ink);white-space:nowrap}
+  .shipping-tier-pick{margin-top:.9rem;padding:.9rem 1rem;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  .shipping-tier-pick label{display:block;margin-bottom:.4rem;font:700 .78rem ui-sans-serif,system-ui,sans-serif}
+  .shipping-tier-pick select{width:100%;box-sizing:border-box;min-height:3rem;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit}
+  .shipping-tier-pick small{display:block;margin-top:.45rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}
+  body{min-height:100vh;background:radial-gradient(circle at 12% 12%,rgba(143,183,116,.1),transparent 28rem),var(--paper)}
+  .checkout-page{width:min(1120px,calc(100% - 2rem));margin:0 auto;padding:2rem 0 5rem;overflow-x:clip}.checkout-page *{min-width:0}.checkout-stage,.checkout-top,.steps,.product-strip,.method-grid,.method-card,.method-inner,.review-grid,.review-card,.impact-card,.pix-layout,.pix-card,.pix-details,.safe-note,.semeia-security{width:100%;max-width:100%;box-sizing:border-box}.checkout-page h1,.checkout-page h2,.checkout-page p,.checkout-page strong,.checkout-page small,.checkout-page span{overflow-wrap:anywhere}
+  .checkout-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1.5rem;margin-bottom:2.2rem}.back-link{display:inline-flex;align-items:center;gap:.55rem;justify-self:start;width:max-content;max-width:100%;min-height:2.9rem;padding:.45rem 1.15rem .45rem .45rem;border:1px solid var(--line);border-radius:999px;color:var(--ink-soft);background:color-mix(in srgb,var(--card) 78%,transparent);font:700 .82rem ui-sans-serif,system-ui,sans-serif;text-decoration:none;white-space:nowrap;box-shadow:inset 0 1px rgba(255,255,255,.03);transition:border-color .2s ease,color .2s ease,background .2s ease}.back-link .back-arrow{display:grid;place-items:center;width:2rem;height:2rem;flex:none;border-radius:50%;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);transition:transform .2s var(--ease-out),background .2s ease}.back-link .back-arrow svg{width:1.05rem;height:1.05rem}.back-link:hover{border-color:color-mix(in srgb,var(--accent) 60%,var(--line));color:var(--ink);background:color-mix(in srgb,var(--accent) 8%,var(--card))}.back-link:hover .back-arrow{transform:translateX(-3px);background:color-mix(in srgb,var(--accent) 24%,transparent)}.back-link:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}.checkout-top .steps{grid-column:2}
+  .steps{display:flex;align-items:center;color:var(--ink-soft);font-family:ui-sans-serif,system-ui,sans-serif}.steps span{position:relative;display:flex;align-items:center;gap:.55rem}.steps span+span{margin-left:2.8rem}.steps span+span:before{content:"";position:absolute;right:calc(100% + .45rem);width:1.9rem;height:1px;background:var(--line)}.steps b{display:grid;place-items:center;width:1.8rem;height:1.8rem;border:1px solid var(--line);border-radius:50%;font:700 .64rem "SF Mono",Consolas,monospace}.steps small{font-size:.72rem;font-weight:700;letter-spacing:.02em}.steps span.active{color:var(--accent)}.steps span.active b{border-color:var(--accent);color:var(--paper);background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 10%,transparent)}
+  .checkout-stage{animation:stage-in .45s var(--ease-out) both}.checkout-stage[hidden]{display:none}@keyframes stage-in{from{opacity:0;transform:translateY(10px)}}
+  .stage-head{max-width:720px;margin:0 0 1.8rem}.stage-head.center{text-align:center;margin-inline:auto}.stage-kicker{display:block;margin-bottom:.55rem;color:var(--accent);font:700 .68rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}.stage-head h1{font-size:clamp(2.35rem,6vw,4.5rem);line-height:.98;letter-spacing:-.045em}.stage-head p{max-width:650px;margin:.85rem 0 0;color:var(--ink-soft);font-size:1rem;line-height:1.6}.stage-head.center p{margin-inline:auto}
+  .product-strip{display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:1rem;margin-bottom:1.15rem;padding:1rem;border:1px solid var(--line);border-radius:20px;background:color-mix(in srgb,var(--card) 92%,transparent)}.product-strip img{width:76px;height:76px;border-radius:16px;object-fit:cover;background:var(--paper-raised)}.product-strip strong,.product-strip span{display:block}.product-strip strong{font-size:1.05rem}.product-strip span{margin-top:.25rem;color:var(--ink-soft);font-size:.8rem}.product-strip-price{color:var(--accent);font:700 1.05rem "SF Mono",Consolas,monospace;white-space:nowrap}
+  .method-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}.method-card{display:flex;min-width:0;min-height:225px;padding:0;border:1px solid var(--line);border-radius:24px;overflow:hidden;text-align:left;color:var(--ink);background:color-mix(in srgb,var(--card) 94%,transparent);cursor:pointer;transition:.25s var(--ease-out)}.method-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent) 65%,var(--line));box-shadow:0 18px 45px -35px var(--shadow)}.method-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 13%,transparent)}.method-inner{display:flex;flex-direction:column;width:100%;padding:1.25rem}.method-art{display:grid;place-items:center;width:66px;height:66px;margin-bottom:1.25rem;border-radius:20px;color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent)}.method-art svg{width:38px;height:38px}.method-card strong{font-size:1rem}.method-card small{display:block;min-height:2.7rem;margin:.35rem 0 .8rem;color:var(--ink-soft);font-size:.76rem;line-height:1.45}.method-card em{width:max-content;margin-top:auto;padding:.3rem .55rem;border-radius:999px;color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent);font:normal 700 .65rem "SF Mono",Consolas,monospace}
+  .stage-actions{display:flex;justify-content:flex-end;gap:.75rem;margin-top:1.4rem}.stage-actions .btn{min-height:3.25rem;justify-content:center}.stage-actions .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .review-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:1rem}.review-card,.impact-card,.pix-card{padding:clamp(1.15rem,3vw,1.75rem);border:1px solid var(--line);border-radius:26px;background:color-mix(in srgb,var(--card) 94%,transparent)}.review-product{display:flex;align-items:center;gap:1rem;padding-bottom:1.2rem;margin-bottom:.85rem;border-bottom:1px solid var(--line)}.review-product img{width:72px;height:72px;border-radius:17px;object-fit:cover}.review-product strong,.review-product span{display:block}.review-product span{margin-top:.25rem;color:var(--ink-soft);font-size:.8rem}.price-line{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem 0;color:var(--ink-soft);font-size:.88rem}.price-line strong{color:var(--ink);text-align:right}.price-line.total{margin-top:.55rem;padding-top:1rem;border-top:1px solid var(--line);font-size:1.05rem}.price-line.total strong{color:var(--accent);font-size:1.35rem}.total-note{display:block;margin-top:.45rem;color:var(--ink-soft);font-size:.7rem;line-height:1.45}
+    .impact-card{display:flex;flex-direction:column;border-color:color-mix(in srgb,var(--good) 60%,var(--line));background:linear-gradient(145deg,color-mix(in srgb,var(--good) 11%,var(--card)),var(--card))}.impact-icon{display:grid;place-items:center;width:54px;height:54px;margin-bottom:1rem;border-radius:17px;color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}.impact-icon svg{width:28px;height:28px}.impact-card h2{font-size:1.55rem;line-height:1.1}.impact-card p{color:var(--ink-soft);line-height:1.55}.impact-number{display:block;margin:.8rem 0;color:var(--good);font:700 .98rem/1.5 ui-sans-serif,system-ui,sans-serif}.impact-card small{margin-top:auto;color:var(--ink-soft);font-size:.7rem;line-height:1.5}
+  .pix-layout{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr);gap:1rem;align-items:start}.pix-card{text-align:center}.qr-box{display:grid;place-items:center;width:min(290px,100%);aspect-ratio:1;margin:0 auto 1rem;padding:1rem;box-sizing:border-box;border-radius:24px;background:#fff}.qr-box img,.qr-box canvas{display:block;max-width:100%;height:auto!important}.pix-amount{display:block;color:var(--accent);font:700 1.15rem "SF Mono",Consolas,monospace}.pix-details{text-align:left}.pix-details h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1}.pix-details>p{color:var(--ink-soft);line-height:1.6}.pix-code{width:100%;min-height:8rem;box-sizing:border-box;margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);font:.72rem/1.5 "SF Mono",Consolas,monospace;resize:none}.safe-note{margin-top:1rem;padding:.9rem 1rem;border-radius:15px;color:var(--ink-soft);background:color-mix(in srgb,var(--good) 9%,transparent);font-size:.76rem;line-height:1.5}.feedback{min-height:1.2rem;color:var(--good);font-size:.78rem}.loading{padding:5rem 1rem;text-align:center;color:var(--ink-soft)}
+  @media(max-width:850px){.method-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.review-grid,.pix-layout{grid-template-columns:1fr}}
+  @media(max-width:560px){.checkout-page{width:min(calc(100% - 2rem),430px);padding-top:1.15rem}.checkout-top{align-items:stretch;flex-direction:column;gap:1.35rem;margin-bottom:2rem}.back-link{width:max-content;max-width:100%;padding:.4rem .95rem .4rem .4rem;font-size:.8rem}.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:.9rem .45rem;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--card) 78%,transparent)}.steps span{justify-content:center;flex-direction:column;gap:.42rem;text-align:center}.steps span+span{margin-left:0}.steps span+span:before{top:.87rem;right:calc(50% + 1.15rem);width:calc(100% - 2.3rem)}.steps b{position:relative;z-index:1;width:1.75rem;height:1.75rem;background:var(--card)}.steps small{font-size:.58rem}.stage-head{width:100%;margin-bottom:1.35rem}.stage-kicker{margin-bottom:.45rem;font-size:.61rem}.stage-head h1{max-width:100%;font-size:clamp(1.9rem,9vw,2.7rem);line-height:1.02;letter-spacing:-.038em}.stage-head p{max-width:100%;margin-top:.7rem;font-size:.87rem;line-height:1.5}.product-strip{grid-template-columns:58px minmax(0,1fr);padding:.85rem}.product-strip img{width:58px;height:58px}.product-strip-price{grid-column:2;white-space:normal}.method-grid{grid-template-columns:minmax(0,1fr)}.method-card{min-height:auto}.method-inner{display:grid;grid-template-columns:52px minmax(0,1fr);column-gap:.75rem;align-items:center;padding:.9rem}.method-art{grid-row:1/4;width:52px;height:52px;margin:0}.method-art svg{width:29px;height:29px}.method-card small{min-height:0;margin:.2rem 0}.method-card em{max-width:100%;margin:.25rem 0 0;white-space:normal}.review-grid,.pix-layout{grid-template-columns:minmax(0,1fr)}.review-card,.impact-card,.pix-card{padding:1rem;border-radius:21px}.review-product{align-items:flex-start;gap:.75rem}.review-product img{width:56px;height:56px;flex:0 0 auto}.price-line{align-items:flex-start;gap:.7rem}.price-line strong{max-width:58%}.price-line.total strong{font-size:1.18rem}.impact-card h2{font-size:1.35rem}.impact-number{font-size:.9rem}.stage-actions{display:grid;grid-template-columns:minmax(0,1fr);margin-top:1rem}.stage-actions .btn{width:100%;max-width:100%;box-sizing:border-box;white-space:normal}.stage-actions .btn-primary{grid-row:1}.qr-box{width:min(240px,100%);padding:.75rem}.pix-code{max-width:100%;padding:.8rem;font-size:.64rem}.pix-details .stage-actions{display:grid}.safe-note{padding:.8rem}.semeia-security{overflow:hidden}.semeia-security .cf-turnstile{width:100%;max-width:100%}.site-nav nav{display:none}}
+  @media(max-width:350px){.checkout-page{width:calc(100% - 1rem)}.steps small{font-size:.52rem}.product-strip{grid-template-columns:48px minmax(0,1fr)}.product-strip img{width:48px;height:48px}.method-inner{grid-template-columns:44px minmax(0,1fr);padding:.75rem}.method-art{width:44px;height:44px}.review-card,.impact-card,.pix-card{padding:.8rem}.qr-box{width:min(220px,100%)}}
+  @media(max-width:560px){.checkout-top{display:flex;gap:1rem}.back-link{min-height:2.7rem;padding:.4rem .95rem .4rem .4rem;border:1px solid var(--line);font-size:.78rem;white-space:nowrap}}
+  .cart-link{position:relative;display:inline-flex;align-items:center;gap:.4rem}.cart-badge{display:inline-grid;place-items:center;min-width:1.25rem;height:1.25rem;padding:0 .3rem;border-radius:999px;background:var(--accent);color:#0f2415;font:800 .66rem/1 "SF Mono",Consolas,monospace}
+</style>
+</head>
+<body>
+<header class="site-nav"><div class="inner"><a class="brand" href="index.html"><img class="brand-mark" src="assets/semeia-mark.svg" alt="">Semeia</a><nav><a href="index.html#produtos">Produtos</a><a href="minha-loja.html">Minha loja</a><a class="cart-link" href="carrinho.html">Sacola<span class="cart-badge" data-cart-count hidden>0</span></a></nav></div></header>
+<main class="checkout-page">
+  <div class="checkout-top"><a class="back-link" id="back-product" href="index.html"><span class="back-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l-6 6 6 6"/></svg></span><span class="back-label">Voltar ao produto</span></a><div class="steps" aria-label="Etapas da compra"><span class="active" data-progress="method"><b>1</b><small>Recebimento</small></span><span data-progress="review"><b>2</b><small>Revisão</small></span><span data-progress="pix"><b>3</b><small>Pagamento</small></span></div></div>
+  <div class="loading" id="loading">Preparando sua compra…</div>
+
+  <section class="checkout-stage" id="stage-method" hidden>
+    <div class="stage-head"><span class="stage-kicker">Combine a chegada</span><h1>Como o produto chega até você?</h1><p>Escolha uma forma de retirada ou receba em casa. O frete só será incluído quando você selecionar entrega.</p></div>
+    <div class="product-strip"><img id="method-image" alt=""><div><strong id="method-product"></strong><span id="method-seller"></span></div><div class="product-strip-price" id="method-price"></div></div>
+    <div class="method-grid" role="radiogroup" aria-label="Forma de recebimento">
+      <button class="method-card" data-method="walk" role="radio" aria-checked="false"><span class="method-inner"><span class="method-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="25" cy="8" r="4"/><path d="m22 16 7 6 5 10M22 16l-5 11 8 4M25 31l-8 10M27 31l9 10"/></svg></span><strong>Vou a pé</strong><small>Retirada no ponto indicado pela loja</small><em>Sem frete</em></span></button>
+      <button class="method-card" data-method="bike" role="radio" aria-checked="false"><span class="method-inner"><span class="method-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="34" r="8"/><circle cx="36" cy="34" r="8"/><path d="m13 34 8-14 7 14H13Zm8-14h9m-4-5h7M28 34l7-15"/></svg></span><strong>Vou de bicicleta</strong><small>Retirada leve e sem combustível</small><em>Sem frete</em></span></button>
+      <button class="method-card" data-method="vehicle" role="radio" aria-checked="false"><span class="method-inner"><span class="method-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 30h32l-4-11H15L8 30Zm0 0v7h5m27-7v7h-5M17 37h14"/><circle cx="16" cy="34" r="3"/><circle cx="33" cy="34" r="3"/></svg></span><strong>Vou com veículo</strong><small>Carro ou moto até o ponto de retirada</small><em>Sem frete</em></span></button>
+      <button class="method-card" data-method="delivery" role="radio" aria-checked="false"><span class="method-inner"><span class="method-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14h23v21H6zM29 22h8l5 7v6H29z"/><circle cx="14" cy="37" r="4"/><circle cx="35" cy="37" r="4"/></svg></span><strong>Quero receber</strong><small>Entrega combinada com o vendedor</small><em id="delivery-chip">Frete a confirmar</em></span></button>
+    </div>
+    <div class="shipping-tier-pick" id="shipping-tier-pick" hidden>
+      <label for="shipping-tier-select">Qual a distância até você?</label>
+      <select id="shipping-tier-select"></select>
+      <small>Este vendedor cobra frete por distância. Escolha sua faixa para ver o total.</small>
+    </div>
+    <div class="stage-actions"><button class="btn btn-primary" id="continue" disabled>Revisar meu pedido →</button></div>
+  </section>
+
+  <section class="checkout-stage" id="stage-review" hidden>
+    <div class="stage-head"><span class="stage-kicker">Revisão do pedido</span><h1>Confira seu pedido.</h1><p id="review-lede">Veja os valores e a forma de recebimento antes de continuar.</p></div>
+    <div class="review-grid"><div class="review-card"><div class="review-product"><img id="review-image" alt=""><div><strong id="review-product"></strong><span id="review-seller"></span></div></div><div class="price-line"><span>Produto</span><strong id="review-price"></strong></div><div class="price-line"><span>Recebimento</span><strong id="review-method"></strong></div><div class="price-line"><span>Frete</span><strong id="review-shipping"></strong></div><div class="price-line total"><span>Total</span><strong id="review-total"></strong></div><small class="total-note" id="total-note"></small></div><aside class="impact-card"><span class="impact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3 2 5 5 5 8.5A5 5 0 0 1 12 16a5 5 0 0 1-5-4.5C7 8 9 5 12 3z"/><path d="M12 16v5"/></svg></span><h2>Sua escolha também fortalece o Semeia.</h2><strong class="impact-number" id="impact-number"></strong><p>Ao finalizar, adicionamos esta estimativa ao impacto coletivo. Isso nos ajuda a mostrar que comprar de negócios locais faz diferença.</p><small>Registro informado por você. O Semeia não confirma o pagamento, não garante a entrega e não apresenta esta estimativa como certificação ambiental.</small></aside></div>
+    <div class="buyer-box">
+      <span class="buyer-title">Para o vendedor te achar</span>
+      <p class="buyer-lede">Sem isso o vendedor recebe o Pix sem saber de quem é o pedido. Não criamos conta nem cadastro.</p>
+      <div class="buyer-grid">
+        <div><label for="buyer-name">Seu nome</label><input id="buyer-name" maxlength="80" autocomplete="name" placeholder="Como o vendedor deve te chamar"></div>
+        <div><label for="buyer-whats">Seu WhatsApp</label><input id="buyer-whats" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="(16) 99999-9999"></div>
+      </div>
+      <p class="buyer-error" id="buyer-error" aria-live="polite"></p>
+    </div>
+    <div class="semeia-security"><span>Proteção da métrica comunitária</span><div class="cf-turnstile" data-sitekey="0x4AAAAAAENPXnq4jBtZ6CA3" data-action="turnstile-spin-v1" data-theme="dark" data-size="flexible"></div></div><p class="feedback" id="review-feedback" aria-live="polite"></p><div class="stage-actions"><button class="btn btn-ghost" id="back-method">← Alterar recebimento</button><button class="btn btn-primary" id="finish" disabled title="Preencha seu nome e WhatsApp para finalizar">Finalizar compra</button></div>
+  </section>
+
+  <section class="checkout-stage" id="stage-pix" hidden>
+    <div class="stage-head center"><span class="stage-kicker">Pedido finalizado</span><h1>Agora é só pagar direto ao vendedor.</h1><p id="pix-recipient"></p></div>
+    <div class="pix-layout"><div class="pix-card"><div class="qr-box" id="pix-qr"></div><strong class="pix-amount" id="pix-amount"></strong></div><div class="pix-details"><span class="stage-kicker">Pix copia e cola</span><h2>Confira o recebedor no seu banco.</h2><p>Escaneie o QR Code ou copie o código abaixo. Antes de confirmar, verifique se o nome exibido pelo banco corresponde ao vendedor.</p><textarea class="pix-code" id="pix-code" readonly></textarea><div class="stage-actions"><button class="btn btn-primary" id="copy-pix">Copiar código Pix</button><a class="btn btn-ghost" id="pix-whats" target="_blank" rel="noopener">Falar com o vendedor</a></div><div class="safe-note">Pagamento, retirada e entrega são combinados diretamente com a loja. Guarde o comprovante e confirme os detalhes pelo WhatsApp.</div><p class="feedback" id="pix-feedback" aria-live="polite"></p></div></div>
+  </section>
+</main>
+<script src="assets/data.js"></script><script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script><script src="assets/api.js"></script><script src="assets/cart.js?v=20260813-1"></script><script src="assets/main.js?v=20260814-trees"></script><script src="assets/security.js"></script><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="assets/pix.js?v=20260814-1"></script>
+<script>
+(function(){
+  var params=new URLSearchParams(location.search),id=params.get("id"),storeParam=params.get("store"),product=null,method=null,total=0,shippingKnown=true;
+  var $=function(selector){return document.querySelector(selector)};
+  var money=SemeiaFormat.money;
+  function imageOf(item){return item.imageUrl||(item.imageUrls&&item.imageUrls[0])||"assets/product-placeholder-basket.webp"}
+  function methodInfo(value){return {walk:"Retirada a pé",bike:"Retirada de bicicleta",vehicle:"Retirada com carro ou moto",delivery:"Entrega pelo vendedor"}[value]}
+  function impactLabel(value){
+    var kg = Number(value || 0);
+    if(kg <= 0) return "Escolha local registrada";
+    return "Você evita que ~" + semeiaImpactAmount(kg) + " de gás carbônico vá para a atmosfera — " + semeiaTreeEquivalent(kg) + ".";
+  }
+  function showStage(name){["method","review","pix"].forEach(function(stage){$("#stage-"+stage).hidden=stage!==name});document.querySelectorAll("[data-progress]").forEach(function(step){var order={method:1,review:2,pix:3};step.classList.toggle("active",order[step.dataset.progress]<=order[name])});scrollTo({top:0,behavior:"smooth"})}
+  // ---- Frete por faixa de distância ----
+  function tiers(){return product&&Array.isArray(product.shippingTiers)?product.shippingTiers:[]}
+  function cheapestTierFee(){var fees=tiers().map(function(t){return t.feeCents}).filter(function(f){return f!=null});return fees.length?Math.min.apply(null,fees):null}
+  function tierRangeLabel(index){return SemeiaFormat.tierRange(tiers(),index)}
+  var tierFeeLabel=SemeiaFormat.tierFeeLabel;
+  // Vazio = ninguém escolheu ainda. Sem isso a primeira faixa vinha marcada
+  // sozinha e a pessoa fechava o pedido com um frete que nunca conferiu.
+  function tierIndex(){var value=tiers().length?$("#shipping-tier-select").value:"";return value===""?null:Number(value)}
+  function selectedTier(){var list=tiers();if(!list.length)return null;var index=tierIndex();return index==null?null:list[index]||null}
+  function paintTierOptions(){var select=$("#shipping-tier-select"),list=tiers();$("#shipping-tier-pick").hidden=true;if(!list.length)return;select.innerHTML="";select.add(new Option("Escolha a distância até você",""));list.forEach(function(tier,index){select.add(new Option(tierRangeLabel(index)+" — "+tierFeeLabel(tier),String(index)))});select.value=""}
+  // O selo do card mostra a faixa escolhida; antes ficava no "a partir de".
+  function deliveryChipText(){
+    // Fora da entrega o selo volta a ser resumo: a faixa escolhida não vale para retirada.
+    var list=tiers(),chosen=method==="delivery"?selectedTier():null;
+    if(!list.length)return product.shippingFee==null?"Frete a confirmar":Number(product.shippingFee)===0?"Entrega grátis":"+ "+money(product.shippingFee);
+    if(!chosen){var cheapest=cheapestTierFee();return cheapest==null?"Frete a combinar":Number(cheapest)===0?"A partir de grátis":"A partir de "+money(cheapest/100)}
+    var fee=chosen.feeCents==null?"Frete a combinar":Number(chosen.feeCents)===0?"Entrega grátis":money(chosen.feeCents/100);
+    return fee+" · "+tierRangeLabel(tierIndex());
+  }
+  // Escolher "quero receber" sem dizer a distância deixaria o total no chute.
+  function syncDeliveryChoice(){
+    var needsTier=method==="delivery"&&tiers().length,missing=needsTier&&!selectedTier();
+    var button=$("#continue");
+    button.disabled=!method||missing;
+    button.title=missing?"Escolha a faixa de distância para ver o frete":"";
+    $("#delivery-chip").textContent=deliveryChipText();
+  }
+  function deliveryFee(){var list=tiers();if(!list.length)return product.shippingFee;var tier=selectedTier();return tier&&tier.feeCents!=null?tier.feeCents/100:null}
+
+  // ---- Pedido vindo da sacola: varios itens de uma loja so ----
+  function orderItems(){return product&&Array.isArray(product.cartItems)?product.cartItems:[]}
+  function feeCentsAt(item,index){var list=Array.isArray(item.shippingTiers)?item.shippingTiers:[];if(!list.length)return item.shippingFee==null?null:Math.round(Number(item.shippingFee)*100);var tier=list[index];return tier?tier.feeCents:null}
+  // O frete e um por loja: usamos a tabela mais detalhada e, em cada faixa, o maior valor entre os itens.
+  function buildOrder(entries){
+    var first=entries[0].product;
+    var subtotal=entries.reduce(function(sum,entry){return sum+Number(entry.product.price)*entry.quantity},0);
+    var co2=entries.reduce(function(sum,entry){var savings=entry.product.impactEstimate&&entry.product.impactEstimate.savingsKg;return sum+(Number(savings)||Number(entry.product.co2kg)||0)*entry.quantity},0);
+    var base=entries.map(function(entry){return Array.isArray(entry.product.shippingTiers)?entry.product.shippingTiers:[]}).reduce(function(longest,list){return list.length>longest.length?list:longest},[]);
+    var mergedTiers=base.map(function(tier,index){
+      var fees=entries.map(function(entry){return feeCentsAt(entry.product,index)});
+      return {upToKm:tier.upToKm,feeCents:fees.some(function(fee){return fee==null})?null:Math.max.apply(null,fees)};
+    });
+    var plain=entries.map(function(entry){return entry.product.shippingFee});
+    return {
+      id:"loja-"+first.storeId,storeId:first.storeId,
+      name:entries.length>1?entries.length+" itens desta loja":(entries[0].quantity>1?entries[0].quantity+"x "+entries[0].product.name:entries[0].product.name),
+      unit:"",price:subtotal,supplier:first.supplier,region:first.region,whats:first.whats,
+      pixKey:first.pixKey,pixName:first.pixName,pixCity:first.pixCity,
+      imageUrl:first.imageUrl,imageUrls:first.imageUrls,
+      shippingTiers:mergedTiers,
+      shippingFee:plain.some(function(fee){return fee==null})?null:Math.max.apply(null,plain.map(Number)),
+      impactEstimate:{savingsKg:co2},co2kg:co2,
+      cartItems:entries.map(function(entry){return {productId:entry.product.id,name:entry.product.name,quantity:entry.quantity,price:Number(entry.product.price)}})
+    };
+  }
+  function paintOrderItems(){
+    var items=orderItems(),box=$("#review-items");
+    if(box)box.remove();
+    if(items.length<2)return;
+    var list=document.createElement("div");list.id="review-items";list.className="review-items";
+    items.forEach(function(item){
+      var row=document.createElement("div");
+      var name=document.createElement("span");name.textContent=item.quantity+"x "+item.name;
+      var price=document.createElement("strong");price.textContent=money(item.price*item.quantity);
+      row.append(name,price);list.append(row);
+    });
+    var card=document.querySelector("#stage-review .review-card"),after=card.querySelector(".review-product");
+    after.after(list);
+  }
+
+  // Nome e WhatsApp ficam no navegador: o comprador digita uma vez, mesmo pedindo em várias lojas.
+  var BUYER_KEY = "semeia-buyer";
+  function loadBuyer(){
+    try{
+      var saved = JSON.parse(localStorage.getItem(BUYER_KEY) || "null");
+      if(saved){
+        $("#buyer-name").value = saved.name || "";
+        $("#buyer-whats").value = saved.whatsapp || "";
+      }
+    }catch(_){}
+    $("#buyer-name").addEventListener("input", syncFinishState);
+    var phone = $("#buyer-whats");
+    phone.value = maskPhone(phone.value);
+    phone.addEventListener("input", function(){
+      var atEnd = phone.selectionStart === phone.value.length;
+      var formatted = maskPhone(phone.value);
+      if(formatted !== phone.value){
+        phone.value = formatted;
+        // Reposiciona o cursor no fim só quando a pessoa está digitando no fim.
+        if(atEnd) phone.setSelectionRange(formatted.length, formatted.length);
+      }
+      syncFinishState();
+    });
+    syncFinishState();
+  }
+  function saveBuyer(buyer){
+    try{ localStorage.setItem(BUYER_KEY, JSON.stringify(buyer)) }catch(_){}
+  }
+  // (16) 99999-9999 enquanto digita, aceitando fixo de 8 dígitos também.
+  function maskPhone(value){
+    var digits = String(value || "").replace(/\D/g, "").slice(0, 11);
+    if(!digits) return "";
+    if(digits.length <= 2) return "(" + digits;
+    var rest = digits.slice(2);
+    var split = digits.length > 10 ? 5 : 4;
+    if(rest.length <= split) return "(" + digits.slice(0, 2) + ") " + rest;
+    return "(" + digits.slice(0, 2) + ") " + rest.slice(0, split) + "-" + rest.slice(split);
+  }
+
+  // O botão de finalizar só acende com nome e WhatsApp preenchidos.
+  function syncFinishState(){
+    var button = $("#finish");
+    if(!button) return;
+    var ready = !readBuyer().error;
+    button.disabled = !ready;
+    button.title = ready ? "" : "Preencha seu nome e WhatsApp para finalizar";
+    if(ready) $("#buyer-error").textContent = "";
+  }
+
+  function readBuyer(){
+    var name = $("#buyer-name").value.trim();
+    var whatsapp = $("#buyer-whats").value.trim();
+    var digits = whatsapp.replace(/\D/g, "");
+    if(name.length < 2) return { error: "Informe seu nome para o vendedor saber de quem é o pedido." };
+    if(digits.length < 10 || digits.length > 13) return { error: "Informe um WhatsApp com DDD, como (16) 99999-9999." };
+    return { name: name, whatsapp: whatsapp, digits: digits };
+  }
+
+  function render(item){product=item;$("#loading").hidden=true;if(!product){$("#stage-method").hidden=false;$("#stage-method").innerHTML='<div class="stage-head"><span class="stage-kicker">Produto indisponível</span><h1>Não encontramos este anúncio.</h1><p>Volte ao catálogo e escolha outro produto.</p></div>';return}
+  // Link direto para um produto que acabou: avisa em vez de deixar fechar o pedido.
+  if(product.quantityAvailable!=null&&!(Number(product.quantityAvailable)>0)){$("#stage-method").hidden=false;$("#stage-method").innerHTML='<div class="stage-head"><span class="stage-kicker">Sem estoque</span><h1>Este produto ficou indisponível.</h1><p>A loja vendeu as últimas unidades. Fale com o vendedor para saber quando repõe, ou escolha outro produto.</p><p><a class="btn btn-primary" href="index.html#produtos">Ver outros produtos</a></p></div>';return}$("#back-product").href=storeParam?"carrinho.html":"produto?id="+encodeURIComponent(product.id);$("#method-image").src=imageOf(product);$("#method-product").textContent=product.name;$("#method-seller").textContent=product.supplier+" · "+product.region;$("#method-price").textContent=money(product.price)+(product.unit||"");paintTierOptions();$("#delivery-chip").textContent=deliveryChipText();var hasPix=Boolean(String(product.pixKey||"").trim());$("#review-lede").textContent=hasPix?"Revise os valores e o recebimento. Ao finalizar, você verá o Pix do vendedor.":"Revise os valores e o recebimento. Ao finalizar, o pedido será enviado ao vendedor pelo WhatsApp.";$("#finish").textContent="Finalizar compra";var paymentStep=document.querySelector('[data-progress="pix"] small');if(paymentStep)paymentStep.textContent=hasPix?"Pagamento":"Contato";showStage("method")}
+  document.querySelectorAll(".method-card").forEach(function(card){card.onclick=function(){method=card.dataset.method;document.querySelectorAll(".method-card").forEach(function(item){var selected=item===card;item.classList.toggle("selected",selected);item.setAttribute("aria-checked",String(selected))});$("#shipping-tier-pick").hidden=!(method==="delivery"&&tiers().length);syncDeliveryChoice()}});
+  $("#shipping-tier-select").addEventListener("change",syncDeliveryChoice);
+  $("#continue").onclick=function(){var shipping=method==="delivery"?deliveryFee():0;shippingKnown=shipping!=null;total=Number(product.price)+(shippingKnown?Number(shipping):0);$("#review-image").src=imageOf(product);$("#review-product").textContent=product.name;$("#review-seller").textContent=product.supplier+" · "+product.region;$("#review-price").textContent=money(product.price);$("#review-method").textContent=methodInfo(method);paintOrderItems();var shippingText=shippingKnown?(Number(shipping)===0?"Grátis":money(shipping)):"A combinar";if(method==="delivery"&&selectedTier())shippingText+=" · "+tierRangeLabel(tierIndex());$("#review-shipping").textContent=shippingText;$("#review-total").textContent=shippingKnown?money(total):money(product.price)+" + frete";$("#total-note").textContent=shippingKnown?"":"O frete será combinado e não entra no QR Code agora.";syncFinishState();$("#impact-number").textContent=impactLabel(product.impactEstimate?product.impactEstimate.savingsKg:product.co2kg);showStage("review")};
+  $("#back-method").onclick=function(){showStage("method")};
+
+  // A chave inclui os itens: dois pedidos diferentes da mesma loja não podem
+  // reaproveitar o mesmo identificador (o segundo viraria "duplicado" na API).
+  function eventId(){var key="semeia-checkout-event:"+product.id+":"+orderItems().map(function(item){return item.productId+"x"+item.quantity}).join(",");try{var saved=JSON.parse(localStorage.getItem(key)||"null");if(saved&&saved.id&&Date.now()-saved.createdAt<1800000)return saved.id;var value=crypto.randomUUID();localStorage.setItem(key,JSON.stringify({id:value,createdAt:Date.now()}));return value}catch(_){return crypto.randomUUID()}}
+  function whatsappUrl(){var phone=String(product.whats||"").replace(/\D/g,"");if(!phone)return "";var fee=method==="delivery"?deliveryFee():0;var range=tiers().length&&selectedTier()?" ("+tierRangeLabel(tierIndex())+")":"";var shipping=method==="delivery"?(fee!=null?(Number(fee)===0?"entrega grátis":"frete de "+money(fee)+range):"frete a combinar") : "sem frete";var amount=shippingKnown?money(total):money(product.price)+" + frete";var lines=orderItems().length>1?orderItems().map(function(item){return "• "+item.quantity+"x "+item.name+" — "+money(item.price*item.quantity)}).join("\n"):product.name;var buyerLine=readBuyer();var message="Olá! Sou "+(buyerLine.name||"um comprador")+" e finalizei meu pedido pelo Semeia.\n"+(orderItems().length>1?lines+"\n":"Produto: "+lines+". ")+"Recebimento: "+methodInfo(method)+". "+shipping+". Total: "+amount+". Aguardo as orientações para pagamento e "+(method==="delivery"?"entrega.":"retirada.");return "https://wa.me/"+phone+"?text="+encodeURIComponent(message)}
+  function paintPix(message){var amount=shippingKnown?total:Number(product.price),code=SemeiaPix.payload({key:product.pixKey,name:product.pixName||product.supplier,city:product.pixCity||product.region,amount:amount}),box=$("#pix-qr");$("#pix-recipient").textContent="Pix de "+money(amount)+" direto para "+(product.pixName||product.supplier)+(shippingKnown?".":". O frete será combinado separadamente.");$("#pix-amount").textContent=money(amount);$("#pix-code").value=code;box.innerHTML="";if(typeof QRCode==="function")new QRCode(box,{text:code,width:250,height:250,colorDark:"#102016",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});var phone=String(product.whats||"").replace(/\D/g,"");if(phone)$("#pix-whats").href="https://wa.me/"+phone+"?text="+encodeURIComponent("Olá! Finalizei o pedido de "+product.name+" no Semeia. Escolhi "+methodInfo(method).toLowerCase()+" e gostaria de confirmar os detalhes.");else $("#pix-whats").hidden=true;$("#pix-feedback").textContent=message;showStage("pix")}
+  $("#finish").onclick=async function(){var button=this,hasPix=Boolean(String(product.pixKey||"").trim());
+  var buyer=readBuyer();
+  if(buyer.error){$("#buyer-error").textContent=buyer.error;$("#buyer-name").focus();return}
+  $("#buyer-error").textContent="";saveBuyer({name:buyer.name,whatsapp:buyer.whatsapp});
+  button.disabled=true;button.textContent="Finalizando…";try{await SemeiaSecurity.verify($("#stage-review"));var result=await SemeiaAPI.confirmImpact(Object.assign({eventId:eventId(),fulfillmentMethod:method,shippingTierIndex:tierIndex()},orderItems().length?{items:orderItems().map(function(item){return {productId:item.productId,quantity:item.quantity}})}:{productId:product.id},{buyerName:buyer.name,buyerWhatsapp:buyer.digits}));finishCartOrder();if(hasPix){paintPix(result.created?"Sua escolha foi adicionada ao impacto coletivo do Semeia.":"Esta finalização já estava registrada nas métricas do Semeia.")}else{var url=whatsappUrl();if(!url)throw new Error("Esta loja ainda não informou um WhatsApp para contato.");location.href=url}}catch(error){
+    // 409 = a loja ficou sem estoque enquanto a pessoa preenchia. Nada foi criado.
+    $("#review-feedback").textContent=error.message||"Não foi possível finalizar agora.";
+    $("#review-feedback").style.color="var(--warn)"; // recado de erro não deve sair em verde
+    if(error.status===409&&storeParam){var back=document.createElement("a");back.href="carrinho.html";back.textContent=" Rever minha sacola";back.style.textDecoration="underline";$("#review-feedback").append(back)}
+    if(window.turnstile)window.turnstile.reset()}finally{button.disabled=false;button.textContent="Finalizar compra"}};
+  $("#copy-pix").onclick=function(){navigator.clipboard.writeText($("#pix-code").value).then(function(){$("#pix-feedback").textContent="Código Pix copiado. Confira o recebedor no aplicativo do banco."})};
+    // Ao finalizar, o grupo sai da sacola e fica marcado como enviado.
+  function finishCartOrder(){
+    if(!product||!product.storeId||!orderItems().length)return;
+    if(window.SemeiaCart)SemeiaCart.removeMany(orderItems().map(function(item){return item.productId}));
+    try{
+      var done=JSON.parse(sessionStorage.getItem("semeia-cart-done")||"{}");
+      done[product.storeId]=Date.now();
+      sessionStorage.setItem("semeia-cart-done",JSON.stringify(done));
+    }catch(_){}
+  }
+  function renderEmpty(title,text){$("#loading").hidden=true;$("#stage-method").hidden=false;$("#stage-method").innerHTML='<div class="stage-head"><span class="stage-kicker">'+title+'</span><h1>'+text+'</h1><p><a class="btn btn-primary" href="carrinho.html">Voltar para a sacola</a></p></div>'}
+  async function loadStoreOrder(){
+    $("#back-product").href="carrinho.html";$("#back-product").querySelector(".back-label").textContent="Voltar para a sacola";
+    var saved=(window.SemeiaCart?SemeiaCart.items():[]);
+    var loaded=await Promise.all(saved.map(function(item){return SemeiaAPI.loadProduct(item.productId).then(function(found){return found?{product:found,quantity:item.quantity}:null}).catch(function(){return null})}));
+    var entries=loaded.filter(Boolean).filter(function(entry){return entry.product.storeId===storeParam});
+    if(!entries.length)return renderEmpty("Pedido vazio","Não há itens desta loja na sua sacola.");
+    // O estoque pode ter acabado depois da sacola: item esgotado fica de fora
+    // (a sacola já mostrava assim) e quantidade acima do estoque é limitada.
+    entries=entries.filter(function(entry){var stock=entry.product.quantityAvailable;return stock==null||Number(stock)>0})
+      .map(function(entry){var stock=entry.product.quantityAvailable;return stock==null?entry:{product:entry.product,quantity:Math.min(entry.quantity,Number(stock))}});
+    if(!entries.length)return renderEmpty("Sem estoque","Os itens desta loja ficaram indisponíveis.");
+    render(buildOrder(entries));
+  }
+  loadBuyer();
+  if(storeParam)loadStoreOrder();
+  else{
+    // Quantidade escolhida na página do produto: monta o mesmo pedido de loja,
+    // com um item só — assim preço, frete, impacto e Pix já saem multiplicados.
+    var wanted=Math.min(999,Math.max(1,Math.floor(Number(params.get("qty"))||1)));
+    var single=function(found){return found?(wanted>1?buildOrder([{product:found,quantity:wanted}]):found):null};
+    var fallback=(window.PRODUCTS||[]).filter(function(item){return item.id===id})[0]||null;
+    // O pedido montado usa um id de loja; o "voltar" precisa do anúncio de origem.
+    var backToProduct=function(){if(wanted>1)$("#back-product").href="produto?id="+encodeURIComponent(id)};
+    SemeiaAPI.loadProduct(id).then(function(found){render(single(found));backToProduct()}).catch(function(){render(single(fallback));backToProduct()});
+  }
+})();
+</script>
+</body>
+</html>

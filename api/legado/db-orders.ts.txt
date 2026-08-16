@@ -1,0 +1,61 @@
+export async function insertOrder(database: D1Database, order: NewOrder): Promise<void> {
+  const now = Math.floor(Date.now() / 1000);
+  await database
+    .prepare(`
+      INSERT INTO orders
+        (id, product_id, store_id, buyer_email, amount_cents, fee_cents, co2_g, status, created_at, updated_at)
+      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'pending', ?8, ?8)
+    `)
+    .bind(
+      order.id,
+      order.productId,
+      order.storeId,
+      order.buyerEmail,
+      order.amountCents,
+      order.feeCents,
+      order.co2g,
+      now,
+    )
+    .run();
+}
+
+
+export async function markOrderStatus(
+  database: D1Database,
+  orderId: string,
+  status: OrderRow["status"],
+  paymentId: string | null,
+): Promise<void> {
+  await database
+    .prepare("UPDATE orders SET status = ?1, mp_payment_id = ?2, updated_at = ?3 WHERE id = ?4")
+    .bind(status, paymentId, Math.floor(Date.now() / 1000), orderId)
+    .run();
+}
+
+
+export function getOrder(database: D1Database, id: string): Promise<OrderRow | null> {
+  return database.prepare("SELECT * FROM orders WHERE id = ?1").bind(id).first<OrderRow>();
+}
+
+
+export interface NewOrder {
+  id: string;
+  productId: string;
+  storeId: string;
+  buyerEmail: string | null;
+  amountCents: number;
+  feeCents: number;
+  co2g: number;
+}
+
+
+export async function attachPreference(
+  database: D1Database,
+  orderId: string,
+  preferenceId: string,
+): Promise<void> {
+  await database
+    .prepare("UPDATE orders SET mp_preference_id = ?1, updated_at = ?2 WHERE id = ?3")
+    .bind(preferenceId, Math.floor(Date.now() / 1000), orderId)
+    .run();
+}

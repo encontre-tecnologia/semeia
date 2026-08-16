@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Coloque seu pequeno negócio de São Carlos no Semeia: página própria com catálogo, contato direto por WhatsApp e cadastro gratuito durante o piloto.">
+<link rel="canonical" href="https://semeiabr.com/cadastro-loja">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Semeia">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Cadastre sua loja no Semeia — gratuito durante o piloto">
+<meta property="og:description" content="Coloque seu pequeno negócio de São Carlos no Semeia: página própria com catálogo, contato direto por WhatsApp e cadastro gratuito durante o piloto.">
+<meta property="og:url" content="https://semeiabr.com/cadastro-loja">
+<meta property="og:image" content="https://semeiabr.com/assets/og-semeia.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Cadastre sua loja no Semeia — gratuito durante o piloto</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<link rel="stylesheet" href="assets/pretty-select.css?v=20260813-1">
+<style>
+  body { overflow-x: clip; }
+  .signup-page { position: relative; padding-block: clamp(2rem, 6vw, 5rem) 2rem; overflow-x: clip; }
+  .signup-page::before, .signup-page::after {
+    content: ""; position: absolute; pointer-events: none; z-index: -1; border: 1px solid var(--line);
+    border-radius: 50% 44% 58% 42%; transform: rotate(22deg);
+  }
+  .signup-page::before { width: 18rem; height: 18rem; left: -13rem; top: 5rem; }
+  .signup-page::after { width: 11rem; height: 11rem; right: -7rem; top: 30rem; transform: rotate(-18deg); }
+  .signup-shell { max-width: 820px; margin-inline: auto; }
+  .signup-intro { margin: 0 auto 2rem; text-align: center; }
+  .pilot-label { display: inline-flex; align-items: center; gap: .55rem; color: var(--accent); font: 700 .7rem/1 "SF Mono", Consolas, monospace; letter-spacing: .09em; text-transform: uppercase; }
+  .pilot-label::before { content: ""; width: 1.8rem; height: 1px; background: currentColor; }
+  .signup-intro h1 { font-size: clamp(2.8rem, 7vw, 4.8rem); line-height: .96; letter-spacing: -.055em; margin: 1rem auto .9rem; max-width: 12ch; }
+  .signup-intro .lede { max-width: 37rem; color: var(--ink-soft); font-size: 1rem; margin: 0 auto; }
+
+  form { background: color-mix(in srgb, var(--card) 92%, transparent); border: 1px solid var(--line); border-radius: 32px; padding: clamp(1.15rem, 3vw, 2rem); box-shadow: 0 34px 90px -58px var(--shadow), inset 0 1px rgba(255,255,255,.42); backdrop-filter: blur(18px); }
+  .form-head { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; padding: .5rem .5rem 1.35rem; }
+  .form-head h2 { font-size: clamp(1.7rem, 3vw, 2.35rem); letter-spacing: -.045em; line-height: 1.05; }
+  .form-head .sub { color: var(--ink-soft); font-size: .86rem; margin: .6rem 0 0; max-width: 34rem; }
+  .step-badge { border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line)); border-radius: 999px; padding: .48rem .75rem; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--accent); font: 700 .66rem "SF Mono", Consolas, monospace; letter-spacing: .04em; white-space: nowrap; }
+  .form-progress { display: grid; grid-template-columns: repeat(4,1fr); gap: .4rem; padding: 0 .5rem 1.2rem; }
+  .form-progress span { height: 3px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 42%, var(--line)); }
+  .form-section { min-width: 0; border: 1px solid var(--line); border-radius: 22px; padding: 1.35rem 1.25rem .25rem; margin: 0 0 .85rem; background: color-mix(in srgb, var(--paper) 30%, transparent); }
+  .section-title { display: flex; gap: .8rem; align-items: center; margin-bottom: 1.25rem; }
+  .section-title span { width: 1.85rem; height: 1.85rem; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--accent) 11%, transparent); color: var(--accent); font: 700 .65rem "SF Mono", Consolas, monospace; }
+  .section-title h3 { font-size: 1rem; letter-spacing: -.01em; }
+  .field { margin-bottom: 1.15rem; }
+  .field label, .field-label { display: block; font-size: .82rem; font-weight: 700; color: var(--ink); margin-bottom: .45rem; }
+  .field .hint { font-size: .75rem; color: var(--ink-soft); margin: .38rem 0 0; }
+  input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="password"], select, textarea {
+    width: 100%; min-height: 3.25rem; padding: .86rem 1rem; border-radius: 14px; border: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 72%, transparent); color: var(--ink); font-family: inherit; font-size: .94rem; outline: none;
+  }
+  input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--ink-soft) 72%, transparent); }
+  input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="password"], select, textarea { transition: border-color .25s, box-shadow .25s, background .25s, transform .25s var(--ease-out); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent); transform: translateY(-1px); }
+  textarea { resize: vertical; min-height: 6rem; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+  .form-action { display: flex; align-items: center; gap: 1rem; padding: .8rem .5rem .35rem; }
+  .form-action .btn { min-height: 3.55rem; flex: 1; justify-content: space-between; border-radius: 16px; padding-inline: 1.3rem; box-shadow: 0 18px 35px -24px var(--accent); }
+  .form-action small { color: var(--ink-soft); font-size: .69rem; line-height: 1.35; max-width: 11rem; }
+  .confirm { display: none; margin-top: 1.1rem; padding: 1rem; border-radius: 16px; background: color-mix(in srgb, var(--good) 12%, var(--card)); border: 1px solid color-mix(in srgb, var(--good) 55%, var(--line)); color: var(--good); font-size: .84rem; }
+  .confirm.show { display: block; }
+  .confirm .connect-button { margin-top: .9rem; width: 100%; justify-content: center; }
+  @media (prefers-reduced-motion: no-preference) {
+    .signup-intro > * { animation: rise-in .72s var(--ease-out) both; }
+    .signup-intro h1 { animation-delay: .06s; }
+    .signup-intro .lede { animation-delay: .12s; }
+    form { animation: form-in .85s .12s var(--ease-out) both; }
+  }
+  @keyframes rise-in { from { opacity: 0; transform: translateY(22px); } }
+  @keyframes form-in { from { opacity: 0; transform: translateY(28px) scale(.985); } }
+  @media (max-width: 900px) {
+    .signup-intro h1 { max-width: 12ch; }
+  }
+  @media (max-width: 620px) {
+    .signup-page { padding-top: 1.5rem; }
+    .signup-intro h1 { font-size: clamp(2.55rem, 13vw, 3.7rem); }
+    .row2 { grid-template-columns: 1fr; }
+    form { padding: .85rem; border-radius: 24px; }
+    .form-section { padding: 1.15rem .95rem .15rem; border-radius: 18px; }
+    .form-head { grid-template-columns: 1fr; }
+    .step-badge { width: max-content; grid-row: 1; }
+    .form-action { align-items: stretch; flex-direction: column; }
+    .form-action small { max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="inner">
+    <div class="brand">
+      <img class="brand-mark" src="assets/semeia-mark.svg" alt="">
+      Semeia
+    </div>
+    <nav>
+      <a href="index.html">Produtos</a>
+      <a href="index.html#como-funciona">Como funciona</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap signup-page">
+  <div class="signup-shell">
+    <aside class="signup-intro">
+      <div class="pilot-label">Cadastro gratuito no piloto</div>
+      <h1>Abra sua loja no Semeia.</h1>
+      <p class="lede">Crie sua vitrine local, publique produtos e receba contatos diretamente pelo WhatsApp.</p>
+    </aside>
+
+    <form id="signup-form">
+      <div class="form-head">
+        <div>
+          <h2>Vamos abrir sua loja</h2>
+          <p class="sub">Leva cerca de 3 minutos. Você poderá revisar tudo antes de publicar seus produtos.</p>
+        </div>
+        <span class="step-badge">CADASTRO DO PILOTO</span>
+      </div>
+      <div class="form-progress" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+      <fieldset class="form-section">
+        <legend class="section-title"><span>01</span><h3>Sobre o seu negócio</h3></legend>
+
+        <div class="row2">
+      <div class="field">
+        <label for="biz">Nome da loja</label>
+        <input type="text" id="biz" required autocomplete="organization" placeholder="Ex.: Sítio Boa Terra">
+      </div>
+      <div class="field">
+        <label for="contact">Seu nome</label>
+        <input type="text" id="contact" required autocomplete="name" placeholder="Quem cuida da loja">
+      </div>
+        </div>
+
+        <div class="row2">
+      <div class="field">
+        <label for="cat">Categoria</label>
+        <select id="cat" required><option value="">Selecione…</option></select>
+      </div>
+      <div class="field">
+        <label for="region">Cidade</label>
+        <!-- Lista fechada: o campo livre criou três grafias para a mesma cidade. -->
+        <select id="region" required>
+          <option value="São Carlos - SP" selected>São Carlos - SP</option>
+        </select>
+        <p class="hint">O Semeia começou por São Carlos. Produz em outra cidade? Escreva para a gente — abrimos por região, conforme a procura.</p>
+      </div>
+        </div>
+
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="section-title"><span>02</span><h3>Contato da loja</h3></legend>
+        <div class="row2">
+      <div class="field">
+        <label for="whats">WhatsApp ou telefone</label>
+        <input type="tel" id="whats" required autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000">
+      </div>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" required autocomplete="email" inputmode="email" placeholder="voce@exemplo.com">
+      </div>
+        </div>
+
+        <p class="hint">Ao enviar, entre com o Google para confirmar este e-mail. Depois, use a mesma conta em Minha loja.</p>
+        <p class="hint">Este número aparecerá como o contato principal dos produtos publicados.</p>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="section-title"><span>03</span><h3>Primeiros produtos</h3></legend>
+        <div class="field">
+      <label for="products">Quais produtos você quer listar primeiro?</label>
+      <textarea id="products" required placeholder="Ex.: cesta de hortifruti orgânico — R$ 42&#10;mel silvestre 500 g — R$ 28"></textarea>
+      <p class="hint">Liste de 1 a 3 itens. Depois poderemos transformar cada um em um produto completo.</p>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="section-title"><span>04</span><h3>Pix direto <small style="font-weight:400;color:var(--ink-soft)">(opcional)</small></h3></legend>
+        <div class="row2">
+          <div class="field"><label for="pix-key">Chave Pix</label><input type="text" id="pix-key" placeholder="CPF, e-mail, telefone ou chave aleatória"></div>
+          <div class="field"><label for="pix-name">Nome de quem recebe</label><input type="text" id="pix-name" placeholder="Ex.: Sítio Boa Terra"></div>
+        </div>
+        <div class="field"><label for="pix-city">Cidade</label><input type="text" id="pix-city" maxlength="15" placeholder="Ex.: Campinas"><p class="hint">Se preencher, o comprador poderá pagar via Pix direto pelo produto. Cartão e dinheiro continuam pelo WhatsApp.</p></div>
+      </fieldset>
+
+      <label class="check-option" style="margin:1rem .5rem"><input id="privacy-consent" type="checkbox" required>Li e aceito os <a href="termos.html" target="_blank">Termos de uso</a> e a <a href="privacidade.html" target="_blank">Política de privacidade</a>.</label>
+      <div class="semeia-security"><span>Proteção contra cadastros automáticos</span><div class="cf-turnstile" data-sitekey="0x4AAAAAAENPXnq4jBtZ6CA3" data-action="turnstile-spin-v1" data-theme="dark"></div></div>
+      <div class="form-action">
+        <button type="submit" class="btn btn-primary"><span>Enviar cadastro</span><span aria-hidden="true">→</span></button>
+        <small>Seus dados são usados apenas para criar e operar sua loja.</small>
+      </div>
+    <div class="confirm" id="confirm-msg">Seu app de e-mail deve abrir com o cadastro pronto — só confirme o envio por lá. Se não abrir, escreva direto para <span class="mono">guilhermerocetom@tecnomotor.com.br</span>.</div>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer wrap">
+  <span>Semeia — uma vitrine para aproximar negócios locais de quem compra.</span>
+  <a href="index.html">← Ver produtos</a>
+</footer>
+
+<script src="assets/data.js?v=20260812-categories1"></script>
+<script src="assets/config.js?v=20260813-api-url"></script>
+<script src="assets/api.js"></script>
+<script src="assets/main.js?v=20260814-trees"></script>
+<script src="assets/security.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>window.SemeiaFirebaseReady=import("./assets/firebase-auth.js");</script>
+<script type="text/plain" id="legacy-store-signup">
+  var form = document.getElementById("signup-form");
+  var confirmMsg = document.getElementById("confirm-msg");
+  var submitBtn = form.querySelector('button[type="submit"]');
+
+  // O formulário mostra rótulos; o banco guarda slugs.
+  function slugFor(dictionary, label) {
+    var keys = Object.keys(dictionary);
+    for (var i = 0; i < keys.length; i++) {
+      var value = dictionary[keys[i]];
+      var text = typeof value === "string" ? value : value.label;
+      if (text === label) return keys[i];
+    }
+    return null;
+  }
+
+  function readForm() {
+    return {
+      biz: document.getElementById("biz").value.trim(),
+      contact: document.getElementById("contact").value.trim(),
+      catLabel: document.getElementById("cat").value,
+      region: document.getElementById("region").value.trim(),
+      whats: document.getElementById("whats").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      pixKey: document.getElementById("pix-key").value.trim(),
+      pixName: document.getElementById("pix-name").value.trim(),
+      pixCity: document.getElementById("pix-city").value.trim(),
+      products: document.getElementById("products").value.trim(),
+    };
+  }
+
+  /** Sem API no ar, o cadastro ainda chega — por e-mail, como no piloto. */
+  function sendByEmail(data) {
+    var body =
+      "Novo cadastro de loja para o piloto do Semeia\n\n" +
+      "Loja: " + data.biz + "\n" +
+      "Responsável: " + data.contact + "\n" +
+      "Categoria: " + data.catLabel + "\n" +
+      "Região: " + data.region + "\n" +
+      "WhatsApp/telefone: " + data.whats + "\n" +
+      "E-mail: " + data.email + "\n\n" +
+      "Produtos iniciais:\n" + data.products;
+
+    window.location.href = "mailto:guilhermerocetom@tecnomotor.com.br"
+      + "?subject=" + encodeURIComponent("Cadastro de loja Semeia: " + data.biz)
+      + "&body=" + encodeURIComponent(body);
+
+    confirmMsg.innerHTML = 'Seu app de e-mail deve abrir com o cadastro pronto — só confirme o envio por lá. ' +
+      'Se não abrir, escreva direto para <span class="mono">guilhermerocetom@tecnomotor.com.br</span>.';
+    confirmMsg.classList.add("show");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var data = readForm();
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Enviando…";
+
+    SemeiaAPI.createStore({
+      name: data.biz,
+      contactName: data.contact,
+      email: data.email,
+      whatsapp: data.whats,
+      category: slugFor(CATS, data.catLabel) || data.catLabel,
+      region: data.region,
+      seals: [],
+      pixKey: data.pixKey,
+      pixName: data.pixName,
+      pixCity: data.pixCity,
+    })
+      .then(function () {
+        sessionStorage.removeItem("semeia-store-login");
+        window.location.href = "minha-loja.html";
+        return;
+        confirmMsg.textContent = result.message || "Cadastro recebido. Vamos revisar as informações antes de publicar a loja.";
+        confirmMsg.classList.add("show");
+        form.reset();
+      })
+      .catch(function (err) {
+        if (err && err.status) {
+          // A API respondeu recusando — mostrar o motivo é mais útil que abrir e-mail.
+          confirmMsg.textContent = "Não foi possível enviar: " + err.message;
+          confirmMsg.classList.add("show");
+        } else {
+          sendByEmail(data);
+        }
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Enviar cadastro</span><span aria-hidden="true">→</span>';
+      });
+  });
+
+  setupUIInteractions();
+</script>
+<script src="assets/store-signup.js?v=20260815-texto"></script>
+<script src="assets/pretty-select.js?v=20260813-1"></script>
+</body>
+</html>

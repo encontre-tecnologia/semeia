@@ -1,0 +1,30 @@
+# Dependências
+node_modules/
+
+# Segredos locais do Worker — os valores reais vivem em `wrangler secret`.
+# O .dev.vars.example fica versionado como referência.
+api/.dev.vars
+
+# Estado local do wrangler
+.wrangler/
+
+# Cópias das publicações. Cada deploy gera uma pasta com o site inteiro;
+# o histórico do git já cumpre esse papel.
+deploys/
+
+# Imagens originais fora do site e anexos de ferramenta.
+originais/
+.codex-remote-attachments/
+api/.codex-workers-types/
+
+# Relatório interno de custos — números de faturamento não vão para repositório
+# público. O arquivo continua na máquina.
+auditoria-custos-*/
+
+# Preferências locais do editor/assistente
+.claude/settings.local.json
+
+# Sistema
+Thumbs.db
+.DS_Store
+*.log

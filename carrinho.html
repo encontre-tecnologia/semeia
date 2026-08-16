@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://semeiabr.com/carrinho">
+<title>Sua sacola — Semeia</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<style>
+  .cart-page{width:min(calc(100% - 3rem),900px);margin-inline:auto;padding:2.6rem 0 4.5rem}
+  .cart-head{margin-bottom:1.5rem}
+  .cart-kicker{display:block;color:var(--accent);font:700 .68rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.09em}
+  .cart-head h1{margin:.4rem 0 .3rem;font-size:clamp(2rem,5vw,3rem);line-height:1.05}
+  .cart-head p{margin:0;max-width:46rem;color:var(--ink-soft);line-height:1.6}
+  .cart-loading,.cart-empty{padding:3rem 1rem;text-align:center;color:var(--ink-soft)}
+  .cart-empty h2{margin:.4rem 0 .6rem;color:var(--ink)}
+  .cart-store{margin-bottom:1.15rem;border:1px solid var(--line);border-radius:24px;background:color-mix(in srgb,var(--card) 92%,transparent);overflow:hidden}
+  .cart-store.is-done{border-color:color-mix(in srgb,var(--good) 55%,var(--line))}
+  .cart-store-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 1.3rem;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--accent) 5%,transparent)}
+  .cart-store-head strong{display:block;font-size:1.05rem}
+  .cart-store-head small{color:var(--ink-soft);font-size:.76rem}
+  .cart-store-flag{padding:.35rem .7rem;border-radius:999px;border:1px solid color-mix(in srgb,var(--good) 50%,var(--line));color:var(--good);font:700 .66rem "SF Mono",Consolas,monospace;white-space:nowrap}
+  .cart-item{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:1rem;align-items:center;padding:1rem 1.3rem;border-bottom:1px solid var(--line)}
+  .cart-item img{width:64px;height:64px;border-radius:14px;object-fit:cover;background:var(--paper)}
+  .cart-item strong{display:block;font-size:.95rem}
+  .cart-item small{display:block;margin-top:.15rem;color:var(--ink-soft);font-size:.75rem}
+  .cart-unit-price{display:flex!important;align-items:center;gap:.45rem;flex-wrap:wrap}.cart-old-price{text-decoration:line-through;opacity:.72}.cart-up{padding:.18rem .38rem;border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line));border-radius:999px;color:var(--warn);font:800 .56rem/1 "SF Mono",Consolas,monospace}.cart-off{padding:.18rem .38rem;border:1px solid color-mix(in srgb,var(--accent-bright) 50%,var(--line));border-radius:999px;color:var(--accent-bright);font:800 .56rem/1 "SF Mono",Consolas,monospace}
+  .cart-item-price{font:700 .9rem "SF Mono",Consolas,monospace;color:var(--accent);white-space:nowrap;text-align:right}
+  .cart-qty{display:inline-flex;align-items:center;gap:.1rem;margin-top:.5rem;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .cart-qty button{width:2rem;height:2rem;border:0;background:transparent;color:var(--ink);font-size:1rem;line-height:1;cursor:pointer}
+  .cart-qty button:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+  .cart-qty span{min-width:2rem;text-align:center;font:700 .82rem "SF Mono",Consolas,monospace}
+  .cart-remove{margin-left:.7rem;padding:0;border:0;background:none;color:#df8c76;font:700 .7rem ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+  .cart-remove:hover{text-decoration:underline;text-underline-offset:3px}
+  .cart-store-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1.1rem 1.3rem}
+  .cart-store-total small{display:block;color:var(--ink-soft);font-size:.72rem}
+  .cart-store-total strong{font-size:1.35rem;color:var(--accent)}
+  .cart-store-foot .btn{min-height:3rem;justify-content:center}
+  .cart-summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:1.4rem;padding:1.15rem 1.3rem;border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));border-radius:20px;background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  .cart-summary p{margin:0;max-width:44rem;color:var(--ink-soft);font-size:.82rem;line-height:1.55}
+  .cart-summary strong{color:var(--ink)}
+  @media(max-width:620px){
+    .cart-page{width:calc(100% - 2rem);padding-top:1.6rem}
+    .cart-item{grid-template-columns:56px minmax(0,1fr);row-gap:.5rem}
+    .cart-item img{width:56px;height:56px}
+    .cart-item-price{grid-column:1/-1;text-align:left}
+    .cart-store-foot{flex-direction:column;align-items:stretch}
+    .cart-store-foot .btn{width:100%}
+  }
+  /* Estoque acabou depois que a pessoa guardou o item: avisamos sem apagar nada da sacola. */
+  .cart-alert{margin-bottom:1.15rem;padding:.9rem 1.1rem;border:1px solid color-mix(in srgb,var(--warn) 45%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--warn) 9%,transparent);color:var(--ink-soft);font-size:.82rem;line-height:1.5}
+  .cart-alert strong{display:block;margin-bottom:.15rem;color:var(--warn);font-size:.87rem}
+  .cart-item.is-out{background:color-mix(in srgb,var(--warn) 5%,transparent)}
+  .cart-item.is-out img{filter:grayscale(1);opacity:.55}
+  .cart-item.is-out>div>strong{color:var(--ink-soft)}
+  .cart-flag{display:inline-block;margin-top:.35rem;padding:.22rem .5rem;border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line));border-radius:999px;color:var(--warn);font:800 .58rem/1.35 "SF Mono",Consolas,monospace}
+  .cart-fix{margin-left:.5rem;padding:0;border:0;background:none;color:var(--accent);font:700 .7rem ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+  .cart-fix:hover{text-decoration:underline;text-underline-offset:3px}
+  .cart-item-price.is-out{color:var(--warn);font:700 .74rem "SF Mono",Consolas,monospace}
+  .cart-qty button:disabled{opacity:.35;cursor:not-allowed}
+  .cart-store-foot .btn.is-blocked{border-color:color-mix(in srgb,var(--warn) 40%,var(--line));background:color-mix(in srgb,var(--warn) 12%,transparent);color:var(--warn);box-shadow:none;cursor:not-allowed}
+  .cart-store-foot .btn.is-blocked:hover{transform:none;background:color-mix(in srgb,var(--warn) 12%,transparent);color:var(--warn)}
+  .cart-link{position:relative;display:inline-flex;align-items:center;gap:.4rem}.cart-badge{display:inline-grid;place-items:center;min-width:1.25rem;height:1.25rem;padding:0 .3rem;border-radius:999px;background:var(--accent);color:#0f2415;font:800 .66rem/1 "SF Mono",Consolas,monospace}
+</style>
+</head>
+<body>
+<header class="site-nav"><div class="inner"><a class="brand" href="index.html"><img class="brand-mark" src="assets/semeia-mark.svg" alt="">Semeia</a><nav><a href="index.html#produtos">Produtos</a><a href="index.html#como-funciona">Como funciona</a><a class="cart-link" href="carrinho.html">Sacola<span class="cart-badge" data-cart-count hidden>0</span></a></nav></div></header>
+
+<main class="cart-page">
+  <div class="cart-head">
+    <span class="cart-kicker">Compra em andamento</span>
+    <h1 id="cart-title">Sua sacola</h1>
+    <p id="cart-lede">Junte o que quiser de várias lojas. Cada loja é um pedido separado, com o Pix indo direto para a loja.</p>
+  </div>
+
+  <div class="cart-loading" id="cart-loading">Carregando sua sacola…</div>
+
+  <div class="cart-empty" id="cart-empty" hidden>
+    <h2>Sua sacola está vazia</h2>
+    <p>Escolha produtos no catálogo e eles aparecem aqui.</p>
+    <p><a class="btn btn-primary" href="index.html#produtos">Ver produtos</a></p>
+  </div>
+
+  <div class="cart-alert" id="cart-alert" role="status" hidden></div>
+
+  <div id="cart-stores"></div>
+
+  <div class="cart-summary" id="cart-summary" hidden>
+    <p id="cart-summary-text"></p>
+    <div class="cart-store-total"><small>Produtos na sacola</small><strong id="cart-grand-total">R$ 0,00</strong></div>
+  </div>
+</main>
+
+<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script>
+<script src="assets/api.js"></script>
+<script src="assets/cart.js?v=20260813-1"></script>
+<script src="assets/notice.js?v=20260813-1"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (selector) { return document.querySelector(selector); };
+  var money = SemeiaFormat.money;
+  function imageOf(item) { return item.imageUrl || (item.imageUrls && item.imageUrls[0]) || "assets/product-placeholder-basket.webp"; }
+
+  // Pedidos já finalizados ficam marcados por 30 min, para a pessoa saber onde parou.
+  var DONE_KEY = "semeia-cart-done";
+  function doneStores() {
+    try {
+      var saved = JSON.parse(sessionStorage.getItem(DONE_KEY) || "{}");
+      return saved && typeof saved === "object" ? saved : {};
+    } catch (_) { return {}; }
+  }
+
+  /**
+   * Estoque relido da API a cada abertura da sacola. Três situações:
+   * "ok" (ou estoque não informado), "out" (acabou) e "short" (sobrou menos do
+   * que a pessoa guardou). Nada é removido sozinho — quem decide é o comprador.
+   */
+  function availability(entry) {
+    var stock = entry.product.quantityAvailable;
+    if (stock == null) return { state: "ok" };
+    stock = Number(stock);
+    if (!(stock > 0)) return { state: "out", stock: 0 };
+    if (stock < entry.quantity) return { state: "short", stock: stock };
+    return { state: "ok", stock: stock };
+  }
+  function stockText(stock) {
+    return stock.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+  }
+
+  function cheapestFee(product) {
+    var tiers = Array.isArray(product.shippingTiers) ? product.shippingTiers : [];
+    if (!tiers.length) return product.shippingFee == null ? null : Number(product.shippingFee);
+    var fees = tiers.map(function (tier) { return tier.feeCents; }).filter(function (fee) { return fee != null; });
+    return fees.length ? Math.min.apply(null, fees) / 100 : null;
+  }
+
+  function shippingNote(products) {
+    var fees = products.map(cheapestFee);
+    if (fees.some(function (fee) { return fee == null; })) return "Frete combinado com a loja no próximo passo.";
+    var cheapest = Math.max.apply(null, fees.map(function (fee) { return Number(fee); }));
+    return cheapest === 0
+      ? "Entrega grátis nesta loja. Você escolhe como receber no próximo passo."
+      : "Frete a partir de " + money(cheapest) + ", cobrado uma vez por loja. Você escolhe a faixa no próximo passo.";
+  }
+
+  function storeCard(group, done) {
+    var card = document.createElement("section");
+    card.className = "cart-store" + (done ? " is-done" : "");
+
+    var head = document.createElement("div");
+    head.className = "cart-store-head";
+    var identity = document.createElement("div");
+    var name = document.createElement("strong");
+    name.textContent = group.supplier;
+    var region = document.createElement("small");
+    region.textContent = group.region || "";
+    identity.append(name, region);
+    head.append(identity);
+    if (done) {
+      var flag = document.createElement("span");
+      flag.className = "cart-store-flag";
+      flag.textContent = "Pedido enviado";
+      head.append(flag);
+    }
+    card.append(head);
+
+    var subtotal = 0, soldOut = 0, blocked = false;
+    group.items.forEach(function (entry) {
+      var stock = availability(entry);
+      if (stock.state === "out") soldOut++;
+      else subtotal += Number(entry.product.price) * entry.quantity;
+      if (stock.state === "short") blocked = true;
+      var row = document.createElement("div");
+      row.className = "cart-item" + (stock.state === "out" ? " is-out" : "");
+
+      var image = document.createElement("img");
+      image.src = imageOf(entry.product);
+      image.alt = "";
+
+      var info = document.createElement("div");
+      var title = document.createElement("strong");
+      title.textContent = entry.product.name;
+      var unit = document.createElement("small");
+      unit.className = "cart-unit-price";
+      var unitCurrent = document.createElement("span");
+      unitCurrent.textContent = money(entry.product.price) + (entry.product.unit || "");
+      unit.appendChild(unitCurrent);
+      var change = SemeiaFormat.priceChange(entry.product);
+      if (change) {
+        var oldPrice = document.createElement("span");
+        oldPrice.className = "cart-old-price";
+        oldPrice.textContent = money(change.previous);
+        var badge = document.createElement("span");
+        badge.className = change.up ? "cart-up" : "cart-off";
+        badge.textContent = change.label;
+        unit.append(oldPrice, badge);
+      }
+      var controls = document.createElement("div");
+      var quantity = document.createElement("div");
+      quantity.className = "cart-qty";
+      var less = document.createElement("button");
+      less.type = "button"; less.textContent = "−"; less.setAttribute("aria-label", "Diminuir quantidade");
+      var current = document.createElement("span");
+      current.textContent = String(entry.quantity);
+      var more = document.createElement("button");
+      more.type = "button"; more.textContent = "+"; more.setAttribute("aria-label", "Aumentar quantidade");
+      less.onclick = function () { SemeiaCart.setQuantity(entry.product.id, entry.quantity - 1); render(); };
+      more.onclick = function () { SemeiaCart.setQuantity(entry.product.id, entry.quantity + 1); render(); };
+      // Não deixa passar do que a loja tem: o "+" trava no estoque informado.
+      if (stock.stock != null && entry.quantity >= stock.stock) {
+        more.disabled = true;
+        more.title = "A loja tem " + stockText(stock.stock) + " no momento";
+      }
+      quantity.append(less, current, more);
+      var remove = document.createElement("button");
+      remove.type = "button"; remove.className = "cart-remove"; remove.textContent = "Remover";
+      remove.onclick = function () { SemeiaCart.remove(entry.product.id); render(); };
+      if (stock.state !== "out") controls.append(quantity);
+      controls.append(remove);
+      info.append(title, unit);
+
+      if (stock.state === "out") {
+        var gone = document.createElement("span");
+        gone.className = "cart-flag";
+        gone.textContent = "Indisponível agora";
+        info.append(gone);
+      } else if (stock.state === "short") {
+        var left = document.createElement("span");
+        left.className = "cart-flag";
+        left.textContent = "Restam só " + stockText(stock.stock);
+        var fix = document.createElement("button");
+        fix.type = "button"; fix.className = "cart-fix";
+        fix.textContent = "Ajustar para " + stockText(stock.stock);
+        fix.onclick = function () { SemeiaCart.setQuantity(entry.product.id, stock.stock); render(); };
+        info.append(left, fix);
+      }
+      info.append(controls);
+
+      var price = document.createElement("div");
+      price.className = "cart-item-price" + (stock.state === "out" ? " is-out" : "");
+      price.textContent = stock.state === "out" ? "Fora de estoque" : money(Number(entry.product.price) * entry.quantity);
+
+      row.append(image, info, price);
+      card.append(row);
+    });
+
+    var foot = document.createElement("div");
+    foot.className = "cart-store-foot";
+    var totals = document.createElement("div");
+    totals.className = "cart-store-total";
+    var label = document.createElement("small");
+    var available = group.items.filter(function (entry) { return availability(entry).state !== "out"; });
+    label.textContent = !available.length
+      ? "Nada desta loja está disponível no momento."
+      : soldOut
+        ? (soldOut === 1 ? "1 item indisponível não entra neste pedido. " : soldOut + " itens indisponíveis não entram neste pedido. ")
+          + shippingNote(available.map(function (entry) { return entry.product; }))
+        : shippingNote(available.map(function (entry) { return entry.product; }));
+    var value = document.createElement("strong");
+    value.textContent = money(subtotal);
+    totals.append(label, value);
+
+    // Sem estoque nenhum, ou com quantidade acima do que a loja tem, o pedido não segue.
+    var action;
+    if (!available.length || blocked) {
+      action = document.createElement("span");
+      action.className = "btn btn-ghost is-blocked";
+      action.setAttribute("aria-disabled", "true");
+      action.textContent = available.length ? "Ajuste as quantidades" : "Sem itens disponíveis";
+      action.title = available.length
+        ? "Um item está com quantidade acima do estoque da loja."
+        : "Os itens desta loja ficaram sem estoque.";
+    } else {
+      action = document.createElement("a");
+      action.className = "btn " + (done ? "btn-ghost" : "btn-primary");
+      action.href = "checkout.html?store=" + encodeURIComponent(group.storeId);
+      action.textContent = done ? "Abrir pedido de novo" : "Finalizar este pedido";
+    }
+    foot.append(totals, action);
+    card.append(foot);
+    return card;
+  }
+
+  // Um aviso só no topo, resumindo o que mudou desde que a pessoa guardou os itens.
+  function paintStockAlert(soldOut, short) {
+    var alert = $("#cart-alert");
+    if (!soldOut && !short) { alert.hidden = true; alert.textContent = ""; return; }
+    var parts = [];
+    if (soldOut) parts.push(soldOut === 1 ? "1 item ficou indisponível" : soldOut + " itens ficaram indisponíveis");
+    if (short) parts.push(short === 1 ? "1 item tem menos estoque do que você pediu" : short + " itens têm menos estoque do que você pediu");
+    alert.innerHTML = "";
+    var title = document.createElement("strong");
+    title.textContent = "Sua sacola mudou: " + parts.join(" e ") + ".";
+    var text = document.createTextNode(soldOut
+      ? "Guardamos tudo como estava, mas o que está fora de estoque não entra no total nem no pedido. Você pode remover ou esperar a loja repor."
+      : "Ajuste a quantidade para continuar — a loja não tem tudo o que você pediu no momento.");
+    alert.append(title, text);
+    alert.hidden = false;
+  }
+
+  function paint(groups) {
+    var box = $("#cart-stores"), done = doneStores();
+    box.innerHTML = "";
+    var grand = 0, soldOut = 0, short = 0;
+    groups.forEach(function (group) {
+      group.items.forEach(function (entry) {
+        var stock = availability(entry);
+        if (stock.state === "out") return soldOut++;
+        if (stock.state === "short") short++;
+        grand += Number(entry.product.price) * entry.quantity;
+      });
+      box.append(storeCard(group, Boolean(done[group.storeId])));
+    });
+    paintStockAlert(soldOut, short);
+    $("#cart-grand-total").textContent = money(grand);
+    $("#cart-summary").hidden = false;
+    $("#cart-title").textContent = groups.length === 1 ? "Sua sacola" : "Sua sacola — " + groups.length + " lojas";
+    $("#cart-summary-text").textContent = groups.length === 1
+      ? "Você vai fazer 1 pagamento, direto para a loja. O frete entra no próximo passo."
+      : "Você vai fazer " + groups.length + " pagamentos, um para cada loja — o Pix vai direto para a loja, e cada loja tem seu próprio frete.";
+  }
+
+  // Produtos já buscados ficam em memória: mexer na quantidade redesenha na hora,
+  // sem voltar na API e sem o estado de carregamento piscando na tela.
+  var catalog = {};
+
+  function showEmpty() {
+    $("#cart-loading").hidden = true;
+    $("#cart-stores").innerHTML = "";
+    $("#cart-summary").hidden = true;
+    $("#cart-alert").hidden = true;
+    $("#cart-empty").hidden = false;
+    $("#cart-title").textContent = "Sua sacola";
+  }
+
+  function render() {
+    var saved = SemeiaCart.items();
+    if (!saved.length) return showEmpty();
+    var groups = [];
+    saved.forEach(function (item) {
+      var product = catalog[item.productId];
+      if (!product) return;
+      var group = groups.filter(function (entry) { return entry.storeId === product.storeId; })[0];
+      if (!group) {
+        group = { storeId: product.storeId, supplier: product.supplier, region: product.region, items: [] };
+        groups.push(group);
+      }
+      group.items.push({ product: product, quantity: item.quantity });
+    });
+    if (!groups.length) return showEmpty();
+    $("#cart-loading").hidden = true;
+    $("#cart-empty").hidden = true;
+    paint(groups);
+  }
+
+  async function load() {
+    var saved = SemeiaCart.items();
+    if (!saved.length) return showEmpty();
+    var pending = saved.filter(function (item) { return !catalog[item.productId]; });
+    if (!pending.length) return render();
+    $("#cart-loading").hidden = false;
+    // Preço e disponibilidade vêm sempre da API: o navegador só guarda id e quantidade.
+    var loaded = await Promise.all(pending.map(function (item) {
+      return SemeiaAPI.loadProduct(item.productId).catch(function () { return null; });
+    }));
+    var missing = [];
+    loaded.forEach(function (product, index) {
+      if (product) catalog[product.id] = product;
+      else missing.push(pending[index].productId);
+    });
+    if (missing.length) {
+      SemeiaCart.removeMany(missing);
+      SemeiaNotice.alert(missing.length === 1
+        ? "Um produto saiu do catálogo e foi retirado da sua sacola."
+        : missing.length + " produtos saíram do catálogo e foram retirados da sua sacola.");
+    }
+    render();
+  }
+
+  // Voltando para a aba da sacola, o estoque é lido de novo: a loja pode ter
+  // vendido a última unidade enquanto a pessoa olhava o produto.
+  // (relê em silêncio: sem estado de carregamento, para a tela não piscar)
+  document.addEventListener("visibilitychange", async function () {
+    if (document.visibilityState !== "visible") return;
+    var saved = SemeiaCart.items();
+    if (!saved.length) return;
+    var loaded = await Promise.all(saved.map(function (item) {
+      return SemeiaAPI.loadProduct(item.productId).catch(function () { return null; });
+    }));
+    loaded.forEach(function (product) { if (product) catalog[product.id] = product; });
+    render();
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

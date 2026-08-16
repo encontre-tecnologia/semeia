@@ -1,0 +1,49 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "semeia-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-11",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 }
+  },
+
+  // O único segredo usado atualmente é ADMIN_TOKEN, configurado com
+  // `wrangler secret put ADMIN_TOKEN`. Nunca grave o valor neste arquivo.
+  // E-mails transacionais (boas-vindas e aprovação da loja) saem pela API do
+  // Gmail — ver src/gmail.ts. Enquanto EMAIL_FROM estiver vazio ou os segredos
+  // GMAIL_* não existirem, nada é enviado.
+  "vars": {
+    // Lista separada por vírgula. O endereço do Pages continua valendo enquanto
+    // o domínio próprio se estabelece.
+    "ALLOWED_ORIGIN": "https://semeiabr.com,https://www.semeiabr.com,https://semeia-51k.pages.dev",
+    "EMAIL_FROM": "encontretecnologia2@gmail.com",
+    "FIREBASE_PROJECT_ID": "semeia-a7cd2",
+    "FIREBASE_WEB_API_KEY": "AIzaSyCig4C5pu-7xu9O0XxvSg_OP7h11hQh75E",
+    "ADMIN_EMAILS": "encontretecnologia2@gmail.com,hiasminlorrane8@gmail.com,guilhermedevsistemas@gmail.com",
+    "CLOUDINARY_CLOUD_NAME": "hnwixqnd",
+    "CLOUDINARY_UPLOAD_PRESET": "ml_default"
+  },
+
+  // De hora em hora: devolve ao catálogo o estoque de pedidos que ninguém
+  // confirmou em 24h (ver releaseExpiredHolds em src/db.ts).
+  "triggers": { "crons": ["0 * * * *"] },
+
+  "ratelimits": [
+    { "name": "REGISTRATION_RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } },
+    { "name": "UPLOAD_RATE_LIMITER", "namespace_id": "1002", "simple": { "limit": 12, "period": 60 } },
+    { "name": "METRIC_RATE_LIMITER", "namespace_id": "1003", "simple": { "limit": 20, "period": 60 } },
+    { "name": "WRITE_RATE_LIMITER", "namespace_id": "1004", "simple": { "limit": 30, "period": 60 } }
+  ],
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "semeia-db",
+      "database_id": "fee3f167-4631-4cb8-b223-10488fd2d50e",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

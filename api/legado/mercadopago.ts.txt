@@ -1,0 +1,247 @@
+/**
+ * Semeia — cliente do Mercado Pago (Split de Pagamentos 1:1).
+ *
+ * Fluxo geral:
+ *  1. O vendedor autoriza a aplicação via OAuth  -> guardamos access/refresh token dele.
+ *  2. Criamos a preferência de checkout COM O TOKEN DELE, informando `marketplace_fee`.
+ *  3. O Mercado Pago divide o valor: líquido para o vendedor, comissão para a plataforma.
+ *  4. O webhook confirma o pagamento — só ele muda o pedido para "pago".
+ */
+
+import { hmacHex, safeEqual } from "./crypto";
+
+const AUTH_BASE = "https://auth.mercadopago.com.br/authorization";
+const API_BASE = "https://api.mercadopago.com";
+
+export interface OAuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  /** epoch em segundos */
+  expiresAt: number;
+  mpUserId: string;
+}
+
+interface OAuthTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  user_id: number | string;
+}
+
+/** URL para onde o vendedor é redirecionado para autorizar a aplicação. */
+export function buildAuthUrl(clientId: string, redirectUri: string, state: string): string {
+  const url = new URL(AUTH_BASE);
+  url.searchParams.set("client_id", clientId);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("platform_id", "mp");
+  url.searchParams.set("redirect_uri", redirectUri);
+  url.searchParams.set("state", state);
+  return url.toString();
+}
+
+async function requestTokens(body: Record<string, string>): Promise<OAuthTokens> {
+  const response = await fetch(`${API_BASE}/oauth/token`, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded", accept: "application/json" },
+    body: new URLSearchParams(body),
+  });
+
+  if (!response.ok) {
+    // Resposta de erro do MP é pequena e limitada — ler como texto aqui é seguro.
+    const detail = await response.text();
+    throw new Error(`OAuth do Mercado Pago falhou (${response.status}): ${detail}`);
+  }
+
+  const data = (await response.json()) as OAuthTokenResponse;
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: Math.floor(Date.now() / 1000) + data.expires_in,
+    mpUserId: String(data.user_id),
+  };
+}
+
+/** Troca o `code` recebido no callback pelos tokens do vendedor. */
+export function exchangeCode(
+  clientId: string,
+  clientSecret: string,
+  code: string,
+  redirectUri: string,
+  testMode: boolean,
+): Promise<OAuthTokens> {
+  return requestTokens({
+    grant_type: "authorization_code",
+    client_id: clientId,
+    client_secret: clientSecret,
+    code,
+    redirect_uri: redirectUri,
+    test_token: testMode ? "true" : "false",
+  });
+}
+
+/** Renova o access token de um vendedor antes que ele expire. */
+export function refreshTokens(
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string,
+): Promise<OAuthTokens> {
+  return requestTokens({
+    grant_type: "refresh_token",
+    client_id: clientId,
+    client_secret: clientSecret,
+    refresh_token: refreshToken,
+  });
+}
+
+export interface PreferenceInput {
+  /** Nosso id de pedido — volta no webhook como `external_reference`. */
+  orderId: string;
+  title: string;
+  /** Em reais, não centavos — é o que a API espera. */
+  unitPrice: number;
+  /** Comissão da plataforma, em reais. */
+  marketplaceFee?: number;
+  buyerEmail?: string;
+  notificationUrl?: string;
+  successUrl?: string;
+  failureUrl?: string;
+  pendingUrl?: string;
+}
+
+export interface PreferenceResult {
+  id: string;
+  initPoint: string;
+  sandboxInitPoint: string | null;
+}
+
+interface PreferenceResponse {
+  id: string;
+  init_point: string;
+  sandbox_init_point?: string;
+}
+
+/** Cria a preferência de checkout na conta do vendedor, já com o split configurado. */
+export async function createPreference(
+  sellerAccessToken: string,
+  input: PreferenceInput,
+): Promise<PreferenceResult> {
+  const response = await fetch(`${API_BASE}/checkout/preferences`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${sellerAccessToken}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      items: [
+        {
+          id: input.orderId,
+          title: input.title,
+          quantity: 1,
+          currency_id: "BRL",
+          unit_price: input.unitPrice,
+        },
+      ],
+      ...(input.buyerEmail ? { payer: { email: input.buyerEmail } } : {}),
+      ...(input.marketplaceFee !== undefined ? { marketplace_fee: input.marketplaceFee } : {}),
+      external_reference: input.orderId,
+      ...(input.notificationUrl ? { notification_url: input.notificationUrl } : {}),
+      ...(input.successUrl && input.failureUrl && input.pendingUrl
+        ? {
+            back_urls: {
+              success: input.successUrl,
+              failure: input.failureUrl,
+              pending: input.pendingUrl,
+            },
+            auto_return: "approved",
+          }
+        : {}),
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`Falha ao criar preferência (${response.status}): ${detail}`);
+  }
+
+  const data = (await response.json()) as PreferenceResponse;
+  return {
+    id: data.id,
+    initPoint: data.init_point,
+    sandboxInitPoint: data.sandbox_init_point ?? null,
+  };
+}
+
+export interface PaymentDetail {
+  id: string;
+  status: string;
+  externalReference: string | null;
+  transactionAmount: number;
+  currencyId: string;
+}
+
+interface PaymentResponse {
+  id: number | string;
+  status: string;
+  external_reference?: string | null;
+  transaction_amount: number;
+  currency_id: string;
+}
+
+/** Busca o pagamento para descobrir o status real — o webhook só manda o id. */
+export async function getPayment(
+  sellerAccessToken: string,
+  paymentId: string,
+): Promise<PaymentDetail> {
+  const response = await fetch(`${API_BASE}/v1/payments/${encodeURIComponent(paymentId)}`, {
+    headers: { authorization: `Bearer ${sellerAccessToken}` },
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`Falha ao consultar pagamento (${response.status}): ${detail}`);
+  }
+
+  const data = (await response.json()) as PaymentResponse;
+  return {
+    id: String(data.id),
+    status: data.status,
+    externalReference: data.external_reference ?? null,
+    transactionAmount: data.transaction_amount,
+    currencyId: data.currency_id,
+  };
+}
+
+/**
+ * Valida a assinatura do webhook.
+ *
+ * O Mercado Pago envia `x-signature: ts=<epoch>,v1=<hmac>` e `x-request-id`.
+ * O HMAC-SHA256 é calculado sobre o manifest `id:<dataId>;request-id:<reqId>;ts:<ts>;`
+ * usando a chave secreta configurada no painel de webhooks.
+ *
+ * Sem isso, qualquer um poderia marcar pedidos como pagos chamando a URL do webhook.
+ */
+export async function verifyWebhookSignature(options: {
+  signatureHeader: string | undefined;
+  requestId: string | undefined;
+  dataId: string | undefined;
+  secret: string;
+}): Promise<boolean> {
+  const { signatureHeader, requestId, dataId, secret } = options;
+  if (!signatureHeader || !dataId) return false;
+
+  let ts: string | undefined;
+  let v1: string | undefined;
+  for (const part of signatureHeader.split(",")) {
+    const [rawKey, ...rest] = part.split("=");
+    const key = rawKey?.trim();
+    const value = rest.join("=").trim();
+    if (key === "ts") ts = value;
+    if (key === "v1") v1 = value;
+  }
+  if (!ts || !v1) return false;
+
+  // O id vem em minúsculas no manifest quando for alfanumérico.
+  const manifest = `id:${dataId.toLowerCase()};request-id:${requestId ?? ""};ts:${ts};`;
+  const expected = await hmacHex(manifest, secret);
+  return safeEqual(v1, expected);
+}

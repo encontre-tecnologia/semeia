@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Veja o produto de um pequeno negócio da sua região: preço, disponibilidade, retirada ou entrega e conversa direta com a loja pelo WhatsApp.">
+<link rel="canonical" href="https://semeiabr.com/produto">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Semeia">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Produtos locais de São Carlos — Semeia">
+<meta property="og:description" content="Veja o produto de um pequeno negócio da sua região: preço, disponibilidade, retirada ou entrega e conversa direta com a loja pelo WhatsApp.">
+<meta property="og:url" content="https://semeiabr.com/produto">
+<meta property="og:image" content="https://semeiabr.com/assets/og-semeia.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Produtos locais de São Carlos — Semeia</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<style>
+  .breadcrumb { padding: 1.8rem 0 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .breadcrumb a:hover { color: var(--accent); }
+
+  .product {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4.8rem);
+    padding: 2.3rem 0 5rem;
+    align-items: start;
+  }
+  .product-loading{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4.8rem);width:100%}.loading-visual,.loading-info span{position:relative;overflow:hidden;background:color-mix(in srgb,var(--card) 88%,var(--paper))}.loading-visual{min-height:480px;border:1px solid var(--line);border-radius:32px}.loading-info{padding-top:1.5rem}.loading-info span{display:block;height:1rem;margin-bottom:1rem;border-radius:999px}.loading-info span:nth-child(1){width:28%;height:.7rem}.loading-info span:nth-child(2){width:84%;height:4rem;border-radius:18px}.loading-info span:nth-child(3){width:45%;height:2.3rem}.loading-info span:nth-child(4){width:100%;height:5rem;border-radius:18px}.loading-visual:after,.loading-info span:after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 12%,transparent),transparent);animation:product-shimmer 1.25s ease-in-out infinite}@keyframes product-shimmer{to{transform:translateX(100%)}}
+  .product-visual {
+    min-height: 480px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 32px 65px -42px var(--shadow);
+    isolation: isolate;
+    animation: visual-in .85s var(--ease-out) both;
+  }
+  .product-visual::before, .product-visual::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.35); }
+  .product-visual::before { width: 22rem; height: 22rem; right: -8rem; top: -9rem; }
+  .product-visual::after { width: 15rem; height: 15rem; left: -7rem; bottom: -8rem; }
+  .product-visual .big-leaf { width: 130px; height: 130px; opacity: 0.85; }
+  @media (prefers-reduced-motion: no-preference) {
+    .product-visual .big-leaf { animation: leaf-breathe 5s ease-in-out infinite; }
+    .product-info { animation: info-in .85s .12s var(--ease-out) both; }
+  }
+  @keyframes visual-in { from { opacity: 0; transform: translateX(-22px) scale(.97); } }
+  @keyframes info-in { from { opacity: 0; transform: translateX(22px); } }
+  @keyframes leaf-breathe { 50% { transform: rotate(7deg) scale(1.08); } }
+  .product-visual .cat-tag {
+    position: absolute;
+    top: 1rem; left: 1rem;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: rgba(255,255,255,0.8);
+    color: #2B2418;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  .product-info .supplier { color: var(--ink-soft); font-size: 0.95rem; margin: 0.55rem 0 0.9rem; }
+  .product-supplier { display:flex; align-items:center; gap:.58rem; min-width:0; }
+  a.product-supplier { width:max-content; max-width:100%; color:var(--ink-soft); text-decoration:none; border-radius:999px; transition:color .2s ease, background .2s ease, transform .2s ease; }
+  a.product-supplier:hover { color:var(--accent); transform:translateY(-1px); }
+  a.product-supplier:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+  .product-supplier-avatar { width:30px; height:30px; flex:0 0 auto; border:1px solid color-mix(in srgb,var(--accent) 58%,var(--line)); border-radius:50%; background:var(--paper-raised); object-fit:cover; }
+  .product-supplier span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .product-supplier strong { color:var(--ink); font-weight:600; text-decoration:underline; text-decoration-color:color-mix(in srgb,var(--accent) 48%,transparent); text-underline-offset:3px; }
+  a.product-supplier:hover strong { color:var(--accent); text-decoration-color:currentColor; }
+  .product-info h1 { font-size: clamp(2.3rem, 5vw, 4rem); line-height: 1; letter-spacing: -.05em; }
+  .price-row { display: flex; align-items: baseline; gap: 0.6rem; margin: 1rem 0 0.3rem; }
+  .price-row .price { font-size: 2.25rem; color: var(--accent); font-weight: 700; }
+  .price-row .unit { color: var(--ink-soft); font-size: 0.95rem; }
+  .price-block{margin:1rem 0 .3rem}.price-block .price-row{margin:0}.product-promo{display:flex;align-items:center;gap:.55rem;margin-top:.35rem}.product-old-price{color:var(--ink-soft);font:.78rem "SF Mono",Consolas,monospace;text-decoration:line-through}.product-increase{padding:.27rem .52rem;border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--warn) 10%,transparent);color:var(--warn);font:800 .62rem/1 "SF Mono",Consolas,monospace}.product-discount{padding:.27rem .52rem;border:1px solid color-mix(in srgb,var(--accent-bright) 55%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--accent-bright) 10%,transparent);color:var(--accent-bright);font:800 .62rem/1 "SF Mono",Consolas,monospace}
+  .region-line { font-size: 0.88rem; color: var(--ink-soft); margin-bottom: 1.2rem; }
+
+  .co2-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    background: var(--card);
+    border: 1px solid var(--good);
+    border-radius: 18px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.3rem;
+  }
+  .co2-box svg { width: 24px; height: 24px; color: var(--good); flex: none; }
+  .co2-box .num { color: var(--good); font-weight: 700; font-family: "SF Mono", Consolas, monospace; }
+  .co2-box .co2-tree { display: block; margin-top: .5rem; color: var(--ink-soft); font-size: .84rem; line-height: 1.55; }
+  .co2-box .co2-tree strong { color: var(--good); }
+  .co2-box p { margin: 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .impact-copy { flex:1; min-width:0; }.impact-label{display:block;margin-bottom:.3rem;color:var(--good);font:700 .67rem "SF Mono",Consolas,monospace;letter-spacing:.07em;text-transform:uppercase}.impact-help{margin-top:.75rem;border-top:1px solid color-mix(in srgb,var(--good) 30%,var(--line));padding-top:.65rem}.impact-help summary{width:max-content;max-width:100%;color:var(--ink);font-size:.78rem;font-weight:700;cursor:pointer;list-style:none}.impact-help summary::-webkit-details-marker{display:none}.impact-help summary:before{content:"＋";display:inline-block;margin-right:.4rem;color:var(--good)}.impact-help[open] summary:before{content:"−"}.impact-help p{margin:.6rem 0 0!important;line-height:1.55}.impact-help strong{color:var(--ink)}.impact-scenarios{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.75rem}.impact-scenario{padding:.6rem .7rem;border:1px solid var(--line);border-radius:11px;background:color-mix(in srgb,var(--paper) 70%,transparent)}.impact-scenario small,.impact-scenario strong{display:block}.impact-scenario small{margin-bottom:.2rem;color:var(--ink-soft);font-size:.65rem}.impact-scenario strong{color:var(--ink);font:.7rem "SF Mono",Consolas,monospace}.impact-breakdown{display:grid;gap:.35rem;margin:.7rem 0 0;padding:0;list-style:none}.impact-breakdown li{display:flex;justify-content:space-between;gap:1rem;font-size:.7rem;color:var(--ink-soft)}.impact-breakdown b{color:var(--ink);font-family:"SF Mono",Consolas,monospace;white-space:nowrap}.practice-note{margin-top:.7rem!important;padding:.55rem .65rem;border-radius:10px;background:color-mix(in srgb,var(--good) 10%,transparent);color:var(--ink)!important}.impact-warning{color:#e7c67e!important}.impact-sources{display:block;margin-top:.7rem;font-size:.65rem;color:var(--ink-soft)}.impact-sources a{color:var(--good);text-decoration:underline;text-underline-offset:2px}
+
+  .desc { font-size: 0.98rem; line-height: 1.6; color: var(--ink); margin: .45rem 0 1.2rem; }
+  .seals-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.6rem; }
+
+  .actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }.actions .btn{gap:.45rem}.actions .btn svg{width:18px;height:18px;flex:none}.product-info>.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.7rem}.product-info>.actions .btn{width:100%;min-width:0;min-height:3.75rem;box-sizing:border-box;padding-inline:1.1rem;border-radius:16px;justify-content:center;text-align:center;font-size:.95rem}.product-info>.actions .btn svg{width:1.25rem;height:1.25rem}/* Tela grande: grade 2x2. Abaixo disso os mesmos botoes so empilham em uma coluna. */
+  @media (min-width:901px){
+    .product-info>.actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+  }
+  /* Quantidade fica junto dos botões: é a última decisão antes de pedir. */
+  .qty-pick{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-bottom:.9rem}
+  .qty-pick>span{color:var(--ink-soft);font:700 .78rem ui-sans-serif,system-ui,sans-serif}
+  .qty-stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--card) 80%,transparent);overflow:hidden}
+  .qty-stepper button{width:2.7rem;height:2.7rem;border:0;background:transparent;color:var(--ink);font-size:1.15rem;line-height:1;cursor:pointer;transition:background .2s ease}
+  .qty-stepper button:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 16%,transparent)}
+  .qty-stepper button:disabled{opacity:.3;cursor:not-allowed}
+  .qty-stepper input{width:3rem;height:2.7rem;border:0;border-inline:1px solid var(--line);background:transparent;color:var(--ink);text-align:center;font:700 .92rem "SF Mono",Consolas,monospace;-moz-appearance:textfield}
+  .qty-stepper input::-webkit-outer-spin-button,.qty-stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .qty-stepper input:focus{outline:none;background:color-mix(in srgb,var(--accent) 10%,transparent)}
+  .qty-total{color:var(--ink-soft);font-size:.8rem}
+  .qty-total b{color:var(--accent);font:700 .95rem "SF Mono",Consolas,monospace}
+  .qty-total em{display:block;margin-top:.1rem;color:var(--warn);font-style:normal;font-size:.72rem}
+  /* Produto sem estoque: o botão continua visível para explicar, mas não clica. */
+  .product-info>.actions .product-buy.is-unavailable,.product-info>.actions .is-unavailable{
+    border-color:color-mix(in srgb,var(--warn) 40%,var(--line));
+    background:color-mix(in srgb,var(--warn) 12%,transparent);
+    color:var(--warn);
+    box-shadow:none;
+    cursor:not-allowed;
+  }
+  .product-info>.actions .product-buy.is-unavailable:hover,.product-info>.actions .is-unavailable:hover{background:color-mix(in srgb,var(--warn) 12%,transparent);color:var(--warn);transform:none}
+  .product-info>.actions .btn:disabled{opacity:.45;cursor:not-allowed}
+  .fulfillment-item.is-unavailable strong{color:var(--warn)}
+  /* Reservas de outros compradores explicam o estoque cair sem o anúncio mudar. */
+  /* O card é uma grade "ícone | texto": sem fixar a coluna, o aviso cai embaixo do ícone. */
+  .fulfillment-item .stock-reserved{display:block;grid-column:2;margin-top:.35rem;color:var(--warn);font:600 .68rem/1.45 ui-sans-serif,system-ui,sans-serif;font-style:normal}
+  .product-info>.actions .product-buy{border:1px solid rgba(190,232,198,.22);background:linear-gradient(135deg,#579466,#356d49);color:#fff;box-shadow:0 14px 30px -18px rgba(79,157,101,.9),inset 0 1px rgba(255,255,255,.12)}.product-info>.actions .product-buy:hover{background:linear-gradient(135deg,#66a875,#3f7c54);color:#fff;box-shadow:0 18px 34px -18px rgba(92,177,117,.95),inset 0 1px rgba(255,255,255,.16)}
+  .pix-modal { position:fixed; inset:0; z-index:30; display:none; place-items:center; padding:1rem; background:rgba(5,14,9,.78); backdrop-filter:blur(8px); }
+  .pix-modal.show { display:grid; }
+  .pix-dialog { width:min(760px,100%); max-height:min(880px,calc(100vh - 2rem)); overflow-x:hidden; overflow-y:auto; overscroll-behavior:contain; scroll-behavior:smooth; scrollbar-width:thin; scrollbar-color:color-mix(in srgb,var(--accent) 48%,transparent) transparent; background:linear-gradient(145deg,color-mix(in srgb,var(--card) 94%,var(--accent) 6%),var(--card)); border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line)); border-radius:28px; padding:clamp(1.25rem,3vw,2rem); box-shadow:0 34px 100px rgba(0,0,0,.48); position:relative; }
+  .pix-dialog::-webkit-scrollbar{width:6px}.pix-dialog::-webkit-scrollbar-track{margin:22px 0;background:transparent}.pix-dialog::-webkit-scrollbar-thumb{border-radius:999px;background:color-mix(in srgb,var(--accent) 42%,transparent)}.pix-dialog::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--accent) 68%,transparent)}.pix-dialog::-webkit-scrollbar-button{display:none;width:0;height:0}
+  .pix-dialog h2 { font-size:clamp(1.7rem,4vw,2.3rem); line-height:1.08; margin:.2rem 0 .45rem; }
+  .pix-dialog p { color:var(--ink-soft); font-size:.9rem; }
+  .pix-code { width:100%; min-height:6rem; box-sizing:border-box; padding:.8rem; border:1px solid var(--line); border-radius:12px; background:var(--paper); color:var(--ink); font:.7rem/1.4 monospace; resize:none; }
+  #pix-qr { display:grid; place-items:center; width:220px; height:220px; max-width:100%; margin:1rem auto; padding:.65rem; box-sizing:border-box; border-radius:18px; background:#fff; }#pix-qr img,#pix-qr canvas{display:block;max-width:100%;height:auto!important}
+  .pix-close { position:absolute; right:1rem; top:.85rem; border:0; background:transparent; color:var(--ink-soft); font-size:1.5rem; cursor:pointer; }
+  .checkout-progress{display:flex;gap:.45rem;margin:0 2.8rem 1.6rem 0}.checkout-progress span{display:flex;align-items:center;gap:.45rem;color:var(--ink-soft);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.06em}.checkout-progress span+span:before{content:"";width:2.1rem;height:1px;margin-right:.15rem;background:var(--line)}.checkout-progress span.active{color:var(--accent)}.checkout-step[hidden]{display:none}.checkout-eyebrow{display:block;margin-bottom:.35rem;color:var(--accent);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}.checkout-lede{max-width:38rem;margin:.25rem 0 1.25rem}.fulfillment-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.fulfillment-choice{display:grid;grid-template-columns:52px 1fr;gap:.8rem;align-items:center;min-height:104px;padding:.9rem;text-align:left;color:var(--ink);border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--paper) 52%,transparent);cursor:pointer;transition:.25s var(--ease-out)}.fulfillment-choice:hover{transform:translateY(-2px);border-color:var(--accent)}.fulfillment-choice.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,var(--card));box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 10%,transparent)}.choice-art{display:grid;place-items:center;width:52px;height:52px;border-radius:15px;color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent)}.choice-art svg{width:31px;height:31px}.choice-copy strong,.choice-copy small,.choice-copy em{display:block}.choice-copy strong{font-size:.92rem}.choice-copy small{margin:.12rem 0 .35rem;color:var(--ink-soft);font-size:.73rem;line-height:1.35}.choice-copy em{width:max-content;padding:.16rem .42rem;border-radius:999px;color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent);font:normal 700 .62rem "SF Mono",Consolas,monospace}.shipping-table{margin-top:.85rem;padding:.9rem 1rem;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 55%,transparent)}.shipping-table-title{display:block;margin-bottom:.5rem;color:var(--accent);font:700 .67rem "SF Mono",Consolas,monospace;text-transform:uppercase;letter-spacing:.08em}.shipping-table ul{list-style:none;margin:0;padding:0;display:grid;gap:.1rem}.shipping-table li{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:.4rem 0;border-top:1px solid var(--line);font-size:.82rem}.shipping-table li:first-child{border-top:0}.shipping-table li span{color:var(--ink-soft)}.shipping-table li strong{color:var(--ink);white-space:nowrap}.shipping-table small{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.7rem;line-height:1.45}/* A nota usa margem negativa para colar no bloco acima; com a tabela no meio, ela precisa voltar ao normal. */.shipping-table+.fulfillment-note{margin-top:.85rem}.shipping-tier-pick{margin-top:.9rem;padding:.9rem 1rem;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--accent) 6%,transparent)}.shipping-tier-pick label{display:block;margin-bottom:.4rem;font:700 .78rem ui-sans-serif,system-ui,sans-serif}.shipping-tier-pick select{width:100%;box-sizing:border-box;min-height:3rem;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit}.shipping-tier-pick small{display:block;margin-top:.45rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}.checkout-actions{display:flex;justify-content:flex-end;gap:.7rem;margin-top:1.35rem}.checkout-actions .btn{justify-content:center}.checkout-summary{display:grid;grid-template-columns:minmax(0,1fr) minmax(235px,.75fr);gap:1rem;margin-top:1.25rem}.summary-card,.impact-confirm{padding:1.1rem;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--paper) 58%,transparent)}.summary-product{display:flex;align-items:center;gap:.8rem;padding-bottom:.9rem;margin-bottom:.65rem;border-bottom:1px solid var(--line)}.summary-product img{width:58px;height:58px;border-radius:14px;object-fit:cover;background:var(--paper-raised)}.summary-product strong,.summary-product span{display:block}.summary-product span{color:var(--ink-soft);font-size:.75rem}.summary-row{display:flex;justify-content:space-between;gap:1rem;padding:.35rem 0;color:var(--ink-soft);font-size:.8rem}.summary-row strong{color:var(--ink);text-align:right}.summary-row.total{margin-top:.4rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:1rem}.summary-row.total strong{color:var(--accent);font-size:1.15rem}.impact-confirm{border-color:color-mix(in srgb,var(--good) 68%,var(--line));background:linear-gradient(145deg,color-mix(in srgb,var(--good) 12%,var(--card)),var(--card))}.impact-confirm svg{width:34px;height:34px;color:var(--good);margin-bottom:.5rem}.impact-confirm strong{color:var(--good)}.impact-confirm p{margin:.45rem 0}.impact-confirm small{display:block;color:var(--ink-soft);font-size:.68rem;line-height:1.45}.pix-success{text-align:center}.pix-success .checkout-eyebrow{margin-top:.2rem}.pix-success h2{max-width:30rem;margin-inline:auto}.pix-success #pix-recipient{max-width:32rem;margin:.4rem auto}.pix-security{padding:.7rem .8rem;border-radius:12px;background:color-mix(in srgb,var(--good) 9%,transparent);font-size:.72rem!important}.checkout-feedback{min-height:1.25rem;margin:.65rem 0 0!important;color:var(--ink-soft)}
+
+  .vendor-note {
+    margin-top: 1.6rem;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 0.9rem;
+  }
+  @media (max-width: 720px) {
+    .product { grid-template-columns: 1fr; }
+    .product-visual { min-height: 300px; }
+    .product-loading{grid-template-columns:1fr}.loading-visual{min-height:300px}.loading-info{padding-top:0}
+  }
+  @media (max-width: 900px) { .product-info>.actions { grid-template-columns:1fr; } }
+  .fulfillment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin:.2rem 0 1.25rem}.fulfillment.is-pair{grid-template-columns:repeat(2,minmax(0,1fr))}.fulfillment-item{min-width:0;padding:.85rem;border:1px solid var(--line);border-radius:15px;background:color-mix(in srgb,var(--card) 88%,transparent)}.fulfillment-item svg{width:19px;height:19px;margin-bottom:.55rem;color:var(--accent)}.fulfillment-item small,.fulfillment-item strong{display:block}.fulfillment-item small{margin-bottom:.22rem;color:var(--ink-soft);font-size:.67rem}.fulfillment-item strong{overflow-wrap:anywhere;color:var(--ink);font-size:.79rem;line-height:1.4}.fulfillment-note{margin:-.7rem 0 1.2rem;color:var(--ink-soft);font-size:.7rem}
+  @media(max-width:720px){.fulfillment,.fulfillment.is-pair{grid-template-columns:1fr}.fulfillment-item{display:grid;grid-template-columns:24px 1fr;column-gap:.65rem;align-items:center}.fulfillment-item svg{grid-row:1/3;margin:0}.fulfillment-item small{margin:0}}
+  @media(max-width:620px){.pix-modal{padding:.5rem;align-items:end}.pix-dialog{max-height:92vh;border-radius:24px 24px 0 0;padding:1.2rem;scrollbar-width:none}.pix-dialog::-webkit-scrollbar{display:none}.checkout-progress{margin-bottom:1.15rem}.fulfillment-choices,.checkout-summary{grid-template-columns:1fr}.fulfillment-choice{min-height:86px;grid-template-columns:46px 1fr}.choice-art{width:46px;height:46px}.checkout-actions{display:grid;grid-template-columns:1fr 1fr}.checkout-actions .btn{width:100%;padding-inline:.7rem}.checkout-actions .btn-primary:last-child{grid-column:1/-1}.summary-card,.impact-confirm{padding:.9rem}}
+  .product-visual.has-gallery .big-leaf{display:none}.gallery-thumbs{position:absolute;z-index:3;left:1rem;right:1rem;bottom:1rem;display:flex;justify-content:center;gap:.48rem}.gallery-thumb{width:3.35rem;height:3.35rem;padding:.18rem;overflow:hidden;box-sizing:border-box;border:2px solid rgba(255,255,255,.45);border-radius:11px;background:rgba(7,18,11,.88);opacity:.78;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.28)}.gallery-thumb img{width:100%;height:100%;display:block;border-radius:7px;object-fit:contain;background:#101a13}.gallery-thumb.active{border-color:#fff;opacity:1;transform:translateY(-2px)}.gallery-arrow{position:absolute;z-index:4;top:50%;display:grid;place-items:center;width:2.65rem;height:2.65rem;padding:0;transform:translateY(-50%);border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(9,22,13,.65);color:#fff;cursor:pointer;font-size:1.5rem;backdrop-filter:blur(6px)}.gallery-arrow:hover{background:rgba(9,22,13,.88)}.gallery-prev{left:1rem}.gallery-next{right:1rem}.gallery-count{position:absolute;z-index:4;right:1rem;top:1rem;padding:.38rem .55rem;border-radius:999px;background:rgba(9,22,13,.7);color:#fff;font:700 .63rem "SF Mono",Consolas,monospace;backdrop-filter:blur(6px)}@media(max-width:520px){.gallery-thumbs{left:.8rem;right:.8rem;bottom:.8rem;overflow-x:auto;justify-content:flex-start;padding:.15rem .05rem .25rem;scrollbar-width:none}.gallery-thumbs::-webkit-scrollbar{display:none}.gallery-thumb{width:3rem;height:3rem;flex:0 0 auto}.gallery-arrow{width:2.35rem;height:2.35rem}.gallery-prev{left:.65rem}.gallery-next{right:.65rem}}
+  .cart-link{position:relative;display:inline-flex;align-items:center;gap:.4rem}.cart-badge{display:inline-grid;place-items:center;min-width:1.25rem;height:1.25rem;padding:0 .3rem;border-radius:999px;background:var(--accent);color:#0f2415;font:800 .66rem/1 "SF Mono",Consolas,monospace}
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="inner">
+    <div class="brand">
+      <img class="brand-mark" src="assets/semeia-mark.svg" alt="">
+      Semeia
+    </div>
+    <nav>
+      <a href="index.html#produtos">Produtos</a>
+      <a href="index.html#como-funciona">Como funciona</a><a class="cart-link" href="carrinho.html">Sacola<span class="cart-badge" data-cart-count hidden>0</span></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="breadcrumb"><a href="index.html#produtos">Produtos</a> / <span id="crumb-cat"></span></p>
+
+  <div class="product" id="product-root"></div>
+</main>
+<div class="pix-modal" id="pix-modal" aria-hidden="true">
+  <section class="pix-dialog" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+    <button class="pix-close" id="pix-close" aria-label="Fechar">×</button>
+    <div class="checkout-progress" id="checkout-progress" aria-label="Etapas da compra">
+      <span class="active" data-progress="method">01 Recebimento</span>
+      <span data-progress="summary">02 Resumo</span>
+    </div>
+
+    <div class="checkout-step" id="checkout-step-method">
+      <span class="checkout-eyebrow">Primeiro, combine a chegada</span>
+      <h2 id="checkout-title">Como o produto chega até você?</h2>
+      <p class="checkout-lede">Escolha como pretende retirar ou receber. O frete só entra no total quando você selecionar entrega.</p>
+      <div class="fulfillment-choices" role="radiogroup" aria-label="Forma de recebimento">
+        <button class="fulfillment-choice" type="button" data-method="walk" role="radio" aria-checked="false">
+          <span class="choice-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="25" cy="8" r="4"/><path d="m22 16 7 6 5 10M22 16l-5 11 8 4M25 31l-8 10M27 31l9 10"/></svg></span>
+          <span class="choice-copy"><strong>Vou a pé</strong><small>Retirada no ponto indicado pela loja</small><em>Sem frete</em></span>
+        </button>
+        <button class="fulfillment-choice" type="button" data-method="bike" role="radio" aria-checked="false">
+          <span class="choice-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="34" r="8"/><circle cx="36" cy="34" r="8"/><path d="m13 34 8-14 7 14H13Zm8-14h9m-4-5h7M28 34l7-15"/></svg></span>
+          <span class="choice-copy"><strong>Vou de bicicleta</strong><small>Retirada leve e sem combustível</small><em>Sem frete</em></span>
+        </button>
+        <button class="fulfillment-choice" type="button" data-method="vehicle" role="radio" aria-checked="false">
+          <span class="choice-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 30h32l-4-11H15L8 30Zm0 0v7h5m27-7v7h-5M17 37h14"/><circle cx="16" cy="34" r="3"/><circle cx="33" cy="34" r="3"/></svg></span>
+          <span class="choice-copy"><strong>Vou com veículo</strong><small>Carro ou moto até o ponto de retirada</small><em>Sem frete</em></span>
+        </button>
+        <button class="fulfillment-choice" type="button" data-method="delivery" role="radio" aria-checked="false">
+          <span class="choice-art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14h23v21H6zM29 22h8l5 7v6H29z"/><circle cx="14" cy="37" r="4"/><circle cx="35" cy="37" r="4"/><path d="M11 20h12"/></svg></span>
+          <span class="choice-copy"><strong>Quero receber</strong><small>Entrega combinada com o vendedor</small><em id="delivery-fee-chip">Frete a confirmar</em></span>
+        </button>
+      </div>
+      <div class="shipping-tier-pick" id="shipping-tier-pick" hidden>
+        <label for="shipping-tier-select">Qual a distância até você?</label>
+        <select id="shipping-tier-select"></select>
+        <small>Este vendedor cobra frete por distância. Escolha sua faixa para ver o total.</small>
+      </div>
+      <div class="checkout-actions">
+        <button class="btn btn-ghost" type="button" id="checkout-cancel">Agora não</button>
+        <button class="btn btn-primary" type="button" id="checkout-continue" disabled>Continuar para o resumo</button>
+      </div>
+    </div>
+
+    <div class="checkout-step" id="checkout-step-summary" hidden>
+      <span class="checkout-eyebrow">Confira antes de finalizar</span>
+      <h2>Seu resumo</h2>
+      <p class="checkout-lede">O pagamento será enviado diretamente ao vendedor por Pix.</p>
+      <div class="checkout-summary">
+        <div class="summary-card">
+          <div class="summary-product"><img id="summary-image" alt=""><div><strong id="summary-product-name"></strong><span>1 item · <span id="summary-unit"></span></span></div></div>
+          <div class="summary-row"><span>Produto</span><strong id="summary-product-price"></strong></div>
+          <div class="summary-row"><span id="summary-method-label">Recebimento</span><strong id="summary-method"></strong></div>
+          <div class="summary-row"><span>Frete</span><strong id="summary-shipping"></strong></div>
+          <div class="summary-row total"><span>Total</span><strong id="summary-total"></strong></div>
+          <small id="summary-total-note"></small>
+        </div>
+        <aside class="impact-confirm">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M24 42C13 39 7 31 8 19c8 0 13 3 16 10 3-7 8-10 16-10 1 12-5 20-16 23Z"/><path d="M24 34V9M23 18c-7 0-11-4-12-11 7 0 11 4 12 11Zm2 7c7 0 11-4 12-11-7 0-11 4-12 11Z"/></svg>
+          <strong id="summary-impact"></strong>
+          <p>Ao finalizar, essa economia entra nas métricas comunitárias do Semeia. Ela ajuda a mostrar que comprar local gera impacto e incentiva mais negócios da região a participar.</p>
+          <small>Registro informado por você. O Semeia não confirma o pagamento nem garante a entrega; combine os detalhes com o vendedor.</small>
+        </aside>
+      </div>
+      <p class="checkout-feedback" id="checkout-feedback" aria-live="polite"></p>
+      <div class="checkout-actions">
+        <button class="btn btn-ghost" type="button" id="checkout-back">← Voltar</button>
+        <button class="btn btn-primary" type="button" id="checkout-finish">Finalizar e gerar Pix</button>
+      </div>
+    </div>
+
+    <div class="checkout-step pix-success" id="checkout-step-pix" hidden>
+      <span class="checkout-eyebrow">Pedido finalizado</span>
+      <h2 id="pix-title">Agora é só pagar direto ao vendedor</h2>
+      <p id="pix-recipient"></p>
+      <div id="pix-qr" role="img" aria-label="QR Code Pix"></div>
+      <textarea class="pix-code" id="pix-code" readonly aria-label="Pix copia e cola"></textarea>
+      <div class="actions" style="margin-top:1rem;justify-content:center"><button class="btn btn-primary" type="button" id="copy-pix">Copiar código Pix</button><a class="btn btn-ghost" id="pix-whats" target="_blank" rel="noopener">Falar com o vendedor</a></div>
+      <p class="pix-security">Confira no aplicativo do banco o nome de quem recebe antes de confirmar o Pix.</p>
+      <p id="pix-feedback" class="checkout-feedback" aria-live="polite"></p>
+    </div>
+  </section>
+</div>
+
+<footer class="site-footer wrap">
+  <span>Semeia — combine pagamento, retirada e entrega diretamente com o vendedor.</span>
+  <a href="cadastro-loja.html">Quero vender no Semeia →</a>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script>
+<script src="assets/api.js?v=20260813-single-paint"></script>
+<script src="assets/seo.js?v=20260815-busca"></script><script src="assets/cart.js?v=20260813-1"></script><script src="assets/notice.js?v=20260813-1"></script><script src="assets/main.js?v=20260814-trees"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="assets/pix.js?v=20260814-1"></script>
+<script>
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get("id");
+  var root = document.getElementById("product-root");
+
+  var product = null;
+  var checkoutMethod = null;
+  var checkoutTotal = 0;
+  var checkoutShippingKnown = true;
+
+  function actionIcon(kind) {
+    if (kind === "stock") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16v12H4zM8 8V6a4 4 0 0 1 8 0v2"/><path d="m9 14 6 4M15 14l-6 4"/></svg>';
+    if (kind === "cart") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h2l2.4 9.6a1 1 0 0 0 1 .8h7.2a1 1 0 0 0 1-.8L20 8H7"/><circle cx="10" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/></svg>';
+    if (kind === "pix")
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 14h2v6h-6v-2M14 18h2"/></svg>';
+    if (kind === "chat") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-9 7.9L5 21l1.6-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c.8 2 1.8 3 4 4"/></svg>';
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10h16l-1.2-5H5.2z"/><path d="M5 10v9h14v-9M9 19v-5h6v5"/><path d="M4 10c0 1.3 1 2.3 2.3 2.3S8.7 11.3 8.7 10c0 1.3 1 2.3 2.3 2.3s2.3-1 2.3-2.3c0 1.3 1 2.3 2.3 2.3S18 11.3 18 10"/></svg>';
+  }
+
+  function formatImpactKg(value) {
+    var amount = Math.max(0, Number(value) || 0);
+    return amount >= 1
+      ? amount.toFixed(2).replace(/0+$/, "").replace(/\.$/, "").replace(".", ",") + " kg"
+      : Math.round(amount * 1000) + " g";
+  }
+
+  function lifecycleDetails(estimate) {
+    if (!estimate || estimate.method !== "comparative_lifecycle_v1") return "";
+    var b = estimate.breakdown || {};
+    return '<div class="impact-scenarios"><div class="impact-scenario"><small>Equivalente convencional</small><strong>~' + formatImpactKg(estimate.conventionalKg) + ' CO₂e</strong></div><div class="impact-scenario"><small>Cenário desta compra</small><strong>~' + formatImpactKg(estimate.localKg) + ' CO₂e</strong></div></div>' +
+      '<ul class="impact-breakdown"><li><span>Menos processamento</span><b>−' + formatImpactKg(b.processingSavedKg) + '</b></li><li><span>Menos embalagem</span><b>−' + formatImpactKg(b.packagingSavedKg) + '</b></li><li><span>Cadeia fria evitada</span><b>−' + formatImpactKg(b.coldChainSavedKg) + '</b></li><li><span>Distribuição mais curta</span><b>−' + formatImpactKg(b.distributionSavedKg) + '</b></li><li><span>Entrega ou retirada estimada</span><b>+' + formatImpactKg(b.deliveryEmissionsKg) + '</b></li></ul>' +
+      (estimate.pesticideFree ? '<p class="practice-note"><strong>Cultivo sem agrotóxicos declarado pelo vendedor.</strong> É um benefício ambiental separado e não foi convertido automaticamente em redução de carbono.</p>' : '');
+  }
+
+  function escapeHTML(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+    });
+  }
+
+  function fulfillmentIcon(kind) {
+    if (kind === "stock") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16v12H4zM4 7l3-3h10l3 3M9 11h6"/></svg>';
+    if (kind === "shipping") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>';
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  }
+
+  function renderProduct(next) {
+    product = next;
+    var cat = CATS[product.cat] || { label: product.cat, tint: "var(--accent)" };
+    var priceLabel = product.price === 0 ? "Grátis" : "R$ " + product.price.toFixed(2).replace(".", ",");
+    // Mudanca de preco nos dois sentidos: "De R$ X" riscado, com a variacao ao lado.
+    var previousPrice = Number(product.previousPrice), currentPrice = Number(product.price);
+    var priceChanged = Boolean(previousPrice) && Boolean(currentPrice) && previousPrice !== currentPrice;
+    var priceWentUp = priceChanged && previousPrice < currentPrice;
+    var changePercent = !priceChanged ? 0 : priceWentUp
+      ? Math.max(1, Number(product.increasePercent) || Math.round((currentPrice / previousPrice - 1) * 100))
+      : Math.max(1, Number(product.discountPercent) || Math.round((1 - currentPrice / previousPrice) * 100));
+    var promoPriceHTML = priceChanged
+      ? '<div class="product-promo"><span class="product-old-price">De R$ ' + previousPrice.toFixed(2).replace(".", ",") + '</span><span class="' + (priceWentUp ? "product-increase" : "product-discount") + '">' + (priceWentUp ? "+" + changePercent + "%" : changePercent + "% OFF") + '</span></div>'
+      : '';
+    var quantity = Number(product.quantityAvailable);
+    var stockLabel = product.quantityAvailable == null ? "Consulte o vendedor" : quantity <= 0 ? "Indisponível" : quantity.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " disponíveis";
+    // Sem estoque não há o que pedir: só sobram conversar com o vendedor e ver a loja.
+    var soldOut = product.quantityAvailable != null && quantity <= 0;
+    // Unidades que outros compradores já separaram e ainda não foram confirmadas.
+    // Sem esse aviso, o estoque cair sozinho parece erro do site.
+    var reserved = Number(product.reservedUnits) || 0;
+    var reservedNote = reserved
+      ? '<em class="stock-reserved">' + (reserved === 1 ? "1 unidade reservada" : reserved + " unidades reservadas")
+        + " em pedidos de outros compradores" + (soldOut ? ". Pode voltar em até 24h" : "") + ".</em>"
+      : "";
+    var tierTable = productTiers().length
+      ? '<div class="shipping-table"><span class="shipping-table-title">Frete por distância</span><ul>' +
+        productTiers().map(function (tier, index) {
+          return '<li><span>' + escapeHTML(tierRangeLabel(index)) + '</span><strong>' + escapeHTML(tierFeeShort(tier)) + '</strong></li>';
+        }).join("") +
+        '</ul><small>Você indica sua faixa ao finalizar o pedido.</small></div>'
+      : "";
+    var shippingLabel = productTiers().length
+      ? (cheapestTierFee() == null ? "A combinar" : Number(cheapestTierFee()) === 0 ? "A partir de grátis" : "A partir de " + money(cheapestTierFee() / 100))
+      : product.shippingFee == null ? "A combinar" : Number(product.shippingFee) === 0 ? "Grátis" : "R$ " + Number(product.shippingFee).toFixed(2).replace(".", ",");
+    var pickupLabel = product.pickupAddress || "Combine com o vendedor";
+    var hasImpactEstimate = product.impactEstimate && product.impactEstimate.method === "comparative_lifecycle_v1";
+    var impactApplies = hasImpactEstimate && product.impactEstimate.productType !== "not_applicable";
+    var hasSavings = impactApplies && Number(product.impactEstimate.savingsKg) > 0;
+    var impactMessage = !impactApplies && hasImpactEstimate
+      ? '<strong>Comparação de alimentos não aplicável a este produto.</strong>'
+      : hasSavings
+      ? '<span class="num">~' + formatImpactKg(product.impactEstimate.savingsKg) + ' de CO₂e</span> de diferença estimada em relação a um equivalente convencional.'
+        + '<span class="co2-tree">Comprando aqui, você evita que esse gás carbônico vá para a atmosfera — ' + semeiaTreeEquivalent(product.impactEstimate.savingsKg) + '.</span>'
+      : hasImpactEstimate
+        ? '<strong class="impact-warning">A entrega pode neutralizar a redução estimada neste cenário.</strong>'
+        : '<strong>Impacto ainda não calculado.</strong> Precisamos conhecer o tipo, o peso e a forma de entrega.';
+    var impactLabel = "Comparação de cadeia estimada";
+    var impactExplanation = !impactApplies && hasImpactEstimate
+      ? 'Este modelo foi criado para alimentos. Moda, artesanato, cosméticos e itens de reuso precisam de fatores próprios e, por isso, não recebem um número automático.'
+      : hasImpactEstimate
+      ? 'Comparamos <strong>' + product.impactEstimate.weightKg + ' kg de ' + product.impactEstimate.productTypeLabel + '</strong> em uma cadeia convencional com o cenário informado pelo vendedor. Produção, processamento, embalagem, refrigeração, distribuição e entrega entram na conta. A produção recebe o mesmo valor nos dois cenários; “sem agrotóxicos” não gera desconto automático de carbono. Valores indicativos, não auditados e não equivalem a certificação.' + lifecycleDetails(product.impactEstimate) + '<span class="impact-sources">Referências de ciclo de vida: <a href="https://www.science.org/doi/10.1126/science.aaq0216" target="_blank" rel="noopener">Poore &amp; Nemecek</a>, <a href="https://www.nature.com/articles/s43016-021-00225-9" target="_blank" rel="noopener">EDGAR-FOOD</a> e <a href="https://pubmed.ncbi.nlm.nih.gov/22947228/" target="_blank" rel="noopener">meta-análise de agricultura orgânica</a>.</span>'
+      : '<strong>CO₂e</strong> reúne os gases que aquecem o planeta em uma unidade comparável. Esta estimativa só é exibida quando há informações suficientes sobre o produto.';
+
+    document.getElementById("crumb-cat").textContent = cat.label;
+
+    // O produto entra na busca com nome, preço, loja e cidade. O bloco de dados
+    // estruturados é o que permite ao Google mostrar preço e disponibilidade
+    // direto no resultado, em vez de só um link.
+    if (window.SemeiaSEO) {
+      var fotoProduto = Array.isArray(product.imageUrls) && product.imageUrls.length
+        ? product.imageUrls[0]
+        : product.imageUrl || undefined;
+      var descricaoProduto = product.desc
+        || (product.name + " de " + product.supplier + ", em " + product.region
+            + ". Combine retirada ou entrega direto com a loja.");
+      SemeiaSEO.pagina({
+        titulo: product.name + " — " + product.supplier + " | Semeia",
+        descricao: SemeiaSEO.resumo(priceLabel + (product.price === 0 ? "" : " " + product.unit) + ". " + descricaoProduto, 155),
+        url: "/produto?id=" + encodeURIComponent(product.id),
+        imagem: fotoProduto,
+        dados: {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          description: SemeiaSEO.resumo(descricaoProduto, 300),
+          image: fotoProduto,
+          category: cat.label,
+          brand: { "@type": "Brand", name: product.supplier },
+          offers: {
+            "@type": "Offer",
+            price: product.price.toFixed(2),
+            priceCurrency: "BRL",
+            availability: soldOut
+              ? "https://schema.org/OutOfStock"
+              : "https://schema.org/InStock",
+            url: SemeiaSEO.absoluta("/produto?id=" + encodeURIComponent(product.id)),
+            seller: { "@type": "Organization", name: product.supplier },
+            areaServed: product.region,
+          },
+        },
+      });
+    }
+
+    root.innerHTML =
+      '<div class="product-visual" style="background:' + cat.tint + '">' +
+        '<span class="cat-tag">' + cat.label + '</span>' +
+        '<svg class="big-leaf" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.2"><path d="M12 3c3 2 5 5 5 8.5A5 5 0 0 1 12 16a5 5 0 0 1-5-4.5C7 8 9 5 12 3z"/><path d="M12 16v5"/></svg>' +
+      '</div>' +
+      '<div class="product-info">' +
+        '<h1>' + product.name + '</h1>' +
+        '<a class="supplier product-supplier" href="loja?id=' + encodeURIComponent(product.storeId) + '" aria-label="Conhecer a loja ' + escapeHTML(product.supplier) + '"><img class="product-supplier-avatar" id="product-store-avatar" alt="Logo da loja ' + escapeHTML(product.supplier) + '"><span>Vendido por <strong>' + escapeHTML(product.supplier) + '</strong> · ' + escapeHTML(product.region) + '</span></a>' +
+        '<div class="price-block"><div class="price-row"><span class="price">' + priceLabel + '</span><span class="unit">' + (product.price === 0 ? "" : product.unit) + '</span></div>' + promoPriceHTML + '</div>' +
+        (product.desc ? '<p class="desc">' + product.desc + '</p>' : '') +
+        '<div class="fulfillment' + (tierTable ? " is-pair" : "") + '" aria-label="Disponibilidade e entrega">' +
+          '<div class="fulfillment-item' + (soldOut ? ' is-unavailable' : '') + '">' + fulfillmentIcon("stock") + '<small>Quantidade disponível</small><strong>' + escapeHTML(stockLabel) + '</strong>' + reservedNote + '</div>' +
+          (tierTable ? "" : '<div class="fulfillment-item">' + fulfillmentIcon("shipping") + '<small>Frete</small><strong>' + escapeHTML(shippingLabel) + '</strong></div>') +
+          '<div class="fulfillment-item">' + fulfillmentIcon("pickup") + '<small>Ponto de retirada</small><strong>' + escapeHTML(pickupLabel) + '</strong></div>' +
+        '</div>' + tierTable + '<p class="fulfillment-note">Informações fornecidas pelo vendedor. Confirme antes de pagar.</p>' +
+        '<div class="co2-box">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3 2 5 5 5 8.5A5 5 0 0 1 12 16a5 5 0 0 1-5-4.5C7 8 9 5 12 3z"/><path d="M12 16v5"/></svg>' +
+          '<div class="impact-copy"><span class="impact-label">' + impactLabel + '</span><p>' + impactMessage + '</p>' +
+          '<details class="impact-help"><summary>Como calculamos?</summary><p>' + impactExplanation + '</p></details></div>' +
+        '</div>' +
+        '<div class="seals-row"></div>' +
+        (soldOut ? '' :
+          '<div class="qty-pick">' +
+            '<span id="qty-label">Quantidade</span>' +
+            '<div class="qty-stepper">' +
+              '<button type="button" id="qty-less" aria-label="Diminuir quantidade">−</button>' +
+              '<input id="qty-input" inputmode="numeric" value="1" aria-labelledby="qty-label">' +
+              '<button type="button" id="qty-more" aria-label="Aumentar quantidade">+</button>' +
+            '</div>' +
+            '<span class="qty-total" id="qty-total"></span>' +
+          '</div>') +
+        '<div class="actions">' +
+          (soldOut
+            ? '<span class="btn btn-primary product-buy is-unavailable" aria-disabled="true" title="Produto sem estoque no momento">' + actionIcon("stock") + 'Produto indisponível</span>'
+            : '<a class="btn btn-primary product-buy" href="checkout?id=' + encodeURIComponent(product.id) + '">' + actionIcon(product.pixKey ? "pix" : "chat") + 'Fazer pedido</a>') +
+          '<button class="btn btn-ghost" type="button" id="add-to-cart"' + (soldOut ? ' disabled title="Produto sem estoque no momento"' : '') + '>' + actionIcon("cart") + 'Adicionar à sacola</button>' +
+          '<a class="btn btn-ghost" id="whats-link" target="_blank" rel="noopener">' + actionIcon("chat") + 'Falar com o vendedor</a>' +
+          '<a class="btn btn-ghost" href="loja.html?id=' + encodeURIComponent(product.storeId) + '">' + actionIcon("store") + 'Ver loja e produtos</a>' +
+        '</div>' +
+        '<p class="vendor-note">Disponibilidade, pagamento, retirada e entrega são combinados diretamente com ' + product.supplier + '. O Semeia não processa a transação.</p>' +
+      '</div>';
+
+    document.getElementById("product-store-avatar").src = product.storeLogoUrl || "assets/how-find.png";
+
+    var visual = root.querySelector(".product-visual");
+    var usesPlaceholderImage = !(Array.isArray(product.imageUrls) && product.imageUrls.length) && !product.imageUrl;
+    var galleryImages = Array.isArray(product.imageUrls) && product.imageUrls.length ? product.imageUrls.slice(0, 5) : product.imageUrl ? [product.imageUrl] : ["assets/product-placeholder-basket.webp"];
+    if (galleryImages.length) {
+      // A URL vem da API; atribuir pela propriedade evita inserir texto externo
+      // diretamente no atributo style do HTML.
+      visual.classList.add("has-gallery");
+      var currentImage = 0;
+      var thumbs = document.createElement("div");
+      thumbs.className = "gallery-thumbs";
+      thumbs.setAttribute("aria-label", "Fotos do produto");
+      var count = document.createElement("span");
+      count.className = "gallery-count";
+      function showImage(index) {
+        currentImage = (index + galleryImages.length) % galleryImages.length;
+        visual.style.backgroundImage = "linear-gradient(rgba(16,29,20,.12), rgba(16,29,20,.22)), url(" + JSON.stringify(galleryImages[currentImage]) + ")";
+        count.textContent = usesPlaceholderImage ? "Imagem meramente ilustrativa" : (currentImage + 1) + " / " + galleryImages.length;
+        thumbs.querySelectorAll(".gallery-thumb").forEach(function (button, buttonIndex) { button.classList.toggle("active", buttonIndex === currentImage); });
+      }
+      galleryImages.forEach(function (url, index) {
+        var button = document.createElement("button"), image = document.createElement("img");
+        button.type = "button"; button.className = "gallery-thumb"; button.setAttribute("aria-label", "Ver foto " + (index + 1));
+        image.src = url; image.alt = ""; button.appendChild(image); button.addEventListener("click", function () { showImage(index); }); thumbs.appendChild(button);
+      });
+      visual.appendChild(count);
+      if (galleryImages.length > 1) {
+        var previous = document.createElement("button"), next = document.createElement("button");
+        previous.type = next.type = "button"; previous.className = "gallery-arrow gallery-prev"; next.className = "gallery-arrow gallery-next";
+        previous.setAttribute("aria-label", "Foto anterior"); next.setAttribute("aria-label", "Próxima foto"); previous.textContent = "‹"; next.textContent = "›";
+        previous.addEventListener("click", function () { showImage(currentImage - 1); }); next.addEventListener("click", function () { showImage(currentImage + 1); });
+        visual.append(previous, next, thumbs);
+      }
+      showImage(0);
+      visual.style.backgroundSize = "cover";
+      visual.style.backgroundPosition = "center";
+    }
+
+    var sealsRow = root.querySelector(".seals-row");
+    product.seals.forEach(function (s) {
+      var span = document.createElement("span");
+      span.className = "seal";
+      span.textContent = SEALS[s] || s;
+      sealsRow.appendChild(span);
+    });
+
+    var whatsLink = document.getElementById("whats-link");
+    if (product.whats) {
+      var phone = String(product.whats).replace(/\D/g, "");
+      var message = 'Olá! Vi o produto "' + product.name + '" no Semeia por ' + priceLabel +
+        ' e gostaria de confirmar a disponibilidade e combinar pagamento/entrega.';
+      whatsLink.href = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+      whatsLink.addEventListener("click", function () {
+        if (window.SemeiaAPI && typeof SemeiaAPI.trackMetric === "function") {
+          SemeiaAPI.trackMetric("whatsapp_click", { productId: product.id });
+        }
+      });
+    } else {
+      whatsLink.removeAttribute("href");
+      whatsLink.removeAttribute("target");
+      whatsLink.setAttribute("aria-disabled", "true");
+      whatsLink.textContent = "Contato indisponível";
+    }
+
+    // Quantidade escolhida aqui vale para os dois caminhos: sacola e pedido direto.
+    var quantityInput = document.getElementById("qty-input");
+    var chosenQuantity = 1;
+    if (quantityInput) {
+      var maxQuantity = product.quantityAvailable == null ? 999 : Math.max(1, Math.floor(Number(product.quantityAvailable)));
+      var orderLink = root.querySelector(".product-buy");
+      var totalLabel = document.getElementById("qty-total");
+      var lessButton = document.getElementById("qty-less");
+      var moreButton = document.getElementById("qty-more");
+
+      var syncQuantity = function (value) {
+        chosenQuantity = Math.min(maxQuantity, Math.max(1, Math.floor(Number(value) || 1)));
+        quantityInput.value = String(chosenQuantity);
+        lessButton.disabled = chosenQuantity <= 1;
+        moreButton.disabled = chosenQuantity >= maxQuantity;
+        totalLabel.innerHTML = chosenQuantity > 1 ? "Total: <b>" + money(product.price * chosenQuantity) + "</b>" : "";
+        // Só avisa do limite quando a pessoa esbarra nele.
+        if (product.quantityAvailable != null && chosenQuantity >= maxQuantity) {
+          totalLabel.innerHTML += "<em>Máximo disponível na loja.</em>";
+        }
+        if (orderLink && orderLink.href) {
+          orderLink.href = "checkout?id=" + encodeURIComponent(product.id) + (chosenQuantity > 1 ? "&qty=" + chosenQuantity : "");
+        }
+      };
+
+      lessButton.addEventListener("click", function () { syncQuantity(chosenQuantity - 1); });
+      moreButton.addEventListener("click", function () { syncQuantity(chosenQuantity + 1); });
+      quantityInput.addEventListener("input", function () {
+        // Enquanto digita, deixa o campo em paz; só normaliza o que já é número.
+        var digits = quantityInput.value.replace(/\D/g, "");
+        quantityInput.value = digits;
+        if (digits) syncQuantity(digits);
+      });
+      quantityInput.addEventListener("blur", function () { syncQuantity(quantityInput.value); });
+      syncQuantity(1);
+    }
+
+    var cartButton = document.getElementById("add-to-cart");
+    if (cartButton) {
+      cartButton.addEventListener("click", function () {
+        var result = SemeiaCart.add(product.id, chosenQuantity);
+        if (!result.ok) {
+          SemeiaNotice.alert("Sua sacola já está cheia. Finalize um pedido antes de adicionar mais itens.");
+          return;
+        }
+        cartButton.textContent = chosenQuantity > 1 ? chosenQuantity + " na sacola ✓" : "Adicionado à sacola ✓";
+        setTimeout(function () { cartButton.innerHTML = actionIcon("cart") + "Adicionar à sacola"; }, 2200);
+      });
+    }
+
+    var pixButton = document.getElementById("pix-button");
+    if (pixButton) {
+      pixButton.addEventListener("click", function () {
+        openCheckout();
+      });
+    }
+
+    setupUIInteractions(root);
+    try {
+      var ownerAuth = JSON.parse(sessionStorage.getItem("semeia-store-login") || "null");
+      if (ownerAuth) fetch(SEMEIA_API_URL.replace(/\/$/, "") + "/api/store/me", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(ownerAuth) })
+        .then(function (response) { return response.ok ? response.json() : null; })
+        .then(function (data) { if (data && data.products.some(function (item) { return item.id === product.id; })) { var edit = document.createElement("a"); edit.className = "btn btn-ghost"; edit.href = "editar-fotos.html?id=" + encodeURIComponent(product.id); edit.textContent = "Editar fotos"; root.querySelector(".actions").appendChild(edit); } });
+    } catch {}
+  }
+
+
+  var money = SemeiaFormat.money;
+
+  function methodInfo(method) {
+    return {
+      walk: { label: "Retirada a pé", short: "A pé" },
+      bike: { label: "Retirada de bicicleta", short: "Bicicleta" },
+      vehicle: { label: "Retirada com veículo", short: "Carro ou moto" },
+      delivery: { label: "Entrega pelo vendedor", short: "Receber em casa" },
+    }[method];
+  }
+
+  function setCheckoutStep(step) {
+    ["method", "summary", "pix"].forEach(function (name) {
+      document.getElementById("checkout-step-" + name).hidden = name !== step;
+    });
+    document.getElementById("checkout-progress").hidden = step === "pix";
+    document.querySelectorAll("[data-progress]").forEach(function (item) {
+      item.classList.toggle("active", item.dataset.progress === step || (step === "summary" && item.dataset.progress === "method"));
+    });
+  }
+
+  // ---- Frete por faixa de distância ----
+  function productTiers() { return Array.isArray(product.shippingTiers) ? product.shippingTiers : []; }
+  function cheapestTierFee() {
+    var fees = productTiers().map(function (tier) { return tier.feeCents; }).filter(function (fee) { return fee != null; });
+    return fees.length ? Math.min.apply(null, fees) : null;
+  }
+  function tierRangeLabel(index) { return SemeiaFormat.tierRange(productTiers(), index); }
+  var tierFeeShort = SemeiaFormat.tierFeeShort;
+  var tierFeeLabel = SemeiaFormat.tierFeeLabel;
+  function selectedTier() {
+    var tiers = productTiers();
+    if (!tiers.length) return null;
+    var index = Number(document.getElementById("shipping-tier-select").value);
+    return Number.isInteger(index) && tiers[index] ? tiers[index] : null;
+  }
+  function paintTierOptions() {
+    var box = document.getElementById("shipping-tier-pick"), select = document.getElementById("shipping-tier-select"), tiers = productTiers();
+    box.hidden = true;
+    if (!tiers.length) return;
+    select.innerHTML = "";
+    tiers.forEach(function (tier, index) {
+      select.add(new Option(tierRangeLabel(index) + " — " + tierFeeLabel(tier), String(index)));
+    });
+  }
+
+  function openCheckout() {
+    checkoutMethod = null;
+    checkoutTotal = Number(product.price) || 0;
+    checkoutShippingKnown = true;
+    document.querySelectorAll(".fulfillment-choice").forEach(function (choice) {
+      choice.classList.remove("selected"); choice.setAttribute("aria-checked", "false");
+    });
+    var feeChip = document.getElementById("delivery-fee-chip"), cheapest = cheapestTierFee();
+    feeChip.textContent = productTiers().length
+      ? (cheapest == null ? "Frete a combinar" : Number(cheapest) === 0 ? "Entrega grátis" : "A partir de " + money(cheapest / 100))
+      : product.shippingFee == null ? "Frete a confirmar" : Number(product.shippingFee) === 0 ? "Entrega grátis" : "+ " + money(product.shippingFee);
+    paintTierOptions();
+    document.getElementById("checkout-continue").disabled = true;
+    document.getElementById("checkout-feedback").textContent = "";
+    document.getElementById("pix-feedback").textContent = "";
+    setCheckoutStep("method");
+    var modal = document.getElementById("pix-modal");
+    modal.classList.add("show"); modal.setAttribute("aria-hidden", "false");
+    setTimeout(function () { document.querySelector(".fulfillment-choice").focus(); }, 50);
+  }
+
+  function closeCheckout() {
+    var modal = document.getElementById("pix-modal");
+    modal.classList.remove("show"); modal.setAttribute("aria-hidden", "true");
+  }
+
+  function paintSummary() {
+    var info = methodInfo(checkoutMethod);
+    var isDelivery = checkoutMethod === "delivery";
+    var tier = selectedTier();
+    var deliveryFee = productTiers().length ? (tier && tier.feeCents != null ? tier.feeCents / 100 : null) : product.shippingFee;
+    var shipping = isDelivery ? deliveryFee : 0;
+    checkoutShippingKnown = shipping != null;
+    checkoutTotal = Number(product.price) + (checkoutShippingKnown ? Number(shipping) : 0);
+    var images = Array.isArray(product.imageUrls) && product.imageUrls.length ? product.imageUrls : product.imageUrl ? [product.imageUrl] : ["assets/product-placeholder-basket.webp"];
+    document.getElementById("summary-image").src = images[0];
+    document.getElementById("summary-product-name").textContent = product.name;
+    document.getElementById("summary-unit").textContent = product.unit || "por unidade";
+    document.getElementById("summary-product-price").textContent = money(product.price);
+    document.getElementById("summary-method").textContent = info.short;
+    var shippingText = checkoutShippingKnown ? (Number(shipping) === 0 ? "Grátis" : money(shipping)) : "A combinar";
+    if (isDelivery && tier) shippingText += " · " + tierRangeLabel(Number(document.getElementById("shipping-tier-select").value));
+    document.getElementById("summary-shipping").textContent = shippingText;
+    document.getElementById("summary-total").textContent = checkoutShippingKnown ? money(checkoutTotal) : money(product.price) + " + frete";
+    document.getElementById("summary-total-note").textContent = checkoutShippingKnown ? "" : "O frete será combinado e não entra no QR Code agora.";
+    var savings = product.impactEstimate && Number(product.impactEstimate.savingsKg) >= 0 ? Number(product.impactEstimate.savingsKg) : Number(product.co2kg) || 0;
+    document.getElementById("summary-impact").textContent = savings > 0 ? "~" + formatImpactKg(savings) + " de CO₂e na comparação" : "Escolha local registrada";
+    setCheckoutStep("summary");
+  }
+
+  function checkoutEventId() {
+    var key = "semeia-checkout-event:" + product.id;
+    try {
+      var saved = JSON.parse(localStorage.getItem(key) || "null");
+      if (saved && saved.id && Date.now() - saved.createdAt < 30 * 60 * 1000) return saved.id;
+      var id = crypto.randomUUID();
+      localStorage.setItem(key, JSON.stringify({ id: id, createdAt: Date.now() }));
+      return id;
+    } catch (_) {
+      return crypto.randomUUID();
+    }
+  }
+
+  function showPix(metricMessage) {
+    var amount = checkoutShippingKnown ? checkoutTotal : Number(product.price);
+    var payload = SemeiaPix.payload({ key: product.pixKey, name: product.pixName || product.supplier, city: product.pixCity || product.region, amount: amount });
+    document.getElementById("pix-recipient").textContent = "Pix de " + money(amount) + " direto para " + (product.pixName || product.supplier) + (checkoutShippingKnown ? "." : ". O frete será combinado separadamente.");
+    document.getElementById("pix-code").value = payload;
+    var qrBox = document.getElementById("pix-qr");
+    qrBox.innerHTML = "";
+    if (typeof window.QRCode === "function") {
+      qrBox.hidden = false;
+      new window.QRCode(qrBox, { text: payload, width: 190, height: 190, colorDark: "#102016", colorLight: "#ffffff", correctLevel: window.QRCode.CorrectLevel.M });
+    } else {
+      qrBox.hidden = true;
+    }
+    var pixWhats = document.getElementById("pix-whats");
+    var phone = String(product.whats || "").replace(/\D/g, "");
+    var message = "Olá! Finalizei o pedido de " + product.name + " no Semeia. Escolhi " + methodInfo(checkoutMethod).label.toLowerCase() + " e gostaria de confirmar os detalhes.";
+    if (phone) pixWhats.href = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+    else { pixWhats.removeAttribute("href"); pixWhats.setAttribute("aria-disabled", "true"); }
+    document.getElementById("pix-feedback").textContent = metricMessage;
+    setCheckoutStep("pix");
+  }
+
+  document.querySelectorAll(".fulfillment-choice").forEach(function (choice) {
+    choice.addEventListener("click", function () {
+      checkoutMethod = choice.dataset.method;
+      document.querySelectorAll(".fulfillment-choice").forEach(function (item) {
+        var selected = item === choice; item.classList.toggle("selected", selected); item.setAttribute("aria-checked", String(selected));
+      });
+      document.getElementById("shipping-tier-pick").hidden = !(checkoutMethod === "delivery" && productTiers().length);
+      document.getElementById("checkout-continue").disabled = false;
+    });
+  });
+  document.getElementById("checkout-continue").addEventListener("click", function () { if (checkoutMethod) paintSummary(); });
+  document.getElementById("checkout-back").addEventListener("click", function () { setCheckoutStep("method"); });
+  document.getElementById("checkout-cancel").addEventListener("click", closeCheckout);
+  document.getElementById("checkout-finish").addEventListener("click", function () {
+    var button = this;
+    button.disabled = true; button.textContent = "Finalizando…";
+    SemeiaAPI.confirmImpact({ eventId: checkoutEventId(), productId: product.id, fulfillmentMethod: checkoutMethod, shippingTierIndex: productTiers().length ? Number(document.getElementById("shipping-tier-select").value) : null })
+      .then(function (result) {
+        showPix(result.created ? "Sua escolha foi adicionada ao impacto coletivo do Semeia." : "Essa finalização já estava registrada nas métricas do Semeia.");
+      })
+      .catch(function () {
+        showPix("O Pix foi gerado, mas não conseguimos atualizar a métrica agora. Seu pagamento não foi afetado.");
+      })
+      .finally(function () { button.disabled = false; button.textContent = "Finalizar e gerar Pix"; });
+  });
+  document.getElementById("pix-close").addEventListener("click", closeCheckout);
+  document.getElementById("pix-modal").addEventListener("click", function(e){ if(e.target===this) document.getElementById("pix-close").click(); });
+  document.getElementById("copy-pix").addEventListener("click", function(){ navigator.clipboard.writeText(document.getElementById("pix-code").value).then(function(){document.getElementById("pix-feedback").textContent="Código Pix copiado. Confira o recebedor no aplicativo do banco.";}); });
+
+  // Renderiza uma única vez, depois que a API escolhe o produto real ou o fallback.
+  var fallback = PRODUCTS.filter(function (p) { return p.id === id; })[0] || PRODUCTS[0];
+  root.setAttribute("aria-busy", "true");
+  root.innerHTML = '<div class="product-loading" aria-label="Carregando produto"><div class="loading-visual"></div><div class="loading-info"><span></span><span></span><span></span><span></span></div></div>';
+  SemeiaAPI.loadProduct(id || fallback.id)
+    .then(function (fresh) { renderProduct(fresh || fallback); })
+    .catch(function () { renderProduct(fallback); })
+    .finally(function () { root.removeAttribute("aria-busy"); });
+
+  setupReveal();
+  setupUIInteractions();
+</script>
+</body>
+</html>

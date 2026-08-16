@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Conheça a vitrine de um pequeno negócio de São Carlos no Semeia: catálogo, horários, retirada, entrega e contato direto com quem vende.">
+<link rel="canonical" href="https://semeiabr.com/loja">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Semeia">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Lojas locais de São Carlos — Semeia">
+<meta property="og:description" content="Conheça a vitrine de um pequeno negócio de São Carlos no Semeia: catálogo, horários, retirada, entrega e contato direto com quem vende.">
+<meta property="og:url" content="https://semeiabr.com/loja">
+<meta property="og:image" content="https://semeiabr.com/assets/og-semeia.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Lojas locais de São Carlos — Semeia</title>
+<link rel="icon" href="assets/semeia-mark.svg" type="image/svg+xml">
+<!-- A página usa /loja?id=<slug>; o base garante que assets e links relativos continuem resolvendo a partir da raiz. -->
+<base href="/">
+<link rel="stylesheet" href="assets/style.css?v=20260815-menu-quadrado">
+<style>
+  .shop { max-width: 1120px; padding-block: 2rem 4rem; }
+
+  .breadcrumb { font-size: .85rem; color: var(--ink-soft); margin-bottom: 1.6rem; }
+  .breadcrumb a:hover { color: var(--accent); }
+
+  /* ---- Cabeçalho da loja ---- */
+  .shop-head {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr);
+    min-height: 430px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 34px;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 8%, var(--card)), var(--card) 62%);
+    box-shadow: 0 34px 80px -58px var(--shadow);
+  }
+  .shop-head::before {
+    content: "";
+    position: absolute;
+    width: 20rem;
+    height: 20rem;
+    right: -7rem;
+    bottom: -11rem;
+    border-radius: 50%;
+    background: var(--shop-tint, var(--accent));
+    filter: blur(70px);
+    opacity: .14;
+    pointer-events: none;
+  }
+  .shop-cover {
+    position: relative;
+    min-height: 430px;
+    background-size: cover;
+    background-position: center;
+    isolation: isolate;
+  }
+  .shop-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, transparent 42%, color-mix(in srgb, var(--card) 80%, transparent) 100%),
+      linear-gradient(180deg, color-mix(in srgb, var(--shop-tint, var(--accent)) 10%, transparent), rgba(5, 14, 9, .38));
+    pointer-events: none;
+  }
+  .shop-head-body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: clamp(2rem, 5vw, 3.5rem);
+  }
+  .shop-logo {
+    width: 104px;
+    height: 104px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--paper-raised);
+    border: 3px solid color-mix(in srgb, var(--accent) 64%, var(--paper-raised));
+    box-shadow: 0 16px 34px -22px var(--shadow), 0 0 0 7px color-mix(in srgb, var(--accent) 7%, transparent);
+  }
+  .shop-identity { min-width: 0; width: 100%; }
+  .shop-identity-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.15rem; }
+  .shop-identity .eyebrow { margin: 0 0 .28rem; color: var(--accent); }
+  .shop-kicker { min-width: 0; }
+  .shop-kicker p:last-child { margin: 0; color: var(--ink-soft); font-size: .8rem; }
+  .shop-identity h1 {
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    line-height: 1.02;
+    letter-spacing: -.04em;
+    margin: 0 0 1rem;
+  }
+
+  .shop-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: .9rem; }
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: .76rem;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: .4rem .8rem;
+    background: color-mix(in srgb, var(--paper) 65%, transparent);
+  }
+  .meta-chip svg { width: 14px; height: 14px; color: var(--accent); }
+  /* Selo de aberto/fechado alinhado com os demais chips desta página. */
+  .shop-meta .open-badge { min-height: 0; padding: .4rem .8rem; font-size: .76rem; line-height: 1.5; }
+
+  .shop-description { max-width: 34rem; margin: .15rem 0 1.45rem; color: var(--ink-soft); line-height: 1.65; font-size: 1rem; }
+
+  .shop-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; padding-top: .15rem; }
+  .shop-actions .btn { min-height: 48px; }
+  .shop-actions .btn svg { width: 17px; height: 17px; }
+  .share-feedback {
+    margin: 0;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: .72rem;
+    color: var(--good);
+    opacity: 0;
+    transition: opacity .25s ease;
+  }
+  .share-feedback.show { opacity: 1; }
+
+  /* Endereço público da loja, para copiar e divulgar */
+  .shop-link-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .8rem;
+    margin-top: 1.55rem;
+    padding: 1rem 0 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+  }
+  .shop-link-card .url {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: .78rem;
+    color: var(--ink-soft);
+  }
+  .shop-link-card .url::before {
+    content: "LINK DA LOJA";
+    display: block;
+    margin-bottom: .28rem;
+    font-size: .62rem;
+    letter-spacing: .08em;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .shop-link-card .btn { min-height: 38px; padding: .45rem .85rem; font-size: .74rem; }
+
+  /* ---- Faixa de números da loja ---- */
+  .shop-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 1.6rem 0 0;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  .shop-stats div { padding: 1.05rem 1rem; text-align: center; }
+  .shop-stats div + div { border-left: 1px solid var(--line); }
+  .shop-stats .n {
+    display: block;
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: -.03em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .shop-stats .l {
+    display: block;
+    margin-top: .4rem;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: .68rem;
+    letter-spacing: .04em;
+    color: var(--ink-soft);
+  }
+
+  /* ---- Catálogo da loja ---- */
+  .shop-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 3rem 0 1.2rem;
+  }
+  .shop-section-head h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); letter-spacing: -.035em; }
+  .shop-section-head .hint { color: var(--ink-soft); font-size: .88rem; margin: 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 310px), 1fr)); gap: 1.35rem; }
+  .grid .card { min-height: 390px; }
+  .grid .card .swatch { height: 230px; }
+  .grid .card .card-body { padding: 1.25rem 1.3rem 1.35rem; }
+  .grid .card .card-body h4 { font-size: 1.28rem; }
+  .grid .card.is-sponsored .sponsored-copy-group { min-width: 138px; }
+  .grid .card.is-sponsored .sponsored-copy { max-width: 138px; white-space: normal; font-size: .5rem; line-height: 1.25; }
+  .card .swatch { background-size: cover; background-position: center; }
+
+  /* ---- Estados ---- */
+  .state { text-align: center; padding: 4rem 1rem; color: var(--ink-soft); }
+  .state h2 { color: var(--ink); margin-bottom: .5rem; font-size: 1.5rem; }
+  .state .btn { margin-top: 1.2rem; }
+
+  .skeleton-head { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
+  .sk { border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+  .sk-logo { width: 108px; height: 108px; border-radius: 50%; }
+  .sk-line { height: 1rem; margin-bottom: .7rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    .sk { animation: sk-pulse 1.3s ease-in-out infinite; }
+  }
+  @keyframes sk-pulse { 50% { opacity: .5; } }
+
+  @media (max-width: 680px) {
+    .shop { padding-top: 1.1rem; }
+    .breadcrumb { margin-bottom: 1rem; }
+    .shop-head { grid-template-columns: 1fr; min-height: 0; border-radius: 24px; }
+    .shop-cover { min-height: 178px; }
+    .shop-cover::after { background: linear-gradient(180deg, transparent 22%, color-mix(in srgb, var(--card) 94%, transparent) 100%); }
+    .shop-head-body { padding: 0 1.2rem 1.4rem; margin-top: -38px; z-index: 2; }
+    .shop-identity-top { align-items: flex-end; margin-bottom: 1.2rem; }
+    .shop-logo { width: 96px; height: 96px; border-width: 3px; }
+    .shop-identity h1 { font-size: clamp(2.35rem, 13vw, 3.3rem); }
+    .shop-stats { grid-template-columns: 1fr; }
+    .shop-stats div + div { border-left: 0; border-top: 1px solid var(--line); }
+    .shop-actions .btn { width: 100%; justify-content: center; }
+    .shop-link-card { align-items: stretch; flex-direction: column; gap: .7rem; }
+    .shop-link-card .btn { justify-content: center; }
+    .grid { grid-template-columns: minmax(0, 360px); justify-content: center; }
+    .grid .card { width: 100%; min-height: 360px; }
+    .grid .card .swatch { height: 205px; }
+  }
+  .cart-link{position:relative;display:inline-flex;align-items:center;gap:.4rem}.cart-badge{display:inline-grid;place-items:center;min-width:1.25rem;height:1.25rem;padding:0 .3rem;border-radius:999px;background:var(--accent);color:#0f2415;font:800 .66rem/1 "SF Mono",Consolas,monospace}
+  /* Retirada e entrega: dado que já existia nos produtos, agora visível na vitrine. */
+  .shop-fulfillment{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;margin:1.4rem 0 0}
+  .shop-fulfillment-item{display:flex;align-items:flex-start;gap:.7rem;padding:1rem 1.15rem;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--card) 90%,transparent)}
+  .shop-fulfillment-item svg{width:1.25rem;height:1.25rem;flex:none;margin-top:.15rem;color:var(--accent)}
+  .shop-fulfillment-item strong{display:block;font-size:.9rem}
+  .shop-fulfillment-item span{display:block;margin-top:.2rem;color:var(--ink-soft);font-size:.82rem;line-height:1.5}
+  @media(max-width:700px){.shop-fulfillment{grid-template-columns:1fr}}
+  .shop-hours{margin:.9rem 0 1.6rem;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 55%,transparent);overflow:hidden}
+  .shop-hours-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;padding:.8rem 1rem;border:0;background:transparent;color:var(--ink);font:700 .8rem ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+  .shop-hours-head i{color:var(--accent);font-style:normal;font-size:1rem}
+  .shop-hours-list{display:none;padding:0 1rem .85rem}
+  .shop-hours.is-open .shop-hours-list{display:block}
+  .shop-hours-row{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:.32rem 0;border-top:1px solid var(--line);color:var(--ink-soft);font-size:.8rem}
+  .shop-hours-row:first-child{border-top:0}
+  .shop-hours-row strong{color:var(--ink)}
+  .shop-hours-row.is-today{color:var(--accent)}
+  .shop-hours-row.is-today strong{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="inner">
+    <a class="brand" href="index.html">
+      <img class="brand-mark" src="assets/semeia-mark.svg" alt="">
+      Semeia
+    </a>
+    <nav>
+      <a href="index.html#produtos">Produtos</a>
+      <a href="index.html#como-funciona">Como funciona</a><a class="cart-link" href="carrinho.html">Sacola<span class="cart-badge" data-cart-count hidden>0</span></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap shop" id="app">
+  <div class="skeleton-head" aria-busy="true" aria-label="Carregando loja">
+    <div class="sk sk-logo"></div>
+    <div>
+      <div class="sk sk-line" style="width:38%"></div>
+      <div class="sk sk-line" style="width:62%"></div>
+      <div class="sk sk-line" style="width:28%"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer wrap">
+  <span>Semeia — vitrine local. A compra é combinada direto com a loja.</span>
+  <a href="cadastro-loja.html">Quero vender no Semeia →</a>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/config.js?v=20260813-api-url"></script><script src="assets/format.js?v=20260815-1"></script>
+<script src="assets/api.js?v=20260813-single-paint"></script>
+<script src="assets/seo.js?v=20260815-busca"></script><script src="assets/cart.js?v=20260813-1"></script><script src="assets/main.js?v=20260814-trees"></script>
+<script>
+  var app = document.getElementById("app");
+  var API = String(window.SEMEIA_API_URL || "").replace(/\/+$/, "");
+
+  // A loja pode chegar por /loja/<slug> (URL amigável) ou por loja.html?id=<id>.
+  var pathMatch = location.pathname.match(/\/loja\/([^\/?#]+)/);
+  var storeRef = pathMatch
+    ? decodeURIComponent(pathMatch[1])
+    : new URLSearchParams(location.search).get("id");
+
+  // Sem foto própria, a loja recebe uma ilustração coerente com a categoria.
+  var FALLBACK_COVER = "assets/local-market-store.webp";
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function catLabel(slug) {
+    return (window.CATS && CATS[slug] && CATS[slug].label) || slug;
+  }
+  function sealLabel(slug) {
+    return (window.SEALS && SEALS[slug]) || slug;
+  }
+  function catTint(slug) {
+    return (window.CATS && CATS[slug] && CATS[slug].tint) || "var(--accent)";
+  }
+
+  var priceChangeOf = SemeiaFormat.priceChange;
+
+  function productPriceNode(product) {
+    var box = el("span", "catalog-price");
+    var current = product.price === 0 ? "Grátis" : SemeiaFormat.money(product.price) + (product.unit || "");
+    box.appendChild(el("strong", "catalog-price-current", current));
+    // O preco anterior aparece riscado tanto na queda quanto no aumento.
+    var change = priceChangeOf(product);
+    if (change) {
+      var promo = el("span", "catalog-price-promo");
+      promo.appendChild(el("span", "catalog-price-old", SemeiaFormat.money(change.previous)));
+      promo.appendChild(el("span", change.up ? "increase-badge" : "discount-badge", change.label));
+      box.appendChild(promo);
+    }
+    return box;
+  }
+
+  function showState(title, message, linkLabel, linkHref) {
+    app.innerHTML = "";
+    var box = el("div", "state");
+    box.appendChild(el("h2", null, title));
+    box.appendChild(el("p", null, message));
+    var link = el("a", "btn btn-ghost", linkLabel);
+    link.href = linkHref;
+    box.appendChild(link);
+    app.appendChild(box);
+  }
+
+  function icon(path) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + "</svg>";
+  }
+
+  function storeShareUrl(store) {
+    return location.origin + "/loja?id=" + encodeURIComponent(store.slug || store.id);
+  }
+
+  function setupShare(button, feedback, store) {
+    var url = storeShareUrl(store);
+    var timer = null;
+    function flash(message) {
+      feedback.textContent = message;
+      feedback.classList.add("show");
+      clearTimeout(timer);
+      timer = setTimeout(function () { feedback.classList.remove("show"); }, 2600);
+    }
+    // Sem Web Share (desktop, em geral): copia para a área de transferência.
+    // O execCommand é o plano B para navegador sem permissão de clipboard —
+    // e, se nem ele funcionar, mostramos o link para copiar na mão.
+    function copyLegacy() {
+      try {
+        var field = document.createElement("textarea");
+        field.value = url;
+        field.setAttribute("readonly", "");
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+        document.body.appendChild(field);
+        field.select();
+        var done = document.execCommand("copy");
+        document.body.removeChild(field);
+        flash(done ? "Link copiado!" : url);
+      } catch (_) {
+        flash(url);
+      }
+    }
+    function copy() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(
+          function () { flash("Link copiado!"); },
+          copyLegacy
+        );
+      } else {
+        copyLegacy();
+      }
+    }
+    button.addEventListener("click", function () {
+      if (navigator.share) {
+        navigator.share({
+          title: store.name + " — Semeia",
+          text: "Conheça a loja " + store.name + " no Semeia:",
+          url: url,
+        }).catch(function (error) {
+          if (error && error.name !== "AbortError") copy();
+        });
+      } else {
+        copy();
+      }
+    });
+  }
+
+  var WEEKDAY_NAMES = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+  // Tabela de horários com o dia de hoje destacado, no fuso que a API usou.
+  function openingHoursBox(store) {
+    var box = el("div", "shop-hours");
+    var head = el("button", "shop-hours-head");
+    head.type = "button";
+    head.innerHTML = '<span>Horário de funcionamento</span><i aria-hidden="true">+</i>';
+    var list = el("div", "shop-hours-list");
+    var today = new Date().getDay();
+    (store.openingHours || []).forEach(function (slot, index) {
+      var row = el("div", "shop-hours-row" + (index === today ? " is-today" : ""));
+      row.appendChild(el("span", null, WEEKDAY_NAMES[index]));
+      row.appendChild(el("strong", null, slot ? slot.from + " às " + slot.to : "Fechado"));
+      list.appendChild(row);
+    });
+    head.onclick = function () {
+      var open = box.classList.toggle("is-open");
+      head.querySelector("i").textContent = open ? "−" : "+";
+    };
+    box.append(head, list);
+    return box;
+  }
+
+  /**
+   * Retirada e entrega saem dos produtos já publicados — nenhum campo novo:
+   * endereço de retirada é o do produto, e o frete vem da faixa mais barata.
+   */
+  function fulfillmentBox(products) {
+    var enderecos = [];
+    products.forEach(function (product) {
+      var address = (product.pickupAddress || "").trim();
+      if (address && enderecos.indexOf(address) === -1) enderecos.push(address);
+    });
+
+    var fees = products.map(function (product) {
+      var tiers = Array.isArray(product.shippingTiers) ? product.shippingTiers : [];
+      if (tiers.length) {
+        var known = tiers.map(function (tier) { return tier.feeCents; }).filter(function (fee) { return fee != null; });
+        return known.length ? Math.min.apply(null, known) / 100 : null;
+      }
+      return product.shippingFee == null ? null : Number(product.shippingFee);
+    });
+    var conhecidos = fees.filter(function (fee) { return fee != null; });
+    var entrega = !fees.length ? null
+      : conhecidos.length === 0 ? "Frete combinado com a loja"
+      : Math.min.apply(null, conhecidos) === 0 ? "Entrega grátis em alguns produtos"
+      : "Entrega a partir de " + SemeiaFormat.money(Math.min.apply(null, conhecidos));
+
+    if (!enderecos.length && !entrega) return null;
+
+    var box = el("div", "shop-fulfillment");
+    if (enderecos.length) {
+      var pickup = el("div", "shop-fulfillment-item");
+      pickup.innerHTML = icon('<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/>');
+      var pickupText = el("div");
+      pickupText.appendChild(el("strong", null, "Retirada"));
+      pickupText.appendChild(el("span", null, enderecos.length === 1 ? enderecos[0] : enderecos.join(" · ")));
+      pickup.appendChild(pickupText);
+      box.appendChild(pickup);
+    }
+    if (entrega) {
+      var delivery = el("div", "shop-fulfillment-item");
+      delivery.innerHTML = icon('<path d="M3 7h11v10H3zM14 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>');
+      var deliveryText = el("div");
+      deliveryText.appendChild(el("strong", null, "Entrega"));
+      deliveryText.appendChild(el("span", null, entrega));
+      delivery.appendChild(deliveryText);
+      box.appendChild(delivery);
+    }
+    return box;
+  }
+
+  function renderStore(store, products) {
+    // Cada vitrine entra na busca com o nome da loja, a cidade e o que ela
+    // vende — antes todas iam para o Google como "Semeia", indistinguíveis.
+    if (window.SemeiaSEO) {
+      var quantos = products.length;
+      var descricaoLoja = store.description
+        || (catLabel(store.category) + " em " + store.region + ". "
+            + (quantos ? quantos + (quantos > 1 ? " produtos disponíveis" : " produto disponível") + ", combinados" : "Combine")
+            + " diretamente com quem vende, por WhatsApp.");
+      SemeiaSEO.pagina({
+        titulo: store.name + " — " + store.region + " | Semeia",
+        descricao: SemeiaSEO.resumo(descricaoLoja, 155),
+        url: "/loja?id=" + encodeURIComponent(store.slug || store.id),
+        imagem: store.coverUrl || store.logoUrl || undefined,
+        dados: {
+          "@context": "https://schema.org",
+          "@type": "Store",
+          name: store.name,
+          description: SemeiaSEO.resumo(descricaoLoja, 300),
+          image: store.coverUrl || store.logoUrl || undefined,
+          telephone: store.whatsapp || undefined,
+          address: { "@type": "PostalAddress", addressLocality: store.region, addressCountry: "BR" },
+          url: SemeiaSEO.absoluta("/loja?id=" + encodeURIComponent(store.slug || store.id)),
+        },
+      });
+    }
+    // Métricas não podem impedir a vitrine de abrir enquanto o navegador atualiza o cache.
+    if (window.SemeiaAPI && typeof SemeiaAPI.trackMetric === "function") {
+      SemeiaAPI.trackMetric("store_view", { storeId: store.id });
+    }
+
+    // Mantém um endereço canônico que sobrevive ao recarregamento no Cloudflare Pages.
+    if (/^https?:$/.test(location.protocol)) {
+      var canonical = "/loja?id=" + encodeURIComponent(store.slug || store.id);
+      if (location.pathname + location.search !== canonical) history.replaceState(null, "", canonical);
+    }
+
+    // Capa própria quando a loja enviou uma; senão, a ilustração por categoria.
+    var cover = store.coverUrl || FALLBACK_COVER;
+    var logo = store.logoUrl || cover;
+
+    // Soma do CO2 evitado considerando uma unidade de cada produto do catálogo.
+    var co2Total = products.reduce(function (sum, p) { return sum + (p.co2kg || 0); }, 0);
+    app.innerHTML = "";
+
+    var crumb = el("p", "breadcrumb");
+    crumb.innerHTML = '<a href="index.html#produtos">Produtos</a> / ' + catLabel(store.category);
+    app.appendChild(crumb);
+
+    var head = el("div", "shop-head");
+    head.style.setProperty("--shop-tint", catTint(store.category));
+    var coverEl = el("div", "shop-cover");
+    coverEl.style.backgroundImage = "url(" + JSON.stringify(cover) + ")";
+    head.appendChild(coverEl);
+
+    var body = el("div", "shop-head-body");
+    var identity = el("div", "shop-identity");
+    var identityTop = el("div", "shop-identity-top");
+
+    var logoEl = document.createElement("img");
+    logoEl.className = "shop-logo";
+    logoEl.src = logo;
+    logoEl.alt = "Logo de " + store.name;
+    logoEl.loading = "lazy";
+    identityTop.appendChild(logoEl);
+
+    var kicker = el("div", "shop-kicker");
+    kicker.appendChild(el("p", "eyebrow", "Loja local"));
+    kicker.appendChild(el("p", null, "Negócio local, perto de você"));
+    identityTop.appendChild(kicker);
+    identity.appendChild(identityTop);
+    identity.appendChild(el("h1", null, store.name));
+
+    var meta = el("div", "shop-meta");
+    var region = el("span", "meta-chip");
+    region.innerHTML = icon('<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/>') + "<span></span>";
+    region.querySelector("span").textContent = store.region;
+    meta.appendChild(region);
+
+    var category = el("span", "meta-chip");
+    category.innerHTML = icon('<path d="M4 7h16M7 12h10M10 17h4"/>') + "<span></span>";
+    category.querySelector("span").textContent = catLabel(store.category);
+    meta.appendChild(category);
+    if (store.hoursConfigured) {
+      var openChip = el("span", "open-badge" + (store.openNow ? "" : " is-closed"), store.openNow ? "Aberta agora" : "Fechada agora");
+      openChip.title = store.todayLabel || "";
+      meta.appendChild(openChip);
+    }
+    identity.appendChild(meta);
+
+    identity.appendChild(el("p", "shop-description", store.description
+      || "Conheça os produtos desta loja e combine disponibilidade, retirada ou entrega diretamente com quem vende."));
+    if (store.hoursConfigured) identity.appendChild(openingHoursBox(store));
+
+    var actions = el("div", "shop-actions");
+    if (store.whatsapp) {
+      var whats = el("a", "btn btn-primary");
+      whats.innerHTML = icon('<path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3z"/><path d="M9 9.5c.3 2.5 3 5.2 5.5 5.5l1.5-1.5-2-1.2-1 .7c-.8-.4-1.6-1.2-2-2l.7-1-1.2-2z"/>') + "<span>Falar com a loja</span>";
+      whats.href = "https://wa.me/" + String(store.whatsapp).replace(/\D/g, "") +
+        "?text=" + encodeURIComponent('Olá! Vi a loja "' + store.name + '" no Semeia e queria saber mais.');
+      whats.target = "_blank";
+      whats.rel = "noopener";
+      whats.addEventListener("click", function () {
+        if (window.SemeiaAPI && typeof SemeiaAPI.trackMetric === "function") {
+          SemeiaAPI.trackMetric("whatsapp_click", { storeId: store.id });
+        }
+      });
+      actions.appendChild(whats);
+    }
+
+    var share = el("button", "btn btn-ghost");
+    share.type = "button";
+    share.innerHTML = icon('<circle cx="6" cy="12" r="2.6"/><circle cx="17.5" cy="5.5" r="2.6"/><circle cx="17.5" cy="18.5" r="2.6"/><path d="m8.4 10.8 6.8-4M8.4 13.2l6.8 4"/>') + "<span>Compartilhar loja</span>";
+    actions.appendChild(share);
+
+    if (store.instagram) {
+      var insta = el("a", "btn btn-ghost");
+      insta.innerHTML = icon('<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/>') + "<span>@" + store.instagram + "</span>";
+      insta.href = "https://instagram.com/" + encodeURIComponent(store.instagram);
+      insta.target = "_blank";
+      insta.rel = "noopener";
+      actions.appendChild(insta);
+    }
+
+    var backToAll = el("a", "btn btn-ghost");
+    backToAll.innerHTML = icon('<path d="M4 7h16v12H4z"/><path d="M3 7l2-3h14l2 3M8 11v4M12 11v4M16 11v4"/>') + "<span>Ver outras lojas</span>";
+    backToAll.href = "index.html#produtos";
+    actions.appendChild(backToAll);
+
+    var feedback = el("p", "share-feedback");
+    feedback.setAttribute("aria-live", "polite");
+    actions.appendChild(feedback);
+    identity.appendChild(actions);
+
+    body.appendChild(identity);
+    head.appendChild(body);
+    app.appendChild(head);
+
+    setupShare(share, feedback, store);
+
+    var fulfillment = fulfillmentBox(products);
+    if (fulfillment) app.appendChild(fulfillment);
+
+    // Números da loja
+    var stats = el("div", "shop-stats");
+    [
+      [products.length, products.length === 1 ? "produto local para você conhecer" : "produtos locais para você conhecer"],
+      ["~" + co2Total.toFixed(1).replace(".", ",") + " kg de CO₂e", "que podem deixar de chegar à atmosfera"],
+    ].forEach(function (pair) {
+      var cell = document.createElement("div");
+      cell.appendChild(el("span", "n", String(pair[0])));
+      cell.appendChild(el("span", "l", pair[1]));
+      stats.appendChild(cell);
+    });
+    app.appendChild(stats);
+
+    // Catálogo
+    var sectionHead = el("div", "shop-section-head");
+    sectionHead.appendChild(el("h2", null, "Produtos desta loja"));
+    if (products.length) {
+      sectionHead.appendChild(el("p", "hint", "Preço e entrega são combinados direto com a loja."));
+    }
+    app.appendChild(sectionHead);
+
+    if (!products.length) {
+      var empty = el("div", "state");
+      empty.appendChild(el("p", null, "Esta loja ainda não publicou produtos."));
+      if (store.whatsapp) {
+        var ask = el("a", "btn btn-ghost", "Perguntar o que tem disponível");
+        ask.href = "https://wa.me/" + String(store.whatsapp).replace(/\D/g, "");
+        ask.target = "_blank";
+        ask.rel = "noopener";
+        empty.appendChild(ask);
+      }
+      app.appendChild(empty);
+      return;
+    }
+
+    var grid = el("div", "grid");
+    products.forEach(function (product, index) {
+      var card = el("a", "card card-enter");
+      var sponsoredPosition = Number(product.sponsoredPosition) || Number(product.sponsoredCategoryPosition) || 0;
+      if (sponsoredPosition) {
+        var sponsoredRank = Math.min(5, Math.max(1, sponsoredPosition));
+        card.classList.add("is-sponsored", "sponsored-rank-" + sponsoredRank);
+        card.dataset.sponsoredRank = String(sponsoredRank);
+        card.style.setProperty("--rank-number", JSON.stringify(sponsoredRank + "º"));
+      }
+      card.href = "produto.html?id=" + encodeURIComponent(product.id);
+      card.style.setProperty("--index", index);
+
+      var swatch = el("div", "swatch");
+      swatch.style.background = catTint(product.cat);
+      swatch.style.backgroundImage = "url(" + JSON.stringify(product.imageUrl || "assets/product-placeholder-basket.webp") + ")";
+      if (!product.imageUrl) swatch.appendChild(el("span", "image-placeholder-note", "Imagem meramente ilustrativa"));
+      if (sponsoredPosition) {
+        var sponsoredTag = el("span", "sponsored-tag");
+        var sponsoredCopy = el("span", "sponsored-copy-group");
+        sponsoredCopy.appendChild(el("span", "sponsored-copy", "Recomendado pelo Semeia"));
+        sponsoredTag.appendChild(sponsoredCopy);
+        sponsoredTag.appendChild(el("strong", "sponsored-position", sponsoredRank + "º"));
+        swatch.appendChild(sponsoredTag);
+      }
+      card.appendChild(swatch);
+
+      var cardBody = el("div", "card-body");
+      cardBody.appendChild(el("h4", null, product.name));
+
+      var metaRow = el("div", "meta-row");
+      metaRow.appendChild(productPriceNode(product));
+      cardBody.appendChild(metaRow);
+
+      if (product.co2kg) {
+        var co2 = el("div", "co2-tag");
+        co2.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c3 2 5 5 5 8.5A5 5 0 0 1 12 16a5 5 0 0 1-5-4.5C7 8 9 5 12 3z"/></svg><span></span>';
+        co2.querySelector("span").textContent = "~" + product.co2kg + " kg CO₂ evitado";
+        cardBody.appendChild(co2);
+      }
+
+      if (product.seals && product.seals.length) {
+        var productSeals = el("div", "seals-row");
+        product.seals.forEach(function (slug) { productSeals.appendChild(el("span", "seal", sealLabel(slug))); });
+        cardBody.appendChild(productSeals);
+      }
+
+      card.appendChild(cardBody);
+      grid.appendChild(card);
+    });
+    app.appendChild(grid);
+
+    setupUIInteractions(app);
+  }
+
+  if (!storeRef) {
+    showState("Loja não informada", "O endereço precisa incluir o identificador da loja.", "Ver todos os produtos", "index.html#produtos");
+  } else {
+    fetch(API + "/api/stores/" + encodeURIComponent(storeRef))
+      .then(function (response) {
+        return response.json().catch(function () { return {}; }).then(function (data) {
+          if (!response.ok) throw new Error(data.error || "Não foi possível carregar a loja.");
+          return data;
+        });
+      })
+      .then(function (data) { renderStore(data.store, data.products || []); })
+      .catch(function (error) {
+        showState("Loja indisponível", error.message, "Ver todos os produtos", "index.html#produtos");
+      });
+  }
+
+  setupUIInteractions();
+</script>
+</body>
+</html>

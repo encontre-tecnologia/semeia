@@ -1,0 +1,20 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/assets/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/privacidade.html
+  Cache-Control: public, max-age=300
+
+/termos.html
+  Cache-Control: public, max-age=300
+
+/loja
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+
+/loja/*
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0

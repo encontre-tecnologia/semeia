@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# As páginas de uso interno (painel, sacola, administração) não são bloqueadas
+# aqui de propósito: elas trazem <meta name="robots" content="noindex">, e o
+# buscador só enxerga essa marca se puder abrir a página. Bloquear no robots.txt
+# faria o contrário do pretendido — o endereço continuaria aparecendo na busca,
+# só que sem título nem descrição.
+
+Sitemap: https://semeiabr.com/sitemap.xml
