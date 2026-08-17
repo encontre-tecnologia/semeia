@@ -124,14 +124,29 @@
     var tamanhoNome = loja.nome && loja.nome.length > 26 ? 68 : 86;
     ctx.font = "700 " + tamanhoNome + "px " + SERIFA;
     var nomeLinhas = linhas(ctx, loja.nome, LARGURA - 200, 2);
-    var alturaTopo = 286
-      + (logo ? 190 : 30)
+    /* Texto é desenhado a partir da linha de base, não do topo: depois da logo
+       é preciso somar o diâmetro dela, o respiro E a altura da primeira linha,
+       senão o nome sobe por cima do círculo. */
+    var TOPO_LOGO = 286;
+    var RAIO_LOGO = 78;
+    var basePrimeiraLinha = logo
+      ? TOPO_LOGO + RAIO_LOGO * 2 + 56 + tamanhoNome
+      : TOPO_LOGO + 30;
+    /* Precisa espelhar exatamente o laço do desenho, que avança uma altura de
+       linha depois de CADA linha — inclusive a última. Com (n-1) aqui, a conta
+       ficava 96px otimista e o QR encostava no endereço. */
+    var alturaTopo = basePrimeiraLinha
       + nomeLinhas.length * (tamanhoNome + 10)
       + (loja.regiao ? 54 : 0)
       + 74 + 56 + 72;
-    // 82 do respiro, 32 do endereço e 150 até o rodapé.
-    var sobra = ALTURA - alturaTopo - 82 - 32 - 150;
-    var ladoQr = Math.max(420, Math.min(720, Math.round(sobra)));
+    /* O pé do cartaz tem posição fixa — endereço e rodapé sempre no mesmo lugar,
+       em qualquer loja. O QR ocupa o que sobra entre o cabeçalho e eles, então
+       nunca invade o texto de baixo, que foi o que aconteceu quando o tamanho
+       vinha de uma soma de respiros. */
+    var BASE_ENDERECO = ALTURA - 150;
+    var BASE_RODAPE = ALTURA - 70;
+    var limiteQr = BASE_ENDERECO - 74;
+    var ladoQr = Math.max(420, Math.min(720, Math.round(limiteQr - alturaTopo - 36)));
     var qr = await qrComoImagem(loja.url, ladoQr);
 
     // Cabeçalho: marca do Semeia
@@ -142,13 +157,8 @@
     ctx.fillText("SEMEIA", meio, y + 68);
 
     // Logo da loja, quando existe
-    y = 286;
-    if (logo) {
-      circulo(ctx, logo, meio - 78, y, 78);
-      y += 190;
-    } else {
-      y += 30;
-    }
+    if (logo) circulo(ctx, logo, meio - RAIO_LOGO, TOPO_LOGO, RAIO_LOGO);
+    y = basePrimeiraLinha;
 
     // Nome da loja
     ctx.fillStyle = TINTA;
@@ -186,18 +196,17 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(meio - lado / 2 - margem, y - margem, lado + margem * 2, lado + margem * 2);
       ctx.drawImage(qr, meio - lado / 2, y, lado, lado);
-      y += lado + margem + 82;
     }
 
     // Endereço escrito, para quem não usa QR
     ctx.fillStyle = VERDE;
     ctx.font = "700 32px " + MONO;
-    ctx.fillText(loja.url.replace(/^https?:\/\//, ""), meio, y);
+    ctx.fillText(loja.url.replace(/^https?:\/\//, ""), meio, BASE_ENDERECO);
 
     // Rodapé
     ctx.fillStyle = SUAVE;
     ctx.font = "400 27px " + SERIFA;
-    ctx.fillText("Combine retirada, entrega e pagamento direto com a loja.", meio, ALTURA - 70);
+    ctx.fillText("Combine retirada, entrega e pagamento direto com a loja.", meio, BASE_RODAPE);
 
     return canvas;
   }
