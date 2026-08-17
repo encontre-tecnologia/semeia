@@ -239,7 +239,7 @@
           <div class="store-panel-meta-row"><p id="meta"></p><span class="status-pill" id="status-pill"></span></div>
           <p class="status-note" id="status"></p>
         </div>
-        <div class="dashboard-head-actions"><a class="btn btn-ghost" id="public-store" href="#">Ver loja pública</a><button class="btn btn-primary" id="share-store" type="button">Compartilhar</button><button class="btn btn-ghost" id="store-poster" type="button" title="Imagem em A4 para imprimir e colar no balcão">Cartaz para imprimir</button><small class="share-store-feedback" id="share-store-feedback" aria-live="polite"></small></div>
+        <div class="dashboard-head-actions"><a class="btn btn-ghost" id="public-store" href="#">Ver loja pública</a><button class="btn btn-primary" id="share-store" type="button">Compartilhar</button><small class="share-store-feedback" id="share-store-feedback" aria-live="polite"></small></div>
       </div>
     </section>
     <nav class="dashboard-tabs" aria-label="Seções da loja" role="tablist">
@@ -330,7 +330,7 @@
 
 <script src="assets/data.js?v=20260812-categories1"></script><script src="assets/main.js?v=20260816-volta-produto"></script><script src="assets/config.js?v=20260813-api-url"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="assets/pix.js?v=20260814-1"></script>
-<script src="assets/notice.js?v=20260813-1"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="assets/poster.js?v=20260816-cartaz"></script><script src="assets/security.js"></script><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="assets/notice.js?v=20260813-1"></script><script src="assets/security.js"></script><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>window.SemeiaFirebaseReady=import("./assets/firebase-auth.js").then(function(module){window.SemeiaFirebase=module;return module;});</script>
 <script>
 (()=>{const A=SEMEIA_API_URL.replace(/\/$/,''),E=q=>document.querySelector(q);let auth,store,boostAvailability=[],salesByProduct=new Map(),productsById=new Map(),promotionsById=new Map(),pendingPromotionByProduct=new Map();
@@ -698,24 +698,6 @@ else{newProductLink.setAttribute('aria-disabled','true');newProductLink.removeAt
 indexPromotions(d);salesByProduct=new Map(((d.sales||{}).byProduct||[]).map(row=>[row.productId,row]));const list=E('#products');list.innerHTML='';if(d.products.length)d.products.forEach(p=>list.appendChild(productRow(p)));else{const empty=document.createElement('p');empty.className='products-empty';empty.textContent='Nenhum produto publicado ainda.';list.appendChild(empty)}countStock();renderPerformance(d);renderMetrics(d);renderSales(d);renderOrders(d);renderPromotions(d);E('#dashboard').hidden=false;E('#publish').hidden=d.store.status!=='approved';selectDashboardTab(document.querySelector('[data-dashboard-tab].is-active')?.dataset.dashboardTab||'products')}
 const nonFoodOption=new Option('Produto não alimentício','not_applicable');E('#product-type').append(nonFoodOption);function syncImpactType(){if(store&&/cosmeticos|artesanato|reuso|moda/.test(store.category))E('#product-type').value='not_applicable'}new MutationObserver(syncImpactType).observe(E('#dashboard'),{attributes:true,attributeFilter:['hidden']});
 function storePublicUrl(s){return location.origin+'/loja?id='+encodeURIComponent(s.slug||s.id)}
-E('#store-poster').onclick=async()=>{
-  if(!store)return;
-  const botao=E('#store-poster'),rotulo=botao.textContent;
-  botao.disabled=true;botao.textContent='Gerando…';
-  try{
-    await SemeiaPoster.baixar({
-      nome:store.name,
-      regiao:store.region,
-      url:storePublicUrl(store),
-      logoUrl:store.logoUrl||null,
-    });
-    botao.textContent='Cartaz baixado';
-    setTimeout(()=>{botao.textContent=rotulo},2600);
-  }catch(x){
-    botao.textContent=rotulo;
-    SemeiaNotice.alert(x.message||'Não foi possível gerar o cartaz.');
-  }finally{botao.disabled=false}
-};
 E('#share-store').onclick=async()=>{if(!store)return;const url=storePublicUrl(store),feedback=E('#share-store-feedback');const copy=async()=>{try{await navigator.clipboard.writeText(url);feedback.textContent='Link copiado: '+url.replace(/^https?:\/\//,'')}catch{feedback.textContent=url}setTimeout(()=>feedback.textContent='',4000)};if(navigator.share){try{await navigator.share({title:store.name+' — Semeia',text:'Conheça a loja '+store.name+' no Semeia:',url})}catch(x){if(x&&x.name!=='AbortError')copy()}}else copy()};
 E('#google-login').onclick=async()=>{try{const firebase=await window.SemeiaFirebaseReady;auth={idToken:await firebase.signInWithGoogle()};await me()}catch(x){SemeiaNotice.alert(x.message)}};
 E('#product-name').oninput=e=>E('#slug').value=slug(e.target.value);
