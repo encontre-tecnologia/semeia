@@ -228,6 +228,10 @@ function setupSiteMenu() {
   function close(){menu.classList.remove("open");document.body.classList.remove("menu-open");toggle.setAttribute("aria-expanded","false");}
   toggle.addEventListener("click",function(){var open=menu.classList.toggle("open");document.body.classList.toggle("menu-open",open);toggle.setAttribute("aria-expanded",String(open));});
   menu.querySelector(".side-menu-backdrop").addEventListener("click",close);menu.querySelector(".side-menu-close").addEventListener("click",close);
+  // Sem isto, quem abre o menu e clica num link sai da página com o menu ainda
+  // aberto: o botão de voltar usa history.back() e reexibe essa página parada
+  // no tempo, com o menu por cima de tudo.
+  menu.querySelectorAll(".side-menu-links a").forEach(function (a) { a.addEventListener("click", close); });
   inner.insertBefore(toggle, inner.firstChild);document.body.appendChild(menu);
 
   /* Fora da home, no celular, o lugar do menu é ocupado por um botão de voltar.
