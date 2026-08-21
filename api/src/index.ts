@@ -30,10 +30,12 @@ import {
   normalizeRegion,
   openingStatus,
   parseImageUrls,
+  parseProductAddons,
   parseSeals,
   parseShippingTiers,
   readContent,
   readOpeningHours,
+  readProductAddons,
   readShippingTiers,
   slugifyStoreName,
   validProductImages,
@@ -245,28 +247,54 @@ interface DirectImpactBody {
 
 
 /** Itens de um pedido: `items` do carrinho ou o `productId` avulso do "comprar agora". */
-function readOrderItems(body: DirectImpactBody): { error: string } | { items: { productId: string; quantity: number }[] } {
+function readOrderItems(body: DirectImpactBody): { error: string } | { items: { productId: string; quantity: number; addonIds: string[] }[] } {
   if (body.items === undefined || body.items === null) {
     const productId = typeof body.productId === "string" ? body.productId.trim() : "";
     if (!productId || productId.length > 160) return { error: "Revise o produto do pedido." };
-    return { items: [{ productId, quantity: 1 }] };
+    return { items: [{ productId, quantity: 1, addonIds: [] }] };
   }
   if (!Array.isArray(body.items) || !body.items.length) return { error: "Seu pedido está vazio." };
   if (body.items.length > 30) return { error: "Use no máximo 30 itens por pedido." };
-  const items: { productId: string; quantity: number }[] = [];
-  for (const entry of body.items as { productId?: unknown; quantity?: unknown }[]) {
+  const items: { productId: string; quantity: number; addonIds: string[] }[] = [];
+  for (const entry of body.items as { productId?: unknown; quantity?: unknown; addonIds?: unknown }[]) {
     if (!entry || typeof entry !== "object") return { error: "Revise os itens do pedido." };
     const productId = typeof entry.productId === "string" ? entry.productId.trim() : "";
     const quantity = Math.round(Number(entry.quantity));
     if (!productId || productId.length > 160) return { error: "Revise os itens do pedido." };
     if (!Number.isFinite(quantity) || quantity < 1 || quantity > 999) return { error: "Revise a quantidade de um dos itens." };
+    const rawAddonIds = entry.addonIds ?? [];
+    if (!Array.isArray(rawAddonIds) || rawAddonIds.length > 8 || rawAddonIds.some((value) => typeof value !== "string")) return { error: "Revise os adicionais de um dos itens." };
+    const addonIds = [...new Set(rawAddonIds.map((value) => String(value).trim()).filter(Boolean))];
+    if (addonIds.length !== rawAddonIds.length) return { error: "Há adicionais inválidos ou repetidos no pedido." };
     if (items.some((item) => item.productId === productId)) return { error: "Há itens repetidos no pedido." };
-    items.push({ productId, quantity });
+    items.push({ productId, quantity, addonIds });
   }
   return { items };
 }
 
 const FULFILLMENT_METHODS = new Set<db.FulfillmentMethod>(["walk", "bike", "vehicle", "delivery"]);
+const DELIVERY_KG_CO2E_PER_KM: Record<string, number> = {
+  gasoline_car: 0.192,
+  ethanol_car: 0.125,
+  electric_car: 0.04,
+  gasoline_motorcycle: 0.08,
+  cargo_bike: 0,
+};
+const PUBLISHED_DELIVERY_KG_PER_ORDER: Record<string, number> = {
+  pickup: 0.05,
+  grouped: 0.15,
+  dedicated: 1.25,
+};
+
+/** Usa o limite superior da faixa e ida + volta: uma hipótese conservadora.
+ * Faixas escritas em palavras não carregam distância, então ficam sem cálculo. */
+function estimatedDeliveryDistanceKm(tiers: db.ShippingTier[], index: number): number | null {
+  const tier = Number.isInteger(index) && index >= 0 && index < tiers.length ? tiers[index] : null;
+  if (!tier || tier.label) return null;
+  if (typeof tier.upToKm === "number" && tier.upToKm > 0) return tier.upToKm;
+  const previous = index > 0 ? tiers[index - 1]?.upToKm : null;
+  return typeof previous === "number" && previous > 0 ? previous + 5 : null;
+}
 
 app.post("/api/impact/confirm", async (c) => {
   if (!(await allowedBy(c.env.METRIC_RATE_LIMITER, c, "impact"))) return c.json({ error: "Muitas confirmações. Aguarde um minuto." }, 429);
@@ -291,11 +319,14 @@ app.post("/api/impact/confirm", async (c) => {
   const buyerName = rawName || null;
   const buyerWhatsapp = rawPhone || null;
 
-  const products: { product: db.ProductWithStore; quantity: number }[] = [];
+  const products: { product: db.ProductWithStore; quantity: number; addons: db.ProductAddon[] }[] = [];
   for (const item of parsed.items) {
     const product = await db.getProduct(c.env.DB, item.productId);
     if (!product) return c.json({ error: "Produto não encontrado." }, 404);
-    products.push({ product, quantity: item.quantity });
+    const available = parseProductAddons(product.addons);
+    const addons = item.addonIds.map((addonId) => available.find((addon) => addon.id === addonId)).filter((addon): addon is db.ProductAddon => Boolean(addon));
+    if (addons.length !== item.addonIds.length) return c.json({ error: "Um dos adicionais escolhidos não está mais disponível." }, 409);
+    products.push({ product, quantity: item.quantity, addons });
   }
   // Um pedido é sempre de uma loja só: o Pix vai direto para a chave dela.
   const first = products[0];
@@ -317,6 +348,18 @@ app.post("/api/impact/confirm", async (c) => {
     ? null
     : Math.max(...feeCandidates.map((fee) => fee ?? 0));
   const shippingFeeCents = fulfillmentMethod === "delivery" ? deliveryFeeCents : 0;
+  const distanceKm = fulfillmentMethod === "delivery"
+    ? estimatedDeliveryDistanceKm(parseShippingTiers(first.product.shipping_tiers), tierIndex)
+    : 0;
+  const deliveryFactor = Math.max(...products.map((entry) =>
+    DELIVERY_KG_CO2E_PER_KM[entry.product.delivery_vehicle] ?? DELIVERY_KG_CO2E_PER_KM.gasoline_car ?? 0.192));
+  const deliveryEmissionG = distanceKm === null ? 0 : Math.round(distanceKm * 2 * deliveryFactor * 1000);
+  // Só substituímos a hipótese genérica publicada quando conhecemos a última
+  // etapa: a pé/bicicleta é zero; frete usa distância + veículo do vendedor.
+  // Na retirada em veículo do comprador, o combustível é desconhecido.
+  const replacesPublishedDelivery = fulfillmentMethod === "walk"
+    || fulfillmentMethod === "bike"
+    || (fulfillmentMethod === "delivery" && distanceKm !== null);
 
   // Estoque é segurado quando o pedido nasce, não quando o vendedor confirma:
   // sem isso, dois compradores fecham a mesma última unidade. Recarregar a
@@ -370,10 +413,16 @@ app.post("/api/impact/confirm", async (c) => {
   let created = false;
   let productAmountCents = 0;
   let co2g = 0;
+  let remainingDeliveryEmissionG = replacesPublishedDelivery ? deliveryEmissionG : 0;
   for (const [index, entry] of products.entries()) {
-    const { product, quantity } = entry;
-    const amountCents = product.price_cents * quantity;
-    const itemCo2g = Math.max(0, product.co2_g) * quantity;
+    const { product, quantity, addons } = entry;
+    const amountCents = (product.price_cents + addons.reduce((sum, addon) => sum + addon.priceCents, 0)) * quantity;
+    // `co2_g` já descontava uma entrega genérica no anúncio. Quando podemos
+    // substituí-la, somamos a hipótese antiga de volta e descontamos a rota real.
+    const publishedDeliveryG = Math.round((PUBLISHED_DELIVERY_KG_PER_ORDER[product.delivery_method] ?? 0.05) * 1000);
+    const grossItemCo2g = (Math.max(0, product.co2_g) + (replacesPublishedDelivery ? publishedDeliveryG : 0)) * quantity;
+    const itemCo2g = Math.max(0, grossItemCo2g - remainingDeliveryEmissionG);
+    remainingDeliveryEmissionG = Math.max(0, remainingDeliveryEmissionG - grossItemCo2g);
     productAmountCents += amountCents;
     co2g += itemCo2g;
     const inserted = await db.insertDirectPurchaseConfirmation(c.env.DB, {
@@ -390,6 +439,7 @@ app.post("/api/impact/confirm", async (c) => {
       quantity,
       buyerName,
       buyerWhatsapp,
+      selectedAddons: addons,
     });
     if (inserted) created = true;
   }
@@ -404,7 +454,7 @@ app.post("/api/impact/confirm", async (c) => {
         buyerName,
         buyerWhatsapp,
         fulfillmentLabel: FULFILLMENT_LABELS[fulfillmentMethod] ?? fulfillmentMethod,
-        items: products.map(({ product, quantity }) => ({ name: product.name, quantity, amount: product.price_cents * quantity / 100 })),
+        items: products.map(({ product, quantity, addons }) => ({ name: product.name + (addons.length ? ` (+ ${addons.map((addon) => addon.name).join(", ")})` : ""), quantity, amount: (product.price_cents + addons.reduce((sum, addon) => sum + addon.priceCents, 0)) * quantity / 100 })),
         shippingFee: shippingFeeCents === null ? null : shippingFeeCents / 100,
         total: shippingFeeCents === null ? null : (productAmountCents + shippingFeeCents) / 100,
       });
@@ -420,6 +470,8 @@ app.post("/api/impact/confirm", async (c) => {
     unidades: products.reduce((soma, entry) => soma + entry.quantity, 0),
     produtoCentavos: productAmountCents,
     freteCentavos: shippingFeeCents,
+    emissaoEntregaG: distanceKm === null ? null : deliveryEmissionG,
+    distanciaEntregaKm: distanceKm,
     recebimento: fulfillmentMethod,
   });
   return c.json({
@@ -428,6 +480,7 @@ app.post("/api/impact/confirm", async (c) => {
     co2Kg: co2g / 1000,
     productAmount: productAmountCents / 100,
     shippingFee: shippingFeeCents === null ? null : shippingFeeCents / 100,
+    deliveryEmissionKg: distanceKm === null ? null : deliveryEmissionG / 1000,
     total: shippingFeeCents === null ? null : (productAmountCents + shippingFeeCents) / 100,
     metricNotice: "Compra informada pelo comprador e adicionada às métricas comunitárias.",
   }, created ? 201 : 200);
@@ -585,8 +638,10 @@ interface StoreProductBody {
   priceCents?: unknown; unit?: unknown; category?: unknown; seals?: unknown; co2g?: unknown; imageUrl?: unknown; imageUrls?: unknown; idToken?: unknown;
   productType?: unknown; weightKg?: unknown; processing?: unknown; packaging?: unknown;
   refrigerated?: unknown; deliveryMethod?: unknown; pesticideFree?: unknown;
+  deliveryVehicle?: unknown;
   stockQuantity?: unknown; shippingFeeCents?: unknown; shippingTiers?: unknown; pickupAddress?: unknown;
   contentAmount?: unknown; contentUnit?: unknown;
+  addons?: unknown;
 }
 
 interface StoreLoginBody { idToken?: unknown; }
@@ -885,6 +940,8 @@ function parseProductFields(body: StoreProductBody): { error: string } | Omit<db
   const parsedTiers = readShippingTiers(body.shippingTiers);
   if ("error" in parsedTiers) return { error: parsedTiers.error };
   const shippingTiers = parsedTiers.tiers;
+  const parsedAddons = readProductAddons(body.addons);
+  if ("error" in parsedAddons) return { error: parsedAddons.error };
   const plainFeeCents = body.shippingFeeCents === null || body.shippingFeeCents === undefined || body.shippingFeeCents === ""
     ? null
     : typeof body.shippingFeeCents === "number" ? Math.round(body.shippingFeeCents) : NaN;
@@ -908,6 +965,9 @@ function parseProductFields(body: StoreProductBody): { error: string } | Omit<db
   const processing = isProcessing(processingRaw) ? processingRaw : "fresh";
   const packaging = isPackaging(packagingRaw) ? packagingRaw : "none";
   const deliveryMethod = isDeliveryMethod(deliveryRaw) ? deliveryRaw : "pickup";
+  const deliveryVehicleRaw = text(body.deliveryVehicle);
+  const deliveryVehicles = new Set(["gasoline_car", "ethanol_car", "electric_car", "gasoline_motorcycle", "cargo_bike"]);
+  const deliveryVehicle = deliveryVehicles.has(deliveryVehicleRaw) ? deliveryVehicleRaw : "gasoline_car";
   const pesticideFree = body.pesticideFree === true;
   const refrigerated = body.refrigerated === true;
   const impact = estimateLifecycleSavings({ productType, weightKg, processing, packaging, refrigerated, deliveryMethod, pesticideFree });
@@ -915,9 +975,10 @@ function parseProductFields(body: StoreProductBody): { error: string } | Omit<db
   return {
     name, description: text(body.description), priceCents, unit, category, seals,
     co2g: Math.round(impact.savingsKg * 1000), imageUrl: imageUrls[0] ?? null, imageUrls, productType,
-    weightKg, processing, packaging, refrigerated, deliveryMethod, pesticideFree,
+    weightKg, processing, packaging, refrigerated, deliveryMethod, deliveryVehicle, pesticideFree,
     stockQuantity, shippingFeeCents, shippingTiers, pickupAddress,
     contentAmount: content.amount, contentUnit: content.unit,
+    addons: parsedAddons.addons,
   };
 }
 
@@ -930,7 +991,10 @@ app.post("/api/store-products", async (c) => {
   if (store.status !== "approved") return c.json({ error: "Sua loja ainda precisa ser aprovada." }, 403);
   const requestedId = typeof body.id === "string" ? body.id.trim() : "";
   if (!requestedId || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(requestedId)) return c.json({ error: "Revise o identificador do produto." }, 400);
-  const fields = parseProductFields(body);
+  const fields = parseProductFields({
+    ...body,
+    deliveryVehicle: body.deliveryVehicle ?? store.delivery_vehicle ?? "gasoline_car",
+  });
   if ("error" in fields) return c.json({ error: fields.error }, 400);
   let id = requestedId;
   if (await db.productIdExists(c.env.DB, id)) id = `${requestedId}-${crypto.randomUUID().slice(0, 6)}`;
@@ -965,10 +1029,12 @@ app.post("/api/store-products/:id/detail", async (c) => {
       productType: product.product_type, weightKg: product.weight_kg,
       processing: product.processing, packaging: product.packaging,
       refrigerated: Boolean(product.refrigerated), deliveryMethod: product.delivery_method,
+      deliveryVehicle: product.delivery_vehicle,
       pesticideFree: Boolean(product.pesticide_free), stockQuantity: product.stock_quantity,
       shippingFeeCents: product.shipping_fee_cents, shippingTiers: parseShippingTiers(product.shipping_tiers),
       pickupAddress: product.pickup_address,
       contentAmount: product.content_amount, contentUnit: product.content_unit,
+      addons: parseProductAddons(product.addons),
     },
   });
 });
@@ -1161,7 +1227,7 @@ app.post("/api/store/orders/:orderId/status", async (c) => {
 });
 
 app.post("/api/store/profile", async (c) => {
-  const body = await c.req.json<StoreLoginBody & { description?: unknown; openingHours?: unknown }>().catch(() => null);
+  const body = await c.req.json<StoreLoginBody & { description?: unknown; openingHours?: unknown; checkoutRedirectUrl?: unknown }>().catch(() => null);
   if (!body) return c.json({ error: "Corpo inválido." }, 400);
   const store = await storeFromLogin(c.env, body);
   if (!store) return c.json({ error: "Faça login para editar a loja." }, 401);
@@ -1169,11 +1235,42 @@ app.post("/api/store/profile", async (c) => {
   const parsed = readOpeningHours(body.openingHours);
   if ("error" in parsed) return c.json({ error: parsed.error }, 400);
   const hasHours = parsed.hours.some(Boolean);
+  const redirectInput = typeof body.checkoutRedirectUrl === "string" ? body.checkoutRedirectUrl.trim() : "";
+  let checkoutRedirectUrl: string | null = null;
+  if (redirectInput) {
+    try {
+      if (new URL(redirectInput).protocol !== "https:") throw new Error();
+      checkoutRedirectUrl = redirectInput;
+    } catch {
+      return c.json({ error: "O link de redirecionamento precisa começar com https://" }, 400);
+    }
+  }
   await db.setStoreProfile(c.env.DB, store.id, {
     description: description || null,
     openingHours: hasHours ? JSON.stringify(parsed.hours) : null,
+    checkoutRedirectUrl,
   });
-  return c.json({ ok: true, description: description || null, ...openingStatus(hasHours ? JSON.stringify(parsed.hours) : null) });
+  return c.json({ ok: true, description: description || null, checkoutRedirectUrl, ...openingStatus(hasHours ? JSON.stringify(parsed.hours) : null) });
+});
+
+const STORE_DELIVERY_VEHICLES = new Set([
+  "gasoline_car",
+  "ethanol_car",
+  "electric_car",
+  "gasoline_motorcycle",
+  "cargo_bike",
+]);
+
+app.post("/api/store/delivery-vehicle", async (c) => {
+  const body = await c.req.json<StoreLoginBody & { deliveryVehicle?: unknown; applyToProducts?: unknown }>().catch(() => null);
+  if (!body) return c.json({ error: "Corpo inválido." }, 400);
+  const store = await storeFromLogin(c.env, body);
+  if (!store) return c.json({ error: "Faça login para alterar a entrega." }, 401);
+  const deliveryVehicle = typeof body.deliveryVehicle === "string" ? body.deliveryVehicle.trim() : "";
+  if (!STORE_DELIVERY_VEHICLES.has(deliveryVehicle)) return c.json({ error: "Escolha um veículo válido." }, 400);
+  const applyToProducts = body.applyToProducts !== false;
+  await db.setStoreDeliveryVehicle(c.env.DB, store.id, deliveryVehicle, applyToProducts);
+  return c.json({ ok: true, deliveryVehicle, productsUpdated: applyToProducts });
 });
 
 app.post("/api/store/cover", async (c) => {

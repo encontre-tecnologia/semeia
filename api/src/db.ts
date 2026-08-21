@@ -26,6 +26,8 @@ export interface StoreRow {
   slug: string | null;
   description: string | null;
   opening_hours: string | null;
+  delivery_vehicle: string;
+  checkout_redirect_url: string | null;
   created_at: number;
 }
 
@@ -40,6 +42,13 @@ export interface ShippingTier {
   upToKm: number | null;
   feeCents: number | null;
   label?: string | null;
+}
+
+/** Opção que o comprador pode acrescentar ao produto durante a compra. */
+export interface ProductAddon {
+  id: string;
+  name: string;
+  priceCents: number;
 }
 
 export interface ProductRow {
@@ -59,6 +68,7 @@ export interface ProductRow {
   packaging: string;
   refrigerated: number;
   delivery_method: string;
+  delivery_vehicle: string;
   pesticide_free: number;
   stock_quantity: number | null;
   shipping_fee_cents: number | null;
@@ -68,6 +78,7 @@ export interface ProductRow {
   content_unit: string | null;
   image_url: string | null;
   image_urls: string | null;
+  addons: string;
   active: number;
   deleted_at: number | null;
   created_at: number;
@@ -78,6 +89,7 @@ export interface ProductWithStore extends ProductRow {
   store_region: string;
   store_whatsapp: string | null;
   store_payment_link: string | null;
+  store_checkout_redirect_url: string | null;
   store_plan: StoreRow["plan"];
   store_status: StoreRow["status"];
   store_pix_key: string | null;
@@ -95,6 +107,7 @@ const PRODUCT_SELECT = `
          s.region AS store_region,
          s.whatsapp AS store_whatsapp,
          s.payment_link AS store_payment_link,
+         s.checkout_redirect_url AS store_checkout_redirect_url,
          s.plan AS store_plan,
          s.status AS store_status,
          s.pix_key AS store_pix_key,
@@ -205,11 +218,13 @@ export interface NewProduct {
   packaging?: string;
   refrigerated?: boolean;
   deliveryMethod?: string;
+  deliveryVehicle?: string;
   pesticideFree?: boolean;
   stockQuantity?: number | null;
   shippingFeeCents?: number | null;
   shippingTiers?: ShippingTier[] | null;
   pickupAddress?: string | null;
+  addons?: ProductAddon[];
 }
 
 export async function insertProduct(database: D1Database, product: NewProduct): Promise<void> {
@@ -217,10 +232,10 @@ export async function insertProduct(database: D1Database, product: NewProduct): 
     .prepare(`
       INSERT INTO products
         (id, store_id, name, description, price_cents, unit, category, seals, co2_g, image_url, image_urls,
-         product_type, weight_kg, processing, packaging, refrigerated, delivery_method,
+         product_type, weight_kg, processing, packaging, refrigerated, delivery_method, delivery_vehicle,
          pesticide_free, stock_quantity, shipping_fee_cents, shipping_tiers, pickup_address,
-         content_amount, content_unit, active, created_at)
-      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, 1, ?25)
+         content_amount, content_unit, addons, active, created_at)
+      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, 1, ?27)
     `)
     .bind(
       product.id,
@@ -240,6 +255,7 @@ export async function insertProduct(database: D1Database, product: NewProduct): 
       product.packaging ?? "none",
       product.refrigerated ? 1 : 0,
       product.deliveryMethod ?? "pickup",
+      product.deliveryVehicle ?? "gasoline_car",
       product.pesticideFree ? 1 : 0,
       product.stockQuantity ?? null,
       product.shippingFeeCents ?? null,
@@ -247,6 +263,7 @@ export async function insertProduct(database: D1Database, product: NewProduct): 
       product.pickupAddress ?? null,
       product.contentAmount ?? null,
       product.contentUnit ?? null,
+      JSON.stringify(product.addons ?? []),
       Math.floor(Date.now() / 1000),
     )
     .run();
@@ -262,9 +279,9 @@ export async function updateProduct(database: D1Database, product: NewProduct): 
              previous_price_cents = CASE WHEN ?3 <> price_cents THEN price_cents ELSE previous_price_cents END,
              price_cents = ?3, unit = ?4, category = ?5, seals = ?6, co2_g = ?7,
              image_url = ?8, image_urls = ?9, product_type = ?10, weight_kg = ?11, processing = ?12,
-             packaging = ?13, refrigerated = ?14, delivery_method = ?15, pesticide_free = ?16,
+             packaging = ?13, refrigerated = ?14, delivery_method = ?15, delivery_vehicle = ?26, pesticide_free = ?16,
              stock_quantity = ?17, shipping_fee_cents = ?18, shipping_tiers = ?19, pickup_address = ?20,
-             content_amount = ?23, content_unit = ?24
+             content_amount = ?23, content_unit = ?24, addons = ?25
        WHERE id = ?21 AND store_id = ?22 AND deleted_at IS NULL
     `)
     .bind(
@@ -292,6 +309,8 @@ export async function updateProduct(database: D1Database, product: NewProduct): 
       product.storeId,
       product.contentAmount ?? null,
       product.contentUnit ?? null,
+      JSON.stringify(product.addons ?? []),
+      product.deliveryVehicle ?? "gasoline_car",
     )
     .run();
   return (result.meta.changes ?? 0) > 0;
@@ -303,10 +322,10 @@ export async function updateProduct(database: D1Database, product: NewProduct): 
  * descrição ou horário não apagar dado antigo sem ninguém pedir.
  */
 export async function setStoreProfile(database: D1Database, id: string, profile: {
-  description: string | null; openingHours: string | null;
+  description: string | null; openingHours: string | null; checkoutRedirectUrl: string | null;
 }): Promise<void> {
-  await database.prepare("UPDATE stores SET description = ?1, opening_hours = ?2 WHERE id = ?3")
-    .bind(profile.description, profile.openingHours, id).run();
+  await database.prepare("UPDATE stores SET description = ?1, opening_hours = ?2, checkout_redirect_url = ?3 WHERE id = ?4")
+    .bind(profile.description, profile.openingHours, profile.checkoutRedirectUrl, id).run();
 }
 
 /** Capa da vitrine — mesma origem da logo (upload assinado do Cloudinary). */
@@ -435,6 +454,25 @@ export async function setStorePix(
     .prepare("UPDATE stores SET pix_key = ?1, pix_name = ?2, pix_city = ?3 WHERE id = ?4")
     .bind(pix.key, pix.name, pix.city, storeId)
     .run();
+}
+
+/** Salva o veículo padrão da loja e, quando solicitado, sincroniza os anúncios atuais. */
+export async function setStoreDeliveryVehicle(
+  database: D1Database,
+  storeId: string,
+  vehicle: string,
+  applyToProducts: boolean,
+): Promise<void> {
+  const statements = [
+    database.prepare("UPDATE stores SET delivery_vehicle = ?1 WHERE id = ?2").bind(vehicle, storeId),
+  ];
+  if (applyToProducts) {
+    statements.push(
+      database.prepare("UPDATE products SET delivery_vehicle = ?1 WHERE store_id = ?2 AND deleted_at IS NULL")
+        .bind(vehicle, storeId),
+    );
+  }
+  await database.batch(statements);
 }
 
 export async function listStores(database: D1Database, status?: string): Promise<StoreRow[]> {
@@ -1009,6 +1047,7 @@ export interface DirectPurchaseConfirmation {
   quantity: number;
   buyerName: string | null;
   buyerWhatsapp: string | null;
+  selectedAddons: ProductAddon[];
 }
 
 export interface OrderItemRow {
@@ -1022,6 +1061,7 @@ export interface OrderItemRow {
   quantity: number;
   buyer_name: string | null;
   buyer_whatsapp: string | null;
+  selected_addons: string;
   co2_g: number;
   created_at: number;
 }
@@ -1034,8 +1074,8 @@ export async function insertDirectPurchaseConfirmation(
   const result = await database.prepare(`
     INSERT OR IGNORE INTO direct_purchase_confirmations
       (id, order_id, product_id, store_id, fulfillment_method, product_amount_cents, shipping_fee_cents,
-       co2_g, quantity, buyer_name, buyer_whatsapp, created_at)
-    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)
+       co2_g, quantity, buyer_name, buyer_whatsapp, selected_addons, created_at)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
   `).bind(
     confirmation.id,
     confirmation.orderId,
@@ -1048,6 +1088,7 @@ export async function insertDirectPurchaseConfirmation(
     confirmation.quantity,
     confirmation.buyerName,
     confirmation.buyerWhatsapp,
+    JSON.stringify(confirmation.selectedAddons),
     Math.floor(Date.now() / 1000),
   ).run();
   return result.meta.changes > 0;

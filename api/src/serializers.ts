@@ -15,7 +15,7 @@ import {
   isProcessing,
   isProductType,
 } from "./impact";
-import { contentLabel, openingStatus, parseImageUrls, parseSeals, parseShippingTiers } from "./parsing";
+import { contentLabel, openingStatus, parseImageUrls, parseProductAddons, parseSeals, parseShippingTiers } from "./parsing";
 
 export const FULFILLMENT_LABELS: Record<string, string> = {
   walk: "Retirada a pé",
@@ -73,6 +73,7 @@ export function serializeProduct(row: db.ProductWithStore, reservedUnits = 0) {
     storeLogoUrl: row.store_logo_url,
     region: row.store_region,
     whats: row.store_whatsapp,
+    checkoutRedirectUrl: row.store_checkout_redirect_url,
     pixKey: row.store_pix_key,
     pixName: row.store_pix_name,
     pixCity: row.store_pix_city,
@@ -82,11 +83,13 @@ export function serializeProduct(row: db.ProductWithStore, reservedUnits = 0) {
     reservedUnits,
     shippingFee: row.shipping_fee_cents === null ? null : row.shipping_fee_cents / 100,
     shippingTiers: parseShippingTiers(row.shipping_tiers),
+    deliveryVehicle: row.delivery_vehicle,
     pickupAddress: row.pickup_address,
     // Quanto vem em cada venda, quando a loja informou: "500 ml", "1,5 kg".
     contentAmount: row.content_amount,
     contentUnit: row.content_unit,
     content: contentLabel(row.content_amount, row.content_unit),
+    addons: parseProductAddons(row.addons),
     sponsoredPosition: row.sponsored_position,
     sponsoredCategoryPosition: row.sponsored_category_position,
     sponsoredCategory: row.sponsored_category,
@@ -119,6 +122,8 @@ export function serializeOwnerStore(
       logoUrl: store.logo_url,
       coverUrl: store.cover_url,
       description: store.description,
+      checkoutRedirectUrl: store.checkout_redirect_url,
+      deliveryVehicle: store.delivery_vehicle || "gasoline_car",
       ...openingStatus(store.opening_hours),
     },
     products: products.map((product) => {
@@ -141,10 +146,12 @@ export function serializeOwnerStore(
         reservedUnits: reserved.get(product.id) ?? 0,
         shippingFee: product.shipping_fee_cents === null ? null : product.shipping_fee_cents / 100,
         shippingTiers: parseShippingTiers(product.shipping_tiers),
+        deliveryVehicle: product.delivery_vehicle,
         pickupAddress: product.pickup_address,
         contentAmount: product.content_amount,
         contentUnit: product.content_unit,
         content: contentLabel(product.content_amount, product.content_unit),
+        addons: parseProductAddons(product.addons),
         views: productViews,
         viewsPerDay: productViews / daysListed,
         daysListed,
@@ -202,7 +209,7 @@ export function groupOrders(items: db.OrderItemRow[], states: db.OrderStateRow[]
     id: string; createdAt: number; buyerName: string | null; buyerWhatsapp: string | null;
     fulfillmentMethod: string; fulfillmentLabel: string; shippingFee: number | null;
     productAmount: number; co2Kg: number;
-    items: Array<{ productId: string; name: string; quantity: number; amount: number }>;
+    items: Array<{ productId: string; name: string; quantity: number; amount: number; addons: db.ProductAddon[] }>;
   }>();
   for (const item of items) {
     // Linhas antigas não tinham order_id: cada uma vira um pedido de um item.
@@ -217,7 +224,7 @@ export function groupOrders(items: db.OrderItemRow[], states: db.OrderStateRow[]
       shippingFee: null as number | null,
       productAmount: 0,
       co2Kg: 0,
-      items: [] as Array<{ productId: string; name: string; quantity: number; amount: number }>,
+      items: [] as Array<{ productId: string; name: string; quantity: number; amount: number; addons: db.ProductAddon[] }>,
     };
     order.productAmount += item.product_amount_cents / 100;
     order.co2Kg += Math.max(0, item.co2_g) / 1000;
@@ -229,6 +236,7 @@ export function groupOrders(items: db.OrderItemRow[], states: db.OrderStateRow[]
       name: item.product_name,
       quantity: item.quantity,
       amount: item.product_amount_cents / 100,
+      addons: parseProductAddons(item.selected_addons),
     });
     orders.set(key, order);
   }

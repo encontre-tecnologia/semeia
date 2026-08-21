@@ -190,6 +190,45 @@ export function parseShippingTiers(raw: string | null): db.ShippingTier[] {
   }
 }
 
+/** Adicionais já validados e gravados no anúncio. */
+export function parseProductAddons(raw: string | null): db.ProductAddon[] {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.slice(0, 8).flatMap((entry) => {
+      if (!entry || typeof entry !== "object") return [];
+      const candidate = entry as { id?: unknown; name?: unknown; priceCents?: unknown };
+      const id = typeof candidate.id === "string" ? candidate.id.trim() : "";
+      const name = typeof candidate.name === "string" ? candidate.name.trim() : "";
+      const priceCents = typeof candidate.priceCents === "number" ? Math.round(candidate.priceCents) : NaN;
+      return id && name && Number.isFinite(priceCents) && priceCents >= 0 ? [{ id, name, priceCents }] : [];
+    });
+  } catch {
+    return [];
+  }
+}
+
+/** Valida os adicionais enviados pela loja. O identificador é gerado no servidor. */
+export function readProductAddons(raw: unknown): { error: string } | { addons: db.ProductAddon[] } {
+  if (raw === null || raw === undefined) return { addons: [] };
+  if (!Array.isArray(raw)) return { error: "Revise os adicionais do produto." };
+  if (raw.length > 8) return { error: "Use no máximo 8 adicionais por produto." };
+  const addons: db.ProductAddon[] = [];
+  for (let index = 0; index < raw.length; index++) {
+    const entry = raw[index] as { id?: unknown; name?: unknown; priceCents?: unknown };
+    if (!entry || typeof entry !== "object") return { error: "Revise os adicionais do produto." };
+    const name = typeof entry.name === "string" ? entry.name.trim().replace(/\s+/g, " ") : "";
+    const priceCents = Math.round(Number(entry.priceCents));
+    if (!name || name.length > 60) return { error: `Revise o nome do adicional ${index + 1}.` };
+    if (!Number.isFinite(priceCents) || priceCents < 0 || priceCents > 10_000_000) return { error: `Revise o valor do adicional ${index + 1}.` };
+    const rawId = typeof entry.id === "string" ? entry.id.trim() : "";
+    const id = /^[a-z0-9][a-z0-9-]{0,79}$/.test(rawId) ? rawId : `adicional-${index + 1}`;
+    addons.push({ id, name, priceCents });
+  }
+  return { addons };
+}
+
 /** Converte as faixas vindas do formulário, devolvendo a mensagem de erro quando algo não fecha. */
 export function readShippingTiers(raw: unknown): { error: string } | { tiers: db.ShippingTier[] } {
   if (raw === null || raw === undefined) return { tiers: [] };
