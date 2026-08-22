@@ -1422,6 +1422,65 @@ app.get("/api/admin/stores", async (c) => {
   });
 });
 
+interface AdminStoreBody {
+  name?: unknown;
+  contactName?: unknown;
+  email?: unknown;
+  whatsapp?: unknown;
+  category?: unknown;
+  region?: unknown;
+  pixKey?: unknown;
+  pixName?: unknown;
+  pixCity?: unknown;
+}
+
+// Cadastro direto pelo admin: a loja entra como se já aprovada, porque quem a
+// digitou já conferiu os dados — não faz sentido ela esperar a própria fila de
+// moderação. O login continua igual ao de qualquer loja: o dono entra com o
+// Google usando este e-mail.
+app.post("/api/admin/stores", async (c) => {
+  const body = await c.req.json<AdminStoreBody>().catch(() => null);
+  if (!body) return c.json({ error: "Corpo inválido." }, 400);
+  const text = (value: unknown) => typeof value === "string" ? value.trim() : "";
+  const name = text(body.name);
+  const contactName = text(body.contactName);
+  const email = text(body.email);
+  const category = text(body.category);
+  const region = text(body.region) || SERVED_REGIONS[0] || "";
+  const pixKey = normalizePixKey(text(body.pixKey));
+  const pixName = text(body.pixName);
+  const pixCity = text(body.pixCity);
+
+  const missing = { name, contactName, email, category };
+  const emptyField = Object.entries(missing).find(([, value]) => value.length === 0);
+  if (emptyField) return c.json({ error: `Campo obrigatório faltando: ${emptyField[0]}.` }, 400);
+  if (!PRODUCT_CATEGORIES.has(category)) return c.json({ error: "Escolha uma categoria válida." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return c.json({ error: "E-mail inválido." }, 400);
+  const servedRegion = normalizeRegion(region);
+  if (!servedRegion) return c.json({ error: `O Semeia começou por ${SERVED_REGIONS.join(", ")}.` }, 400);
+  if (await db.getStoreByEmail(c.env.DB, email)) return c.json({ error: "Já existe uma loja com este e-mail." }, 409);
+
+  const id = crypto.randomUUID();
+  const slug = await uniqueStoreSlug(c.env.DB, name);
+  await db.insertStore(c.env.DB, {
+    id, slug, name, contactName, email,
+    whatsapp: text(body.whatsapp) || null,
+    paymentLink: null,
+    category,
+    region: servedRegion,
+    seals: [],
+    ownerPasswordHash: null,
+    pixKey: pixKey || null,
+    pixName: pixName || null,
+    pixCity: pixCity || null,
+  });
+  await db.setStoreStatus(c.env.DB, id, "approved");
+  c.executionCtx.waitUntil(
+    trackEmail(c.env, "store_approved", { id, email }, sendStoreApprovedEmail(c.env, { id, name, contactName, email, slug })),
+  );
+  return c.json({ ok: true, storeId: id, slug }, 201);
+});
+
 app.get("/api/admin/email-failures", async (c) => {
   const failures = await db.listEmailFailures(c.env.DB);
   return c.json({
@@ -1576,57 +1635,48 @@ app.post("/api/admin/stores/:id/plan", async (c) => {
   return c.json({ ok: true, storeId: store.id, plan });
 });
 
-interface AdminProductBody {
-  id?: unknown;
-  storeId?: unknown;
-  name?: unknown;
-  description?: unknown;
-  priceCents?: unknown;
-  unit?: unknown;
-  category?: unknown;
-  seals?: unknown;
-  co2g?: unknown;
-  imageUrl?: unknown;
-  imageUrls?: unknown;
-}
-
+// Mesma validação do anúncio publicado pela loja (parseProductFields):
+// conteúdo, frete, adicionais e a estimativa de CO₂ saem idênticos, só quem
+// preenche muda. A única diferença é o storeId vir explícito no corpo, já que
+// não existe idToken de loja aqui — é o admin escrevendo pela loja.
 app.post("/api/admin/products", async (c) => {
-  const body = await c.req.json<AdminProductBody>().catch(() => null);
+  const body = await c.req.json<StoreProductBody & { storeId?: unknown }>().catch(() => null);
   if (!body) return c.json({ error: "Corpo inválido." }, 400);
-  const text = (value: unknown) => typeof value === "string" ? value.trim() : "";
-  const id = text(body.id);
-  const storeId = text(body.storeId);
-  const name = text(body.name);
-  const category = text(body.category);
-  const priceCents = typeof body.priceCents === "number" ? Math.round(body.priceCents) : NaN;
-  const co2g = typeof body.co2g === "number" ? Math.max(0, Math.round(body.co2g)) : 0;
-  const imageUrls = body.imageUrl || body.imageUrls ? validProductImages(body.imageUrls, body.imageUrl) : [];
-  if (!id || !storeId || !name || !category || !Number.isFinite(priceCents) || priceCents < 0) {
-    return c.json({ error: "id, storeId, name, category e priceCents são obrigatórios." }, 400);
-  }
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
-    return c.json({ error: "O id deve ser um slug em letras minúsculas." }, 400);
-  }
-  if ((body.imageUrl || body.imageUrls) && !imageUrls) return c.json({ error: "Envie de 1 a 5 fotos válidas." }, 400);
+  const storeId = typeof body.storeId === "string" ? body.storeId.trim() : "";
+  if (!storeId) return c.json({ error: "Escolha a loja deste produto." }, 400);
   const store = await db.getStore(c.env.DB, storeId);
   if (!store) return c.json({ error: "Loja não encontrada." }, 404);
-  const seals = Array.isArray(body.seals)
-    ? body.seals.filter((seal): seal is string => typeof seal === "string")
-    : [];
-  await db.insertProduct(c.env.DB, {
-    id,
-    storeId,
-    name,
-    description: text(body.description),
-    priceCents,
-    unit: text(body.unit) || "/un",
-    category,
-    seals,
-    co2g,
-    imageUrl: imageUrls?.[0] || null,
-    imageUrls: imageUrls || [],
+  const requestedId = typeof body.id === "string" ? body.id.trim() : "";
+  if (!requestedId || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(requestedId)) return c.json({ error: "Revise o identificador do produto." }, 400);
+  const fields = parseProductFields({
+    ...body,
+    deliveryVehicle: body.deliveryVehicle ?? store.delivery_vehicle ?? "gasoline_car",
   });
+  if ("error" in fields) return c.json({ error: fields.error }, 400);
+  let id = requestedId;
+  if (await db.productIdExists(c.env.DB, id)) id = `${requestedId}-${crypto.randomUUID().slice(0, 6)}`;
+  await db.insertProduct(c.env.DB, { ...fields, id, storeId });
   return c.json({ ok: true, productId: id }, 201);
+});
+
+// Mesmo upload assinado da loja, mas sem exigir o login dela: quem está
+// cadastrando pelo admin ainda não tem uma sessão de dono de loja.
+app.post("/api/admin/upload", async (c) => {
+  const form = await c.req.formData();
+  const file = form.get("file");
+  const storeId = typeof form.get("storeId") === "string" ? String(form.get("storeId")).trim() : "";
+  const kind = form.get("kind") === "logo" ? "logos" : "produtos";
+  if (!(file instanceof File)) return c.json({ error: "Escolha uma imagem." }, 400);
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size <= 0 || file.size > 4_000_000) return c.json({ error: "Use JPG, PNG ou WebP com até 4 MB." }, 400);
+  const upload = new FormData();
+  upload.append("file", file, file.name || "imagem.webp");
+  upload.append("upload_preset", c.env.CLOUDINARY_UPLOAD_PRESET);
+  upload.append("folder", `semeia/${kind}`);
+  upload.append("public_id", `${storeId || "admin"}-${crypto.randomUUID()}`);
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(c.env.CLOUDINARY_CLOUD_NAME)}/image/upload`, { method: "POST", body: upload });
+  const data = await response.json<{ secure_url?: string; error?: { message?: string } }>();
+  if (!response.ok || !data.secure_url) return c.json({ error: data.error?.message ?? "Não foi possível enviar a imagem." }, 502);
+  return c.json({ url: data.secure_url }, 201);
 });
 
 export default {
