@@ -142,6 +142,56 @@
   .admin-form .feedback.error { color:#df8c76; }
   @media(max-width:900px) { .create-grid { grid-template-columns:1fr; } }
   @media(max-width:600px) { .admin-form { grid-template-columns:1fr; } }
+
+  /* ---- Campos completos do cadastro de produto (paridade com cadastro-produto.html) ---- */
+  .impact-fields{grid-column:1/-1;margin:.1rem 0 0;padding:1rem;border:1px solid var(--line);border-radius:17px;position:relative}.impact-fields legend{padding:0 .4rem;font:700 .82rem/1.2 ui-sans-serif,system-ui,sans-serif}.impact-fields>p{margin:.15rem 0 .9rem;color:var(--ink-soft);font-size:.76rem;line-height:1.45}
+  .impact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+  .shipping-tiers-field #ap-shipping-tiers{display:grid;gap:.5rem}
+  .shipping-tier-row{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) 2.4rem;gap:.5rem;align-items:center}
+  .shipping-tier-row .km-input{grid-column:1;grid-row:1}
+  .shipping-tier-row .money-input{grid-column:2;grid-row:1}
+  .shipping-tier-row .tier-remove{grid-column:3;grid-row:1}
+  .shipping-tier-row .tier-label{grid-column:2/4;grid-row:2;font-size:.86rem}
+  .shipping-tier-row .km-input[hidden]{display:none}
+  .shipping-tier-row.is-written{grid-template-columns:minmax(0,1fr) 2.4rem}
+  .shipping-tier-row.is-written .tier-label{grid-column:1;grid-row:1;font-size:1rem}
+  .shipping-tier-row.is-written .tier-remove{grid-column:2;grid-row:1}
+  @media(max-width:560px){
+    .shipping-tier-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 2.4rem;row-gap:.35rem;padding-bottom:.35rem}
+    .shipping-tier-row .km-input{grid-column:1/-1;grid-row:1}
+    .shipping-tier-row .money-input{grid-column:1;grid-row:2}
+    .shipping-tier-row .tier-remove{grid-column:3;grid-row:2}
+    .shipping-tier-row .tier-label{grid-column:1/-1;grid-row:3}
+    .shipping-tier-row.is-written .tier-label{grid-column:1;grid-row:1;font-size:.95rem}
+    .shipping-tier-row.is-written .tier-remove{grid-column:2;grid-row:1}
+  }
+  .tier-mode{display:inline-flex;gap:.25rem;margin-bottom:.7rem;padding:.25rem;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--paper) 55%,transparent)}
+  .tier-mode-option{padding:.5rem .85rem;border:0;border-radius:9px;background:transparent;color:var(--ink-soft);font:700 .78rem/1.2 ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background .18s,color .18s}
+  .tier-mode-option:hover{color:var(--ink)}
+  .tier-mode-option.is-active{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+  .shipping-tier-row .tier-range{color:var(--ink-soft);font-size:.78rem;line-height:1.3}
+  .shipping-tier-row input{min-height:2.9rem}
+  .shipping-tier-row .money-input input{padding-left:2.4rem}
+  .shipping-tier-row input[type=number]{appearance:textfield;-moz-appearance:textfield}
+  .shipping-tier-row input[type=number]::-webkit-outer-spin-button,.shipping-tier-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .km-input{position:relative}
+  .km-input input{padding-right:2.6rem;padding-left:var(--recuo-km,3rem)}
+  .km-input .km-unit{position:absolute;z-index:1;right:.85rem;top:50%;transform:translateY(-50%);color:var(--accent);font:700 .82rem "SF Mono",Consolas,monospace;pointer-events:none}.km-input .tier-range{position:absolute;z-index:1;left:.9rem;top:50%;transform:translateY(-50%);color:var(--ink-soft);font:600 .8rem/1 ui-sans-serif,system-ui,sans-serif;white-space:nowrap;pointer-events:none}
+  .tier-remove{min-height:2.9rem;padding:0;border:1px solid var(--line);border-radius:11px;background:transparent;color:var(--ink-soft);font-size:1.1rem;line-height:1;cursor:pointer}
+  .tier-remove:hover{border-color:#df8c76;color:#df8c76}
+  .shipping-tier-add{margin-top:.55rem;padding:.5rem .85rem;border:1px dashed color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:999px;background:transparent;color:var(--accent);font:700 .72rem ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+  .shipping-tier-add:hover{border-style:solid;background:color-mix(in srgb,var(--accent) 9%,transparent)}
+  .shipping-tier-add[disabled]{opacity:.45;cursor:default}
+  @media(max-width:470px){.shipping-tier-row{grid-template-columns:1fr 1fr 2.2rem}.shipping-tier-row .tier-range{grid-column:1/-1}}
+  .check-row{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.2rem}.check-option{display:flex;align-items:center;gap:.5rem;margin:0;padding:.65rem .75rem;border:1px solid var(--line);border-radius:12px;color:var(--ink-soft);font-weight:600;cursor:pointer}.check-option input{width:1rem;min-height:1rem;margin:0;accent-color:var(--accent)}
+  .on-demand{margin-top:.55rem}
+  .content-inputs{display:grid;grid-template-columns:minmax(0,1fr) 6.2rem;gap:0}
+  .content-field .content-inputs input{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0}
+  .content-field .content-inputs select{min-width:0;border-top-left-radius:0;border-bottom-left-radius:0;padding-right:2.1rem;appearance:none;-webkit-appearance:none;font:inherit;text-align:left}
+  .content-field .content-inputs input:focus,.content-field .content-inputs select:focus{position:relative;z-index:1}
+  .addons-field{padding:1.05rem;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--accent) 4%,transparent)}.addons-head{display:flex;align-items:start;justify-content:space-between;gap:1rem;margin-bottom:.75rem}.addons-head strong{display:block;font-size:.9rem}.addons-head small{display:block;margin-top:.25rem;color:var(--ink-soft);font-size:.72rem;line-height:1.45}.addons-list{display:grid;gap:.65rem}.addon-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(135px,.38fr) 42px;gap:.55rem;align-items:center}.addon-row input{min-width:0}.addon-row .money-input span{font-size:.72rem}.addon-remove{display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--line);border-radius:12px;color:var(--ink-soft);background:transparent;cursor:pointer;font-size:1.15rem}.addon-remove:hover{border-color:#cf806b;color:#df8c76}.addon-add{display:inline-flex;align-items:center;gap:.4rem;margin-top:.75rem;padding:.65rem .85rem;border:1px solid color-mix(in srgb,var(--accent) 48%,var(--line));border-radius:999px;color:var(--accent);background:transparent;font:700 .76rem ui-sans-serif,system-ui,sans-serif;cursor:pointer}.addon-empty{margin:0;color:var(--ink-soft);font-size:.76rem}.addons-limit{white-space:nowrap;color:var(--ink-soft);font:700 .66rem "SF Mono",Consolas,monospace}
+  @media(max-width:560px){.addons-head{flex-direction:column}.addon-row{grid-template-columns:minmax(0,1fr) 42px}.addon-row .money-input{grid-column:1}.addon-row .addon-remove{grid-column:2;grid-row:1/3}.addons-field{padding:.85rem}}
+  .fulfillment-title{display:block;margin:.35rem 0 -.35rem;color:var(--accent);font:700 .68rem "SF Mono",Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}
   @media(max-width:900px){.admin-head,.impact-intro{align-items:start;flex-direction:column}.metrics{grid-template-columns:repeat(2,1fr)}.impact-grid{grid-template-columns:1fr}.access{grid-template-columns:1fr 1fr}.access .btn{grid-column:1/-1}}
   @media(max-width:600px){.metrics{grid-template-columns:1fr 1fr}.metric{min-height:150px;padding:1rem}.access{grid-template-columns:1fr}.access .btn{grid-column:auto}.store,.promotion-review{align-items:stretch;grid-template-columns:1fr}.store-actions{justify-content:flex-start}.panel-head{flex-direction:column;align-items:stretch}.map-card{min-height:460px}.promotion-review .store-actions{justify-content:flex-start}}
 </style>
@@ -232,13 +282,18 @@
             <div><label for="ap-price">Preço</label><div class="money-input"><span>R$</span><input id="ap-price" type="number" step="0.01" min="0" inputmode="decimal" required placeholder="0,00"></div></div>
             <div><label for="ap-unit">Como é vendido?</label><select id="ap-unit"><option value="/un">Por unidade</option><option value="/kg">Por quilo</option><option value="/g">Por grama</option><option value="/l">Por litro</option><option value="/garrafa">Por garrafa</option><option value="/pote">Por pote</option><option value="/duzia">Por dúzia</option><option value="/maco">Por maço</option><option value="/bandeja">Por bandeja</option><option value="/pacote">Por pacote</option><option value="/caixa">Por caixa</option><option value="/cesta">Por cesta</option><option value="/kit">Por kit</option></select></div>
             <div><label for="ap-category">Categoria</label><select id="ap-category" required></select></div>
-            <div>
+            <div class="full content-field"><label for="ap-content-amount">Quanto vem em cada venda <span class="optional">(opcional)</span></label><div class="content-inputs"><input id="ap-content-amount" type="number" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="Ex.: 500"><select id="ap-content-unit" aria-label="Medida do conteúdo"><option value="g">g</option><option value="kg">kg</option><option value="ml">ml</option><option value="l">L</option><option value="un">un</option></select></div><small class="field-help">O que vai em <strong>uma</strong> venda: 500 ml, 1 kg, 30 unidades. Também é daqui que sai o peso da estimativa de CO₂.</small></div>
+            <div class="full"><label for="ap-description">Descrição <span class="optional">(opcional)</span></label><textarea id="ap-description" placeholder="Ex.: Colhido hoje, contém alface, tomate e cenoura."></textarea></div>
+            <fieldset class="impact-fields"><legend>Como este produto chega ao comprador</legend><p>Três respostas rápidas deixam a estimativa de CO₂ mais honesta. O tipo de alimento e o peso já vêm da categoria e do conteúdo.</p><div class="impact-grid"><div><label for="ap-processing">Como é preparado?</label><select id="ap-processing"><option value="fresh">Fresco, sem processamento</option><option value="minimal">Minimamente processado</option><option value="processed">Processado</option></select></div><div><label for="ap-delivery-method">Entrega mais comum</label><select id="ap-delivery-method"><option value="pickup">Retirada pelo comprador</option><option value="grouped">Entrega em rota com vários pedidos</option><option value="dedicated">Entrega exclusiva de carro ou moto</option></select></div><div><label for="ap-packaging">Embalagem</label><select id="ap-packaging"><option value="none">Sem embalagem</option><option value="paper">Papel ou papelão</option><option value="plastic">Plástico</option><option value="glass">Vidro</option></select></div><div><label for="ap-delivery-vehicle">Veículo usado nas entregas</label><select id="ap-delivery-vehicle"><option value="gasoline_car">Carro a gasolina</option><option value="ethanol_car">Carro a etanol</option><option value="electric_car">Carro elétrico</option><option value="gasoline_motorcycle">Moto a gasolina</option><option value="cargo_bike">Bicicleta ou entrega a pé</option></select></div></div><div class="check-row"><label class="check-option"><input id="ap-refrigerated" type="checkbox">Precisa de refrigeração</label><label class="check-option"><input id="ap-pesticide-free" type="checkbox">Cultivado sem agrotóxicos</label></div></fieldset>
+            <span class="full fulfillment-title">Disponibilidade e retirada</span>
+            <div class="full">
               <label for="ap-stock">Quantidade disponível</label>
               <input id="ap-stock" type="number" min="1" max="1000000" step="1" inputmode="numeric" placeholder="Ex.: 12">
-              <label class="check-row-inline"><input id="ap-on-demand" type="checkbox">Sob encomenda, sem quantidade pronta</label>
+              <label class="check-option on-demand"><input id="ap-on-demand" type="checkbox">Faço sob encomenda, não tenho quantidade pronta</label>
             </div>
+            <div class="full shipping-tiers-field"><label>Como você cobra o frete <span class="optional">(opcional)</span></label><div id="ap-shipping-tiers"></div><button class="shipping-tier-add" id="ap-shipping-tier-add" type="button">+ Adicionar faixa</button><small class="field-help" id="ap-shipping-help">Sem nenhuma faixa, o frete fica a combinar direto com o comprador.</small></div>
             <div class="full"><label for="ap-pickup">Ponto de retirada</label><input id="ap-pickup" maxlength="240" required placeholder="Ex.: Feira do Centro, Rua das Flores, 120"></div>
-            <div class="full"><label for="ap-description">Descrição <span class="optional">(opcional)</span></label><textarea id="ap-description" placeholder="Ex.: Colhido hoje, contém alface, tomate e cenoura."></textarea></div>
+            <div class="full addons-field"><div class="addons-head"><div><strong>Adicionais <span class="optional">(opcional)</span></strong><small>Ex.: cobertura de chocolate, embalagem para presente ou porção extra.</small></div><span class="addons-limit" id="ap-addons-limit">0 / 8</span></div><div class="addons-list" id="ap-addons-list"></div><button class="addon-add" id="ap-addon-add" type="button">＋ Adicionar opção</button></div>
             <div class="full"><button class="btn btn-primary" type="submit">Publicar produto</button></div>
             <p class="full feedback" id="admin-product-feedback" aria-live="polite"></p>
           </form>
@@ -384,6 +439,95 @@
     if(!file){preview.classList.remove('show');return}
     preview.querySelector('img').src=URL.createObjectURL(file);preview.classList.add('show');
   };
+
+  // ---- Faixas de frete (mesmo comportamento do cadastro-produto.html) ----
+  const apTiersBox=$('#ap-shipping-tiers'),apTierAdd=$('#ap-shipping-tier-add'),AP_MAX_TIERS=4;
+  let apShippingTiers=[],apModoFrete='km';
+  const apKmLabel=value=>String(value).replace('.',',');
+  const apModoBox=document.createElement('div');apModoBox.className='tier-mode';apModoBox.setAttribute('role','group');apModoBox.setAttribute('aria-label','Como você cobra o frete');
+  const apModoBotoes=[['km','Por distância'],['texto','Por região ou regra']].map(([valor,rotulo])=>{
+    const b=document.createElement('button');b.type='button';b.className='tier-mode-option';b.textContent=rotulo;b.dataset.modo=valor;
+    b.onclick=()=>{
+      if(apModoFrete===valor)return;
+      apModoFrete=valor;
+      apShippingTiers.forEach(t=>{if(valor==='km'){t.label=null}else{t.upToKm=null;t.feeCents=null}});
+      renderApShippingTiers();
+    };
+    apModoBox.appendChild(b);return b;
+  });
+  apTiersBox.before(apModoBox);
+  const apAjudaFrete=$('#ap-shipping-help');
+  const AP_AJUDA={vazio:'Sem nenhuma faixa, o frete fica a combinar direto com o comprador.',
+    km:'Informe até quantos km vale cada faixa e quanto custa. Valor 0 é frete grátis; vazio fica a combinar.',
+    texto:'Escreva a cobrança inteira com suas palavras, incluindo o valor. O total é acertado com o comprador na conversa.'};
+  function apPintaModo(){
+    const temFaixa=apShippingTiers.length>0;
+    apModoBox.hidden=!temFaixa;
+    apAjudaFrete.textContent=temFaixa?AP_AJUDA[apModoFrete]:AP_AJUDA.vazio;
+    apModoBotoes.forEach(b=>{const ativo=b.dataset.modo===apModoFrete;b.classList.toggle('is-active',ativo);b.setAttribute('aria-pressed',String(ativo))});
+  }
+  function apSyncTierLabels(){
+    apTiersBox.querySelectorAll('.shipping-tier-row').forEach((row,index)=>{
+      const previous=index?apShippingTiers[index-1].upToKm:null,last=index===apShippingTiers.length-1;
+      const range=row.querySelector('.tier-range'),km=row.querySelector('.tier-km');
+      if(!range)return;
+      range.textContent=previous?'De '+apKmLabel(previous)+' km até':'Até';
+      if(km){km.placeholder=last?'sem limite':'quantos km';km.style.setProperty('--recuo-km',(range.offsetWidth+22)+'px')}
+    });
+    apTierAdd.disabled=apShippingTiers.length>=AP_MAX_TIERS;
+  }
+  function apCampoValor(index,tier){
+    const money=document.createElement('div');money.className='money-input';
+    const currency=document.createElement('span');currency.textContent='R$';
+    const fee=document.createElement('input');fee.className='tier-fee';fee.type='number';fee.min='0';fee.step='any';fee.inputMode='decimal';fee.placeholder='a combinar';fee.value=tier.feeCents==null?'':(tier.feeCents/100).toFixed(2);fee.setAttribute('aria-label','Valor do frete desta faixa');
+    fee.oninput=()=>{apShippingTiers[index].feeCents=fee.value===''?null:Math.round(Number(fee.value)*100)};
+    money.append(currency,fee);return money;
+  }
+  function apBotaoRemover(index){
+    const remove=document.createElement('button');remove.type='button';remove.className='tier-remove';remove.textContent='×';remove.setAttribute('aria-label','Remover esta faixa');
+    remove.onclick=()=>{apShippingTiers.splice(index,1);renderApShippingTiers()};return remove;
+  }
+  function renderApShippingTiers(){
+    apPintaModo();
+    apTiersBox.innerHTML='';
+    apShippingTiers.forEach((tier,index)=>{
+      const row=document.createElement('div');row.className='shipping-tier-row'+(apModoFrete==='texto'?' is-written':'');
+      if(apModoFrete==='km'){
+        const range=document.createElement('span');range.className='tier-range';
+        const km=document.createElement('input');km.className='tier-km';km.type='number';km.min='0.1';km.step='any';km.inputMode='decimal';km.value=tier.upToKm??'';km.setAttribute('aria-label','Distância máxima da faixa em km');
+        const kmBox=document.createElement('div');kmBox.className='km-input';const kmUnit=document.createElement('span');kmUnit.className='km-unit';kmUnit.textContent='km';kmBox.append(range,km,kmUnit);
+        km.oninput=()=>{apShippingTiers[index].upToKm=km.value===''?null:Number(km.value);apSyncTierLabels()};
+        row.append(kmBox,apCampoValor(index,tier),apBotaoRemover(index));
+      }else{
+        const texto=document.createElement('input');texto.className='tier-label';texto.type='text';texto.maxLength=80;texto.placeholder=index?'Ex.: Centro e Vila Nery — R$ 8,00':'Ex.: R$ 1,00 por km rodado';texto.value=tier.label||'';texto.setAttribute('aria-label','Como você cobra o frete nesta linha');
+        texto.oninput=()=>{apShippingTiers[index].label=texto.value.trim()||null};
+        row.append(texto,apBotaoRemover(index));
+      }
+      apTiersBox.append(row);
+    });
+    apSyncTierLabels();
+  }
+  apTierAdd.onclick=()=>{if(apShippingTiers.length>=AP_MAX_TIERS)return;apShippingTiers.push({upToKm:null,feeCents:null,label:null});renderApShippingTiers()};
+  const apFilledShippingTiers=()=>apShippingTiers.filter(tier=>tier.upToKm!==null||tier.feeCents!==null||tier.label);
+  renderApShippingTiers();
+
+  // ---- Adicionais (mesmo comportamento do cadastro-produto.html) ----
+  const AP_MAX_ADDONS=8;let apAddons=[];
+  function renderApAddons(){
+    const list=$('#ap-addons-list');list.innerHTML='';
+    if(!apAddons.length){const empty=document.createElement('p');empty.className='addon-empty';empty.textContent='Nenhum adicional cadastrado.';list.appendChild(empty)}
+    apAddons.forEach((addon,index)=>{
+      const row=document.createElement('div');row.className='addon-row';
+      const name=document.createElement('input');name.type='text';name.maxLength=60;name.placeholder='Nome do adicional';name.value=addon.name||'';name.setAttribute('aria-label','Nome do adicional '+(index+1));name.oninput=()=>{apAddons[index].name=name.value};
+      const money=document.createElement('div');money.className='money-input';const prefix=document.createElement('span');prefix.textContent='R$';const price=document.createElement('input');price.type='number';price.min='0';price.max='100000';price.step='0.01';price.inputMode='decimal';price.placeholder='0,00';price.value=Number.isFinite(addon.priceCents)?(addon.priceCents/100).toFixed(2):'';price.setAttribute('aria-label','Valor do adicional '+(index+1));price.oninput=()=>{apAddons[index].priceCents=price.value===''?0:Math.round(Number(price.value)*100)};money.append(prefix,price);
+      const remove=document.createElement('button');remove.type='button';remove.className='addon-remove';remove.textContent='×';remove.setAttribute('aria-label','Remover adicional '+(index+1));remove.onclick=()=>{apAddons.splice(index,1);renderApAddons()};
+      row.append(name,money,remove);list.appendChild(row)
+    });
+    $('#ap-addons-limit').textContent=apAddons.length+' / '+AP_MAX_ADDONS;$('#ap-addon-add').disabled=apAddons.length>=AP_MAX_ADDONS;
+  }
+  $('#ap-addon-add').onclick=()=>{if(apAddons.length>=AP_MAX_ADDONS)return;apAddons.push({id:'adicional-'+Date.now().toString(36)+'-'+(apAddons.length+1),name:'',priceCents:0});renderApAddons()};
+  renderApAddons();
+
   $('#admin-store-form').onsubmit=async event=>{
     event.preventDefault();
     const button=event.submitter,original=button.textContent,feedback=$('#admin-store-feedback');
@@ -421,9 +565,19 @@
         category:$('#ap-category').value,imageUrl,imageUrls:[imageUrl],
         stockQuantity:onDemand?null:Number($('#ap-stock').value),
         pickupAddress:$('#ap-pickup').value,
+        contentAmount:$('#ap-content-amount').value===''?null:Number($('#ap-content-amount').value),
+        contentUnit:$('#ap-content-amount').value===''?null:$('#ap-content-unit').value,
+        processing:$('#ap-processing').value,packaging:$('#ap-packaging').value,
+        deliveryMethod:$('#ap-delivery-method').value,deliveryVehicle:$('#ap-delivery-vehicle').value,
+        refrigerated:$('#ap-refrigerated').checked,pesticideFree:$('#ap-pesticide-free').checked,
+        shippingTiers:apFilledShippingTiers(),
+        addons:apAddons.map(addon=>({id:addon.id,name:String(addon.name||'').trim(),priceCents:Math.round(Number(addon.priceCents)||0)})),
       };
+      if(payload.addons.some(addon=>!addon.name))throw Error('Dê um nome a cada adicional ou remova a linha vazia.');
       await request('/api/admin/products',{method:'POST',body:JSON.stringify(payload)});
-      event.target.reset();$('#ap-photo-preview').classList.remove('show');
+      event.target.reset();$('#ap-photo-preview').classList.remove('show');$('#ap-store').value=storeId;
+      apShippingTiers=[];apModoFrete='km';renderApShippingTiers();
+      apAddons=[];renderApAddons();
       feedback.textContent='Produto publicado no catálogo.';
       toast('Produto publicado.');
     }catch(error){feedback.textContent=error.message;feedback.classList.add('error')}
